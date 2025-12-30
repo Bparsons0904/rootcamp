@@ -307,6 +307,8 @@ func NewWelcome3Model() Welcome3Model {
 		glamourRenderer: renderer,
 		fileNodes:       files,
 		selectedFact:    architectFacts[randomIndex],
+		width:           120, // Default width to prevent "Loading..." hang
+		height:          40,  // Default height, will be updated by WindowSizeMsg
 	}
 }
 
