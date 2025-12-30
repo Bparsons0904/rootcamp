@@ -6,6 +6,14 @@ This file provides guidance to Claude Code when working with this repository.
 
 RootCamp is a CLI application for learning terminal commands through interactive lessons and sandboxed labs. Built with Go, Bubble Tea (TUI), and SQLite.
 
+## CRITICAL: /poc Directory
+
+**DO NOT BUILD OR MODIFY CODE IN THE /poc DIRECTORY**
+
+The `/poc` directory is for reference only. All active development and implementations must be done in the main project structure:
+- Main code: `/cmd/rootcamp/` and `/internal/`
+- NOT in: `/poc/` (reference only)
+
 ## Common Commands
 
 ```bash
