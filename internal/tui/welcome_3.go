@@ -2,6 +2,7 @@ package tui
 
 import (
 	"fmt"
+	"math/rand"
 	"strings"
 	"time"
 
@@ -11,7 +12,6 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-// System checks for boot sequence
 var systemChecksV3 = []string{
 	"Started Set console font and keymap.",
 	"Started Tell Plymouth To Write Out Runtime Data.",
@@ -33,7 +33,111 @@ var systemChecksV3 = []string{
 	"Reached target RootCamp Training Environment Ready.",
 }
 
-// File tree structure that will be revealed
+var architectFacts = []string{
+	`In **1965**, Multics introduced hierarchical directories.
+
+Before this, data was a _flat pile of magnetic tape_—no hierarchy.
+
+The directory changed everything:
+- **Namespaces** for organization
+- **Paths** to navigate data
+- **Permissions** to control access
+
+Every command you run traverses this tree.`,
+
+	`The **pipe** (|) was invented by Doug McIlroy in **1973**.
+
+His vision: _"Write programs that do one thing well and work together."_
+
+This single character changed software:
+- **Composability** of tools
+- The Unix **philosophy**
+- Simple power: **cat log | grep ERROR**`,
+
+	`In **1991**, Linus Torvalds posted to comp.os.minix:
+
+_"I'm doing a (free) OS (just a hobby)..."_
+
+That hobby became **Linux**:
+- Powers **96.3%** of top servers
+- Every **Android** device
+- **100%** of top 500 supercomputers
+
+A student project, now foundation of the internet.`,
+
+	`**/bin** and **/usr/bin** split: **1971**.
+
+Unix ran out of disk space. The PDP-11 had a **1.5MB** drive. Dennis Ritchie added a second disk at /usr.
+
+Today:
+- **/bin** - System binaries
+- **/usr/bin** - User programs
+
+Modern Linux carries the ghost of a 1970s disk shortage.`,
+
+	`**chmod** uses octal due to **1974** hardware limits.
+
+Permissions needed **9 bits** (rwxrwxrwx). Octal aligned perfectly:
+- **755** = rwxr-xr-x
+- **644** = rw-r--r--
+
+Memory was expensive, every bit counted.
+
+We still use octal because _that's how it's always been_.`,
+
+	`The **root** user was never meant to be permanent.
+
+Ken Thompson created it for testing. It was **temporary**.
+
+Instead, it became **immortal**:
+- Every Unix system has root
+- 50+ years later, still here
+
+The ultimate _"temporary solution"_.`,
+
+	`**Hidden files** (.bashrc) were an accident.
+
+Early **ls** sorted alphabetically. Files starting with **.** sorted first.
+
+Later, someone hid dotfiles to reduce clutter.
+
+Result:
+- Configs became "special"
+- Pattern became **convention**
+
+Your home is littered with dotfiles from a sorting hack.`,
+
+	`**/etc** means **"et cetera"**—_"and other things."_
+
+Early Unix had:
+- **/bin** for binaries
+- **/dev** for devices
+- **/lib** for libraries
+
+Everything else? **Et cetera.**
+
+The "misc folder" became the backbone of system admin.`,
+
+	`**tty** = **teletypewriter** (1920s hardware).
+
+Early terminals were literal typewriters:
+- No screen, just paper
+- Type a command, it prints
+
+Modern terminals are **emulators** of 100-year-old machines.
+
+A simulation of a simulation.`,
+
+	`The **$** prompt has military origins.
+
+In the **1960s**, computing cost money per CPU second. **$** reminded users:
+_"This costs money"_
+
+Root used **#** (override costs).
+
+Today, free computing, but **$** and **#** remain.`,
+}
+
 type fileNode struct {
 	name     string
 	offset   float64
@@ -49,22 +153,16 @@ const (
 )
 
 type Welcome3Model struct {
-	// Boot sequence
-	currentCheck int
-	bootComplete bool
-
-	// Provisioning phase
-	phase       int
-	progress    int
-	fileNodes   []fileNode
-	currentFile int
-
-	// Layout
-	width  int
-	height int
-
-	// Markdown renderer
+	currentCheck    int
+	bootComplete    bool
+	phase           int
+	progress        int
+	fileNodes       []fileNode
+	currentFile     int
+	width           int
+	height          int
 	glamourRenderer *glamour.TermRenderer
+	selectedFact    string
 }
 
 type (
@@ -74,13 +172,11 @@ type (
 )
 
 func NewWelcome3Model() Welcome3Model {
-	// Initialize Glamour renderer for markdown
 	renderer, _ := glamour.NewTermRenderer(
 		glamour.WithAutoStyle(),
 		glamour.WithWordWrap(40),
 	)
 
-	// Initialize file nodes with spring physics
 	files := []fileNode{
 		{
 			name:     "/tmp/rootcamp-x82z/",
@@ -204,10 +300,13 @@ func NewWelcome3Model() Welcome3Model {
 		},
 	}
 
+	randomIndex := rand.Intn(len(architectFacts))
+
 	return Welcome3Model{
 		phase:           phaseBootSequence,
 		glamourRenderer: renderer,
 		fileNodes:       files,
+		selectedFact:    architectFacts[randomIndex],
 	}
 }
 
@@ -312,34 +411,18 @@ func (m Welcome3Model) View() string {
 
 func (m Welcome3Model) renderBootSequence() string {
 	var output strings.Builder
-
-	// Green color for OK status (like systemd)
-	okStyle := lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#00FF00")).
-		Bold(true)
-
-	// White/gray for message text
-	messageStyle := lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#FFFFFF"))
-
-	// Dim style for "Starting" messages
-	startingStyle := lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#999999"))
-
 	output.WriteString("\n")
 
 	for i := 0; i < m.currentCheck && i < len(systemChecksV3); i++ {
 		message := systemChecksV3[i]
 
-		// Check if this is a "Starting" message (show without OK status yet)
 		if strings.HasPrefix(message, "Starting") {
-			line := fmt.Sprintf("         %s\n", startingStyle.Render(message))
+			line := fmt.Sprintf("         %s\n", BootStartingStyle().Render(message))
 			output.WriteString(line)
 		} else {
-			// Show with green OK status
 			line := fmt.Sprintf("  %s %s\n",
-				okStyle.Render("[ OK ]"),
-				messageStyle.Render(message))
+				BootOKStyle().Render("[ OK ]"),
+				BootMessageStyle().Render(message))
 			output.WriteString(line)
 		}
 	}
@@ -348,69 +431,25 @@ func (m Welcome3Model) renderBootSequence() string {
 }
 
 func (m Welcome3Model) renderProvisioningView() string {
-	// Three columns: File tree, Menu, Architect's Log
 	fileTree := m.renderFileTree()
 	menu := m.renderMenu()
 	architectLog := m.renderArchitectLog()
-
-	// Progress bar
 	progressBar := m.renderProgressBar()
 
-	// Create the 3-column layout
 	leftWidth := 50
 	rightWidth := 50
-	middleWidth := m.width - leftWidth - rightWidth - 10 // Fill remaining width, account for borders
+	middleWidth := m.width - leftWidth - rightWidth - 10
+	panelHeight := m.height - 10
 
-	panelHeight := m.height - 12 // Leave room for header, footer, progress
+	left := PanelStyle(leftWidth, panelHeight, ColorBlue).Render(fileTree)
+	middle := PanelStyle(middleWidth, panelHeight, ColorOrange).Render(menu)
+	right := PanelStyle(rightWidth, panelHeight, ColorPurple).Render(architectLog)
 
-	// Style the left panel (Sandbox Structure)
-	leftStyle := lipgloss.NewStyle().
-		Width(leftWidth).
-		Height(panelHeight).
-		Padding(1, 2).
-		Border(lipgloss.RoundedBorder()).
-		BorderForeground(lipgloss.Color("#5FB3FF"))
-
-	// Style the middle panel (Menu)
-	middleStyle := lipgloss.NewStyle().
-		Width(middleWidth).
-		Height(panelHeight).
-		Padding(1, 2).
-		Border(lipgloss.RoundedBorder()).
-		BorderForeground(lipgloss.Color("#FFB86C"))
-
-	// Style the right panel (Architect's Log)
-	rightStyle := lipgloss.NewStyle().
-		Width(rightWidth).
-		Height(panelHeight).
-		Padding(1, 2).
-		Border(lipgloss.RoundedBorder()).
-		BorderForeground(lipgloss.Color("#9D7CFF"))
-
-	left := leftStyle.Render(fileTree)
-	middle := middleStyle.Render(menu)
-	right := rightStyle.Render(architectLog)
-
-	// Join all three columns horizontally
 	mainContent := lipgloss.JoinHorizontal(lipgloss.Top, left, middle, right)
 
-	// Create header
-	headerStyle := lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#7DCFFF")).
-		Bold(true).
-		Width(m.width).
-		Align(lipgloss.Center)
+	header := HeaderStyle(m.width).Render("ROOT CAMP v0.1")
+	footer := FooterStyle().Render("(q) to exit")
 
-	header := headerStyle.Render("ROOT CAMP v0.1")
-
-	// Create footer with progress
-	footerStyle := lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#565F89")).
-		Italic(true)
-
-	footer := footerStyle.Render("(q) to exit")
-
-	// Center progress bar and footer
 	centeredProgressBar := lipgloss.NewStyle().
 		Width(m.width).
 		Align(lipgloss.Center).
@@ -421,7 +460,6 @@ func (m Welcome3Model) renderProvisioningView() string {
 		Align(lipgloss.Center).
 		Render(footer)
 
-	// Assemble everything
 	content := lipgloss.JoinVertical(
 		lipgloss.Left,
 		"",
@@ -444,20 +482,6 @@ func (m Welcome3Model) renderProvisioningView() string {
 }
 
 func (m Welcome3Model) renderMenu() string {
-	titleStyle := lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#1A1B26")).
-		Background(lipgloss.Color("#FFB86C")).
-		Bold(true).
-		Padding(0, 1)
-
-	optionStyle := lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#7DCFFF"))
-
-	disabledStyle := lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#565F89")).
-		Italic(true)
-
-	// Stubbed menu options
 	menuOptions := []struct {
 		key     string
 		label   string
@@ -471,37 +495,32 @@ func (m Welcome3Model) renderMenu() string {
 		{"q", "Exit", true},
 	}
 
-	// Calculate available width for the menu panel
 	leftWidth := 50
 	rightWidth := 50
 	middleWidth := m.width - leftWidth - rightWidth - 10
 
-	// Center the title separately
-	title := titleStyle.Render("MAIN MENU")
+	title := PanelTitleStyle(ColorOrange).Render("MAIN MENU")
 	centeredTitle := lipgloss.Place(
-		middleWidth-4, // Account for padding
+		middleWidth-4,
 		1,
 		lipgloss.Center,
 		lipgloss.Center,
 		title,
 	)
 
-	// Build menu items with left alignment
 	var menuItems []string
 	for _, opt := range menuOptions {
 		var line string
 		if opt.enabled {
-			line = optionStyle.Render(fmt.Sprintf("[%s] %s", opt.key, opt.label))
+			line = MenuOptionStyle().Render(fmt.Sprintf("[%s] %s", opt.key, opt.label))
 		} else {
-			line = disabledStyle.Render(fmt.Sprintf("[%s] %s", opt.key, opt.label))
+			line = DisabledOptionStyle().Render(fmt.Sprintf("[%s] %s", opt.key, opt.label))
 		}
 		menuItems = append(menuItems, line)
 	}
 
-	// Join menu items with LEFT alignment
 	leftAlignedItems := lipgloss.JoinVertical(lipgloss.Left, menuItems...)
 
-	// Center the left-aligned items block
 	centeredItems := lipgloss.Place(
 		middleWidth-4,
 		len(menuItems),
@@ -510,7 +529,6 @@ func (m Welcome3Model) renderMenu() string {
 		leftAlignedItems,
 	)
 
-	// Combine centered title with centered (but internally left-aligned) menu items
 	return lipgloss.JoinVertical(
 		lipgloss.Left,
 		centeredTitle,
@@ -520,31 +538,20 @@ func (m Welcome3Model) renderMenu() string {
 }
 
 func (m Welcome3Model) renderFileTree() string {
-	titleStyle := lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#1A1B26")).
-		Background(lipgloss.Color("#5FB3FF")).
-		Bold(true).
-		Padding(0, 1)
-
-	fileStyle := lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#9ECE6A"))
-
-	// Center the title
-	title := titleStyle.Render("SANDBOX STRUCTURE")
 	leftWidth := 50
+	title := PanelTitleStyle(ColorBlue).Render("SANDBOX STRUCTURE")
 	centeredTitle := lipgloss.Place(
-		leftWidth-4, // Account for padding
+		leftWidth-4,
 		1,
 		lipgloss.Center,
 		lipgloss.Center,
 		title,
 	)
 
-	// Build file tree
 	var fileList strings.Builder
 	for _, node := range m.fileNodes {
 		if node.revealed {
-			fileList.WriteString(fileStyle.Render(node.name))
+			fileList.WriteString(FileTreeStyle().Render(node.name))
 			fileList.WriteString("\n")
 		}
 	}
@@ -553,64 +560,33 @@ func (m Welcome3Model) renderFileTree() string {
 }
 
 func (m Welcome3Model) renderArchitectLog() string {
-	titleStyle := lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#1A1B26")).
-		Background(lipgloss.Color("#9D7CFF")).
-		Bold(true).
-		Padding(0, 1)
-
-	// Center the title
-	title := titleStyle.Render("THE ARCHITECT'S LOG")
 	rightWidth := 50
+	title := PanelTitleStyle(ColorPurple).Render("THE ARCHITECT'S LOG")
 	centeredTitle := lipgloss.Place(
-		rightWidth-4, // Account for padding
+		rightWidth-4,
 		1,
 		lipgloss.Center,
 		lipgloss.Center,
 		title,
 	)
 
-	markdown := `
-In **1965**, the Multics operating system introduced the revolutionary concept of a hierarchical directory structure.
-
-Before this breakthrough, data storage was a _flat pile of magnetic tape_—no organization, no hierarchy, just sequential blocks.
-
-The directory changed everything. It gave us:
-- **Namespaces** for file organization
-- **Paths** to navigate data
-- **Permissions** to control access
-
-Today, every terminal command you run traverses this tree. You're not just using the filesystem—you're walking through history.`
-
-	// Render with Glamour
-	rendered, err := m.glamourRenderer.Render(markdown)
+	rendered, err := m.glamourRenderer.Render(m.selectedFact)
 	if err != nil {
-		return centeredTitle + "\n\n" + markdown // Fallback to plain text
+		return centeredTitle + "\n\n" + m.selectedFact
 	}
 
 	return centeredTitle + "\n\n" + strings.TrimSpace(rendered)
 }
 
 func (m Welcome3Model) renderProgressBar() string {
-	labelStyle := lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#565F89")).
-		Italic(true)
-
 	barWidth := 50
 	filled := int(float64(barWidth) * float64(m.progress) / 100.0)
 	empty := barWidth - filled
 
-	filledStyle := lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#9ECE6A")).
-		Bold(true)
+	bar := ProgressBarFilledStyle().Render(strings.Repeat("█", filled)) +
+		ProgressBarEmptyStyle().Render(strings.Repeat("░", empty))
 
-	emptyStyle := lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#414868"))
-
-	bar := filledStyle.Render(strings.Repeat("█", filled)) +
-		emptyStyle.Render(strings.Repeat("░", empty))
-
-	label := labelStyle.Render(fmt.Sprintf("Status: [Provisioning Sandbox...] %d%%", m.progress))
+	label := ProgressLabelStyle().Render(fmt.Sprintf("Status: [Provisioning Sandbox...] %d%%", m.progress))
 
 	return lipgloss.JoinVertical(
 		lipgloss.Center,
