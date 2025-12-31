@@ -105,3 +105,40 @@ func GetLessonsByLevel(level string) ([]types.Lesson, error) {
 
 	return filtered, nil
 }
+
+func GetLessonsByModule(module string) ([]types.Lesson, error) {
+	data, err := LoadLessons()
+	if err != nil {
+		return nil, err
+	}
+
+	var filtered []types.Lesson
+	for _, lesson := range data.Lessons {
+		if lesson.Module == module {
+			filtered = append(filtered, lesson)
+		}
+	}
+
+	return filtered, nil
+}
+
+func GetAllModules() ([]string, error) {
+	data, err := LoadLessons()
+	if err != nil {
+		return nil, err
+	}
+
+	moduleSet := make(map[string]bool)
+	for _, lesson := range data.Lessons {
+		if lesson.Module != "" {
+			moduleSet[lesson.Module] = true
+		}
+	}
+
+	modules := make([]string, 0, len(moduleSet))
+	for module := range moduleSet {
+		modules = append(modules, module)
+	}
+
+	return modules, nil
+}

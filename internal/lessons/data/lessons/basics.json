@@ -8,6 +8,7 @@
       "title": "Print Working Directory",
       "tags": ["navigation", "basics", "filesystem"],
       "level": "beginner",
+      "module": "navigation",
       "about": {
         "what": "The `pwd` command shows your current location in the filesystem. It stands for **'print working directory'**. Think of it as asking \"where am I?\" in the terminal.\n\nEvery time you open a terminal, you start in some directory. The `pwd` command tells you exactly where that is by showing the full, absolute path from the root of your filesystem.",
         "history": "The name 'pwd' comes from early Unix systems in the 1970s. The 'print' in pwd is a reminder of the teletype era when 'printing' meant displaying on any output device, not just paper printers.\n\nIn the early days of Unix, terminals didn't show your current directory in the prompt by default, so `pwd` was essential for navigation. Even today, it remains one of the most fundamental commands every user learns.",
@@ -48,6 +49,7 @@
       "title": "Logical Path",
       "tags": ["navigation", "basics", "filesystem", "symlinks"],
       "level": "intermediate",
+      "module": "navigation",
       "about": {
         "what": "The `pwd -L` command displays the **logical** current working directory. This means it shows the path as you navigated to it, including any symbolic links.\n\nA **symbolic link** (or symlink) is like a shortcut that points to another directory. When you navigate through a symlink, your shell remembers the path you took. The `-L` flag tells `pwd` to show you that logical path, preserving the symlink in the output.\n\n**This is the default behavior** - running `pwd` without flags is the same as running `pwd -L`.\n\nFor example:\n- Real directory: `/var/projects/web-app`\n- Symlink: `/home/user/workspace` → `/var/projects/web-app`\n- If you `cd /home/user/workspace`, then `pwd -L` shows: `/home/user/workspace`",
         "history": "The `-L` (logical) flag became the default behavior in most modern shells because it matches how users think about navigation.\n\nIn the early days of Unix, symlinks were introduced in BSD 4.2 (1983) to allow flexible filesystem organization. The shell needed to decide: should it track where you *think* you are (the logical path through symlinks), or where you *actually* are (the physical location on disk)?\n\nMost shells chose to track the logical path by default, storing it in the `$PWD` environment variable. This made navigation more intuitive - if you `cd` into a directory called `workspace`, you expect `pwd` to show `workspace`, not some completely different path.\n\nThe `-L` flag was formalized to explicitly request this default behavior, mainly for scripts that need to be clear about their intent.",
@@ -92,6 +94,7 @@
       "title": "Physical Path",
       "tags": ["navigation", "basics", "filesystem", "symlinks"],
       "level": "intermediate",
+      "module": "navigation",
       "about": {
         "what": "The `pwd -P` command displays the **physical** current working directory. This means it resolves all symbolic links to show the actual, real location of the directory on disk.\n\nWhile `pwd -L` (the default) shows you the path as you navigated including symlinks, `pwd -P` shows you where the directory really lives in the filesystem hierarchy.\n\nThis is crucial when:\n- You need to know the actual location of files on disk\n- Working with tools that don't follow symlinks\n- Debugging filesystem structure\n- Understanding where data is physically stored\n\nFor example:\n- Real directory: `/var/projects/web-app`\n- Symlink: `/home/user/workspace` → `/var/projects/web-app`\n- If you `cd /home/user/workspace`, then `pwd -P` shows: `/var/projects/web-app`",
         "history": "The `-P` (physical) flag exists because not all programs follow symbolic links. Some operations need to know the actual, physical location of files.\n\nWhen Unix introduced symbolic links in BSD 4.2 (1983), it created a dilemma: some programs needed to follow links (like text editors - you want to edit the target file, not the link itself), while others needed the real path (like backup tools - you don't want to back up the same files multiple times).\n\nThe `-P` flag gives you access to the real, resolved path. This became especially important with:\n- **Build systems**: Some compilers and linkers don't follow symlinks when searching for includes\n- **Version control**: Git and other VCS track the physical structure\n- **Deployment scripts**: Need to know actual disk layout for correct permissions and ownership\n- **Node.js projects**: The infamous `node_modules` often contains symlinks that need resolution",

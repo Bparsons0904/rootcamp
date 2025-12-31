@@ -145,7 +145,7 @@ func (m *WelcomeModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
-		if msg.String() == "q" || msg.String() == "ctrl+c" {
+		if msg.String() == "q" || msg.String() == "esc" || msg.String() == "ctrl+c" {
 			return m, tea.Quit
 		}
 
@@ -292,7 +292,7 @@ func (m WelcomeModel) renderProvisioningView() string {
 	mainContent := lipgloss.JoinHorizontal(lipgloss.Top, left, middle, right)
 
 	header := HeaderStyle(m.width).Render("ROOT CAMP v0.1")
-	footer := FooterStyle().Render("Use arrow keys to navigate, Enter to select")
+	footer := FooterStyle().Render("Use arrow keys to navigate, Enter to select, ESC/Q to exit")
 
 	centeredFooter := lipgloss.NewStyle().
 		Width(m.width).

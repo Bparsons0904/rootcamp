@@ -167,7 +167,7 @@ func (m *LearnCommandModel) Update(msg tea.Msg) (*LearnCommandModel, tea.Cmd) {
 
 		case stateCodeInput:
 			switch msg.String() {
-			case "esc":
+			case "esc", "q":
 				m.state = stateLessonDetail
 				m.codeInput.SetValue("")
 				m.feedback = ""
@@ -381,7 +381,7 @@ func (m *LearnCommandModel) renderListView() string {
 	instructions := lipgloss.NewStyle().
 		Foreground(lipgloss.Color("241")).
 		Align(lipgloss.Center).
-		Render("Use arrow keys to navigate, Enter to view lesson, ESC to return to menu")
+		Render("Use arrow keys to navigate, Enter to view lesson, ESC/Q to return to menu")
 
 	formView := m.form.View()
 
@@ -421,7 +421,7 @@ func (m *LearnCommandModel) renderDetailView() string {
 	instructions := lipgloss.NewStyle().
 		Foreground(lipgloss.Color("241")).
 		Width(contentWidth).
-		Render("Arrow keys to scroll | [S] Start Lab | [C] Enter Code | ESC to return")
+		Render("Arrow keys to scroll | [S] Start Lab | [C] Enter Code | ESC/Q to return")
 
 	feedbackStyle := lipgloss.NewStyle().
 		Foreground(lipgloss.Color("196")).
@@ -471,7 +471,7 @@ func (m *LearnCommandModel) renderCodeInputView() string {
 		Foreground(lipgloss.Color("241")).
 		Width(m.width).
 		Align(lipgloss.Center).
-		Render("Type your answer and press Enter to submit | ESC to cancel")
+		Render("Type your answer and press Enter to submit | ESC/Q to cancel")
 
 	feedbackStyle := lipgloss.NewStyle().
 		Foreground(lipgloss.Color("196")).

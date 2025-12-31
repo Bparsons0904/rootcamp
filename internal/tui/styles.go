@@ -17,9 +17,14 @@ var (
 
 	// Tokyo Night inspired palette for modals
 	AccentBlue      = lipgloss.AdaptiveColor{Light: "#00BBFF", Dark: "#7aa2f7"}
+	AccentGreen     = lipgloss.AdaptiveColor{Light: "#00AA00", Dark: "#9ece6a"}
+	AccentOrange    = lipgloss.AdaptiveColor{Light: "#FF8800", Dark: "#ff9e64"}
+	AccentPurple    = lipgloss.AdaptiveColor{Light: "#874BFD", Dark: "#bb9af7"}
 	HighlightPurple = lipgloss.AdaptiveColor{Light: "#874BFD", Dark: "#bb9af7"}
 	SubtleGray      = lipgloss.AdaptiveColor{Light: "#D9DCCF", Dark: "#383838"}
 	DeepMidnight    = lipgloss.Color("#1a1b26")
+	TextPrimary     = lipgloss.AdaptiveColor{Light: "#000000", Dark: "#c0caf5"}
+	TextMuted       = lipgloss.AdaptiveColor{Light: "#666666", Dark: "#565f89"}
 )
 
 func PanelStyle(width, height int, borderColor lipgloss.Color) lipgloss.Style {

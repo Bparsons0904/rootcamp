@@ -41,6 +41,7 @@ type Lesson struct {
 	Title        string         `json:"title"`
 	Tags         []string       `json:"tags"`
 	Level        string         `json:"level"`
+	Module       string         `json:"module"`
 	About        LessonAbout    `json:"about"`
 	Hints        []string       `json:"hints"`
 	Sandbox      SandboxConfig  `json:"sandbox"`

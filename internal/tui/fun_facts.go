@@ -146,7 +146,7 @@ func (m *FunFactsModel) renderListView() string {
 	instructions := lipgloss.NewStyle().
 		Foreground(lipgloss.Color("241")).
 		Align(lipgloss.Center).
-		Render("Use arrow keys to navigate, Enter to view, ESC to return to menu")
+		Render("Use arrow keys to navigate, Enter to view, ESC/Q to return to menu")
 
 	formView := m.form.View()
 
@@ -186,7 +186,7 @@ func (m *FunFactsModel) renderDetailView() string {
 
 	instructions := lipgloss.NewStyle().
 		Foreground(lipgloss.Color("241")).
-		Render("Use arrow keys to scroll, ESC to return to list")
+		Render("Use arrow keys to scroll, ESC/Q to return to list")
 
 	content := lipgloss.JoinVertical(
 		lipgloss.Left,

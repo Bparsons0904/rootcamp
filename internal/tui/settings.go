@@ -73,8 +73,8 @@ func (m *SettingsModel) Update(msg tea.Msg) (*SettingsModel, tea.Cmd) {
 
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
-		// Handle Esc to close without saving
-		if msg.String() == "esc" {
+		// Handle Esc or q to close without saving
+		if msg.String() == "esc" || msg.String() == "q" {
 			m.isOpen = false
 			return m, nil
 		}
