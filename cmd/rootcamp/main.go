@@ -17,8 +17,8 @@ func main() {
 	}
 	defer database.Close()
 
-	m := tui.NewWelcome3Model(database)
-	p := tea.NewProgram(m, tea.WithAltScreen())
+	model := tui.NewWelcome3Model(database)
+	p := tea.NewProgram(&model, tea.WithAltScreen())
 
 	if _, err := p.Run(); err != nil {
 		fmt.Printf("Error running program: %v\n", err)

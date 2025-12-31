@@ -52,7 +52,7 @@ rootcamp/
 
 ## Architecture
 
-- **TUI Framework**: Bubble Tea with Lip Gloss styling
+- **TUI Framework**: Bubble Tea with Lip Gloss styling and Huh forms
 - **Database**: SQLite stored at `~/.rootcamp/rootcamp.db`
 - **Lab Sandbox**: Created at `/tmp/rootcamp-{uuid}/`, auto-cleaned on lesson exit
 
@@ -68,6 +68,34 @@ Lessons are embedded Go structs in `internal/lessons/lessons.go`. Each lesson co
 ### TUI Views
 - Dashboard: Lesson list with completion status
 - Lesson: Content display + code input
+- Settings: Interactive form for user preferences
+
+### Settings & Database
+Settings are persisted to SQLite and loaded on startup:
+- Database functions in `internal/db/db.go` handle CRUD operations
+- Settings struct in `internal/types/types.go` defines available settings
+- Settings UI uses Huh forms for interactive multi-select interfaces
+
+### Bubble Tea Model Patterns
+
+**IMPORTANT: Pointer Receivers for Forms**
+When using Huh forms (or any component that binds to model fields via pointers):
+- Use **pointer receivers** for the `Update()` method: `func (m *Model) Update(msg tea.Msg) (*Model, tea.Cmd)`
+- Store form-bound models as **pointers** in parent models: `settingsModel *SettingsModel`
+- This prevents Bubble Tea's value-based model copying from breaking pointer bindings
+
+**Example:**
+```go
+// Correct - pointer receiver prevents stale pointer issues
+func (m *SettingsModel) Update(msg tea.Msg) (*SettingsModel, tea.Cmd) {
+    // Form binding to &m.selectedSettings works correctly
+}
+
+// Parent model stores as pointer
+type Welcome3Model struct {
+    settingsModel *SettingsModel  // Pointer, not value
+}
+```
 
 ### Progress Tracking
 SQLite tracks `lesson_id`, `completed`, `completed_at`, `attempts`
@@ -77,8 +105,38 @@ SQLite tracks `lesson_id`, `completed`, `completed_at`, `attempts`
 - `github.com/charmbracelet/bubbletea` - TUI framework
 - `github.com/charmbracelet/lipgloss` - Styling
 - `github.com/charmbracelet/bubbles` - UI components
+- `github.com/charmbracelet/huh` - Interactive forms (PREFERRED for forms/inputs)
+- `github.com/charmbracelet/glamour` - Markdown rendering
+- `github.com/charmbracelet/harmonica` - Spring animations
 - `github.com/mattn/go-sqlite3` - SQLite driver (requires CGO)
 - `github.com/google/uuid` - UUID generation for sandbox paths
+
+**Preference: Use Huh for Forms**
+When implementing any user input forms (settings, configuration, multi-select, etc.), prefer using the `huh` library. It provides:
+- Built-in validation
+- Consistent styling and theming
+- Multi-select, input, confirm, select, and note components
+- Better user experience than manual input handling
+
+## Development Practices
+
+### Code Organization
+- Keep comments minimal and purposeful - code should be self-documenting
+- Use template comments for future feature additions (commented-out examples)
+- Remove experimental/example code before finalizing features
+
+### Settings Implementation Pattern
+When adding new settings:
+1. Add field to `types.Settings` struct
+2. Add default value in `db.InitDefaultSettings()`
+3. Add option in `SettingsModel.Open()` function
+4. Add loading logic in `db.GetAllSettings()`
+5. Apply setting where needed (e.g., in model initialization)
+
+### Animation & UX Patterns
+- Use `skippedAnimations` flag to conditionally render progress indicators
+- Check settings during model initialization, not every render
+- Use phase-based state management for multi-step animations
 
 ## CGO Note
 

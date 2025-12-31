@@ -11,6 +11,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/glamour"
 	"github.com/charmbracelet/harmonica"
+	"github.com/charmbracelet/huh"
 	"github.com/charmbracelet/lipgloss"
 )
 
@@ -155,19 +156,26 @@ const (
 )
 
 type Welcome3Model struct {
-	currentCheck      int
-	bootComplete      bool
-	phase             int
-	progress          int
-	fileNodes         []fileNode
-	currentFile       int
-	width             int
-	height            int
-	glamourRenderer   *glamour.TermRenderer
-	selectedFact      string
-	database          *sql.DB
-	settingsModel     *SettingsModel
-	skippedAnimations bool
+	currentCheck         int
+	bootComplete         bool
+	phase                int
+	progress             int
+	fileNodes            []fileNode
+	currentFile          int
+	width                int
+	height               int
+	glamourRenderer      *glamour.TermRenderer
+	selectedFact         string
+	database             *sql.DB
+	settingsModel        *SettingsModel
+	guidedLearningModel  *GuidedLearningModel
+	learnCommandModel    *LearnCommandModel
+	viewProgressModel    *ViewProgressModel
+	funFactsModel        *FunFactsModel
+	aboutModel           *AboutModel
+	skippedAnimations    bool
+	menuForm             *huh.Form
+	selectedMenuItem     string
 }
 
 type (
@@ -334,26 +342,64 @@ func NewWelcome3Model(database *sql.DB) Welcome3Model {
 	}
 
 	settingsModel := NewSettingsModel(database)
-	return Welcome3Model{
-		phase:             phase,
-		bootComplete:      bootComplete,
-		progress:          progress,
-		currentFile:       currentFile,
-		glamourRenderer:   renderer,
-		fileNodes:         files,
-		selectedFact:      architectFacts[randomIndex],
-		width:             120,
-		height:            40,
-		database:          database,
-		settingsModel:     &settingsModel,
-		skippedAnimations: skipAnimations,
+	guidedLearningModel := NewGuidedLearningModel(database)
+	learnCommandModel := NewLearnCommandModel(database)
+	viewProgressModel := NewViewProgressModel(database)
+	funFactsModel := NewFunFactsModel(database)
+	aboutModel := NewAboutModel(database)
+
+	model := Welcome3Model{
+		phase:               phase,
+		bootComplete:        bootComplete,
+		progress:            progress,
+		currentFile:         currentFile,
+		glamourRenderer:     renderer,
+		fileNodes:           files,
+		selectedFact:        architectFacts[randomIndex],
+		width:               120,
+		height:              40,
+		database:            database,
+		settingsModel:       &settingsModel,
+		guidedLearningModel: &guidedLearningModel,
+		learnCommandModel:   &learnCommandModel,
+		viewProgressModel:   &viewProgressModel,
+		funFactsModel:       &funFactsModel,
+		aboutModel:          &aboutModel,
+		skippedAnimations:   skipAnimations,
 	}
+
+	// Initialize menu form if animations were skipped
+	if skipAnimations {
+		model.createMenuForm()
+	}
+
+	return model
 }
 
-func (m Welcome3Model) Init() tea.Cmd {
+func (m *Welcome3Model) createMenuForm() {
+	m.menuForm = huh.NewForm(
+		huh.NewGroup(
+			huh.NewSelect[string]().
+				Title("Main Menu").
+				Description("Select an option").
+				Options(
+					huh.NewOption("Guided Learning", "guided_learning"),
+					huh.NewOption("Learn Command", "learn_command"),
+					huh.NewOption("View Progress", "view_progress"),
+					huh.NewOption("Fun Facts", "fun_facts"),
+					huh.NewOption("About Root Camp", "about"),
+					huh.NewOption("Settings", "settings"),
+					huh.NewOption("Exit", "exit"),
+				).
+				Value(&m.selectedMenuItem),
+		),
+	).WithWidth(60).WithTheme(huh.ThemeDracula())
+}
+
+func (m *Welcome3Model) Init() tea.Cmd {
 	// Skip animations if already in complete phase
-	if m.phase == phaseComplete {
-		return nil
+	if m.phase == phaseComplete && m.menuForm != nil {
+		return m.menuForm.Init()
 	}
 
 	return tea.Batch(
@@ -380,7 +426,7 @@ func tickForFileReveal() tea.Cmd {
 	})
 }
 
-func (m Welcome3Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m *Welcome3Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		if msg.String() == "q" || msg.String() == "ctrl+c" {
@@ -393,12 +439,34 @@ func (m Welcome3Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, cmd
 		}
 
-		if m.phase == phaseComplete {
-			switch msg.String() {
-			case "5":
-				cmd := m.settingsModel.Open(m.width, m.height)
-				return m, cmd
-			}
+		if m.guidedLearningModel.IsOpen() {
+			var cmd tea.Cmd
+			m.guidedLearningModel, cmd = m.guidedLearningModel.Update(msg)
+			return m, cmd
+		}
+
+		if m.learnCommandModel.IsOpen() {
+			var cmd tea.Cmd
+			m.learnCommandModel, cmd = m.learnCommandModel.Update(msg)
+			return m, cmd
+		}
+
+		if m.viewProgressModel.IsOpen() {
+			var cmd tea.Cmd
+			m.viewProgressModel, cmd = m.viewProgressModel.Update(msg)
+			return m, cmd
+		}
+
+		if m.funFactsModel.IsOpen() {
+			var cmd tea.Cmd
+			m.funFactsModel, cmd = m.funFactsModel.Update(msg)
+			return m, cmd
+		}
+
+		if m.aboutModel.IsOpen() {
+			var cmd tea.Cmd
+			m.aboutModel, cmd = m.aboutModel.Update(msg)
+			return m, cmd
 		}
 
 	case tea.WindowSizeMsg:
@@ -437,6 +505,9 @@ func (m Welcome3Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				if m.progress >= 100 {
 					m.progress = 100
 					m.phase = phaseComplete
+					// Initialize menu form when provisioning completes
+					m.createMenuForm()
+					return m, m.menuForm.Init()
 				}
 			}
 
@@ -453,10 +524,83 @@ func (m Welcome3Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	}
 
-	// Pass through to settings model if not already handled
+	// Handle menu form when phase is complete and no views are open
+	if m.phase == phaseComplete && m.menuForm != nil {
+		form, cmd := m.menuForm.Update(msg)
+		if f, ok := form.(*huh.Form); ok {
+			m.menuForm = f
+		}
+
+		// Check if form completed
+		if m.menuForm.State == huh.StateCompleted {
+			// Handle menu selection
+			switch m.selectedMenuItem {
+			case "guided_learning":
+				m.menuForm = nil
+				m.createMenuForm()
+				return m, m.guidedLearningModel.Open(m.width, m.height)
+			case "learn_command":
+				m.menuForm = nil
+				m.createMenuForm()
+				return m, m.learnCommandModel.Open(m.width, m.height)
+			case "view_progress":
+				m.menuForm = nil
+				m.createMenuForm()
+				return m, m.viewProgressModel.Open(m.width, m.height)
+			case "fun_facts":
+				m.menuForm = nil
+				m.createMenuForm()
+				return m, m.funFactsModel.Open(m.width, m.height)
+			case "about":
+				m.menuForm = nil
+				m.createMenuForm()
+				return m, m.aboutModel.Open(m.width, m.height)
+			case "settings":
+				m.menuForm = nil
+				m.createMenuForm()
+				return m, m.settingsModel.Open(m.width, m.height)
+			case "exit":
+				return m, tea.Quit
+			}
+		}
+
+		return m, cmd
+	}
+
+	// Pass through to any open model if not already handled
 	if m.settingsModel.IsOpen() {
 		var cmd tea.Cmd
 		m.settingsModel, cmd = m.settingsModel.Update(msg)
+		return m, cmd
+	}
+
+	if m.guidedLearningModel.IsOpen() {
+		var cmd tea.Cmd
+		m.guidedLearningModel, cmd = m.guidedLearningModel.Update(msg)
+		return m, cmd
+	}
+
+	if m.learnCommandModel.IsOpen() {
+		var cmd tea.Cmd
+		m.learnCommandModel, cmd = m.learnCommandModel.Update(msg)
+		return m, cmd
+	}
+
+	if m.viewProgressModel.IsOpen() {
+		var cmd tea.Cmd
+		m.viewProgressModel, cmd = m.viewProgressModel.Update(msg)
+		return m, cmd
+	}
+
+	if m.funFactsModel.IsOpen() {
+		var cmd tea.Cmd
+		m.funFactsModel, cmd = m.funFactsModel.Update(msg)
+		return m, cmd
+	}
+
+	if m.aboutModel.IsOpen() {
+		var cmd tea.Cmd
+		m.aboutModel, cmd = m.aboutModel.Update(msg)
 		return m, cmd
 	}
 
@@ -477,6 +621,26 @@ func (m Welcome3Model) View() string {
 
 	if m.settingsModel.IsOpen() {
 		return m.settingsModel.View()
+	}
+
+	if m.guidedLearningModel.IsOpen() {
+		return m.guidedLearningModel.View()
+	}
+
+	if m.learnCommandModel.IsOpen() {
+		return m.learnCommandModel.View()
+	}
+
+	if m.viewProgressModel.IsOpen() {
+		return m.viewProgressModel.View()
+	}
+
+	if m.funFactsModel.IsOpen() {
+		return m.funFactsModel.View()
+	}
+
+	if m.aboutModel.IsOpen() {
+		return m.aboutModel.View()
 	}
 
 	return baseView
@@ -520,7 +684,7 @@ func (m Welcome3Model) renderProvisioningView() string {
 	mainContent := lipgloss.JoinHorizontal(lipgloss.Top, left, middle, right)
 
 	header := HeaderStyle(m.width).Render("ROOT CAMP v0.1")
-	footer := FooterStyle().Render("(q) to exit")
+	footer := FooterStyle().Render("Use arrow keys to navigate, Enter to select")
 
 	centeredFooter := lipgloss.NewStyle().
 		Width(m.width).
@@ -570,19 +734,6 @@ func (m Welcome3Model) renderProvisioningView() string {
 }
 
 func (m Welcome3Model) renderMenu() string {
-	menuOptions := []struct {
-		key     string
-		label   string
-		enabled bool
-	}{
-		{"1", "Start Training", false},
-		{"2", "View Lessons", false},
-		{"3", "Lab Environment", false},
-		{"4", "Progress Tracker", false},
-		{"5", "Settings", m.phase == phaseComplete},
-		{"q", "Exit", true},
-	}
-
 	leftWidth := 50
 	rightWidth := 50
 	middleWidth := m.width - leftWidth - rightWidth - 10
@@ -596,32 +747,33 @@ func (m Welcome3Model) renderMenu() string {
 		title,
 	)
 
-	var menuItems []string
-	for _, opt := range menuOptions {
-		var line string
-		if opt.enabled {
-			line = MenuOptionStyle().Render(fmt.Sprintf("[%s] %s", opt.key, opt.label))
-		} else {
-			line = DisabledOptionStyle().Render(fmt.Sprintf("[%s] %s", opt.key, opt.label))
-		}
-		menuItems = append(menuItems, line)
+	var content string
+	if m.menuForm != nil {
+		// Render the Huh form
+		formView := m.menuForm.View()
+		content = lipgloss.Place(
+			middleWidth-4,
+			20,
+			lipgloss.Center,
+			lipgloss.Top,
+			formView,
+		)
+	} else {
+		// Show loading message
+		content = lipgloss.Place(
+			middleWidth-4,
+			5,
+			lipgloss.Center,
+			lipgloss.Center,
+			"Loading menu...",
+		)
 	}
-
-	leftAlignedItems := lipgloss.JoinVertical(lipgloss.Left, menuItems...)
-
-	centeredItems := lipgloss.Place(
-		middleWidth-4,
-		len(menuItems),
-		lipgloss.Center,
-		lipgloss.Top,
-		leftAlignedItems,
-	)
 
 	return lipgloss.JoinVertical(
 		lipgloss.Left,
 		centeredTitle,
 		"",
-		centeredItems,
+		content,
 	)
 }
 
