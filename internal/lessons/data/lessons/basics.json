@@ -30,7 +30,7 @@
           "README.txt": "Welcome to the pwd lesson!\n\nYour task is simple: run the pwd command to see where you are.\nThe path shown is your secret code for completing this lesson.\n\nGood luck!"
         }
       },
-      "instructions": "**Your Task:**\n\nRun the `pwd` command in the sandbox environment and observe the output. The full path displayed is your answer.\n\nOnce you have it, exit the sandbox by typing `exit`, then enter the path you saw.",
+      "instructions": "## Your Task\n\nRun the `pwd` command in the sandbox environment and observe the output. The full path displayed is your answer.\n\nOnce you have it, exit the sandbox by typing `exit`, then enter the path you saw.",
       "requirements": [
         {
           "type": "command_output",

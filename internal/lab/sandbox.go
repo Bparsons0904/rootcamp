@@ -2,16 +2,29 @@ package lab
 
 import (
 	"fmt"
+	"math/rand"
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/bobparsons/rootcamp/internal/types"
-	"github.com/google/uuid"
 )
 
+func generateShortID() string {
+	const charset = "abcdefghijklmnopqrstuvwxyz0123456789"
+	const length = 5
+
+	rng := rand.New(rand.NewSource(time.Now().UnixNano()))
+	id := make([]byte, length)
+	for i := range id {
+		id[i] = charset[rng.Intn(len(charset))]
+	}
+	return string(id)
+}
+
 func Create(lesson types.Lesson) (string, error) {
-	sandboxID := uuid.New().String()
+	sandboxID := generateShortID()
 	sandboxPath := filepath.Join("/tmp", fmt.Sprintf("rootcamp-%s", sandboxID))
 
 	if err := os.MkdirAll(sandboxPath, 0755); err != nil {

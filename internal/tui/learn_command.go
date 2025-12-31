@@ -130,18 +130,8 @@ func formatLessonAbout(lesson types.Lesson) string {
 	}
 
 	if lesson.Instructions != "" {
-		parts = append(parts, "## Your Task")
-		parts = append(parts, "")
 		parts = append(parts, lesson.Instructions)
 		parts = append(parts, "")
-	}
-
-	if len(lesson.Hints) > 0 {
-		parts = append(parts, "## Hints")
-		parts = append(parts, "")
-		for i, hint := range lesson.Hints {
-			parts = append(parts, fmt.Sprintf("%d. %s", i+1, hint))
-		}
 	}
 
 	return strings.Join(parts, "\n")
@@ -303,7 +293,8 @@ func (m *LearnCommandModel) startLab() tea.Cmd {
 	m.sandboxPath = sandboxPath
 	startPath := lab.GetStartPath(sandboxPath, *m.currentLesson)
 
-	instructions := fmt.Sprintf(`
+	instructions := fmt.Sprintf(`clear
+cat << 'EOF'
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                          ROOT CAMP - LAB SESSION                             ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
@@ -319,21 +310,19 @@ When you're done, type 'exit' to return to Root Camp and enter your answer.
 
 Good luck!
 
-`, m.currentLesson.Title, m.currentLesson.Instructions, startPath)
+EOF
+exec bash`, m.currentLesson.Title, m.currentLesson.Instructions, startPath)
 
-	c := exec.Command("bash")
+	c := exec.Command("bash", "-c", instructions)
 	c.Dir = startPath
 	c.Stdin = os.Stdin
 	c.Stdout = os.Stdout
 	c.Stderr = os.Stderr
 	c.Env = append(os.Environ(), fmt.Sprintf("PS1=rootcamp:%s$ ", m.currentLesson.Code))
 
-	return tea.Sequence(
-		tea.Println(instructions),
-		tea.ExecProcess(c, func(err error) tea.Msg {
-			return shellFinishedMsg{}
-		}),
-	)
+	return tea.ExecProcess(c, func(err error) tea.Msg {
+		return shellFinishedMsg{}
+	})
 }
 
 func (m LearnCommandModel) View() string {
@@ -362,20 +351,18 @@ func (m *LearnCommandModel) renderListView() string {
 		Bold(true).
 		Foreground(AccentBlue).
 		Padding(1, 0).
-		Width(m.width).
 		Align(lipgloss.Center).
 		Render("📚 Learn Command - Interactive Lessons")
 
 	instructions := lipgloss.NewStyle().
 		Foreground(lipgloss.Color("241")).
-		Width(m.width).
 		Align(lipgloss.Center).
 		Render("Use arrow keys to navigate, Enter to view lesson, ESC to return to menu")
 
 	formView := m.form.View()
 
 	content := lipgloss.JoinVertical(
-		lipgloss.Left,
+		lipgloss.Center,
 		"",
 		title,
 		"",
@@ -384,10 +371,13 @@ func (m *LearnCommandModel) renderListView() string {
 		instructions,
 	)
 
-	return lipgloss.NewStyle().
-		Width(m.width).
-		Height(m.height).
-		Render(content)
+	return lipgloss.Place(
+		m.width,
+		m.height,
+		lipgloss.Center,
+		lipgloss.Center,
+		content,
+	)
 }
 
 func (m *LearnCommandModel) renderDetailView() string {
@@ -395,22 +385,24 @@ func (m *LearnCommandModel) renderDetailView() string {
 		return ""
 	}
 
+	contentWidth := 90
+
 	title := lipgloss.NewStyle().
 		Bold(true).
 		Foreground(AccentBlue).
 		Padding(1, 0).
-		Width(m.width).
+		Width(contentWidth).
 		Render(fmt.Sprintf("📖 Lesson: %s", m.currentLesson.Title))
 
 	instructions := lipgloss.NewStyle().
 		Foreground(lipgloss.Color("241")).
-		Width(m.width).
+		Width(contentWidth).
 		Render("Arrow keys to scroll | [S] Start Lab | [C] Enter Code | ESC to return")
 
 	feedbackStyle := lipgloss.NewStyle().
 		Foreground(lipgloss.Color("196")).
 		Bold(true).
-		Width(m.width)
+		Width(contentWidth)
 
 	var feedbackView string
 	if m.feedback != "" {
@@ -429,10 +421,13 @@ func (m *LearnCommandModel) renderDetailView() string {
 		instructions,
 	)
 
-	return lipgloss.NewStyle().
-		Width(m.width).
-		Height(m.height).
-		Render(content)
+	return lipgloss.Place(
+		m.width,
+		m.height,
+		lipgloss.Center,
+		lipgloss.Top,
+		content,
+	)
 }
 
 func (m *LearnCommandModel) renderCodeInputView() string {
@@ -531,10 +526,14 @@ func (m *LearnCommandModel) renderSuccessView() string {
 }
 
 func (m *LearnCommandModel) setupDetailView() {
-	if m.viewport.Width == 0 {
-		m.viewport = viewport.New(80, 20)
-		m.viewport.YPosition = 0
+	contentWidth := 90
+	viewportHeight := m.height - 8
+	if viewportHeight < 10 {
+		viewportHeight = 10
 	}
+
+	m.viewport = viewport.New(contentWidth, viewportHeight)
+	m.viewport.YPosition = 0
 
 	rendered, ok := m.renderedAbout[m.selectedLessonID]
 	if !ok {
