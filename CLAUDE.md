@@ -54,21 +54,80 @@ rootcamp/
 
 - **TUI Framework**: Bubble Tea with Lip Gloss styling and Huh forms
 - **Database**: SQLite stored at `~/.rootcamp/rootcamp.db`
-- **Lab Sandbox**: Created at `/tmp/rootcamp-{uuid}/`, auto-cleaned on lesson exit
+- **Lab Sandbox**: Created at `/tmp/rootcamp-{5char}/`, auto-cleaned on lesson exit (e.g., `/tmp/rootcamp-a3x9z`)
+
+### Learn Command vs Guided Learning
+
+**IMPORTANT DISTINCTION:**
+- **Learn Command** (IMPLEMENTED): Individual lesson selection - user picks any lesson and completes it independently
+- **Guided Learning** (FUTURE): Predetermined learning path - system decides lesson order based on progression
+
+These are separate features. "Learn Command" is the menu item for the implemented config-driven lesson system.
 
 ## Key Patterns
 
 ### Lesson Structure
-Lessons are embedded Go structs in `internal/lessons/lessons.go`. Each lesson contains:
-- ID (semantic: `cd`, `ls`, etc.)
-- Content (What/History/CommonUses)
-- Lab config (directories, files, task prompt)
-- Secret code for validation
+
+**Config-Driven Lessons:** Lessons are defined in JSON files following the multi-file loading pattern.
+
+**Location:** `internal/lessons/data/lessons/*.json`
+
+**Structure:** Each lesson contains:
+- **ID/Code**: Semantic identifier (`pwd`, `ls`, `cd`, etc.)
+- **About**: Educational content (What, History, Example, CommonUses)
+- **Sandbox**: Lab environment config (directories, files, startDir)
+- **Instructions**: Markdown task description (includes "## Your Task" heading)
+- **Requirements**: Validation criteria (type, validator, expected value)
+- **Hints**: Tips for completion (stored but NOT displayed - reserved for future feature)
+
+**Pattern:** Follows `internal/lessons/funfacts.go` multi-file loading:
+```go
+//go:embed data/lessons/*.json
+var embeddedLessonsFS embed.FS
+
+func LoadLessons() (*types.LessonsData, error) {
+    // Merges all JSON files into single cached structure
+}
+```
+
+**Key Detail:** Instructions field contains full markdown including headings. Hints are excluded from display.
 
 ### TUI Views
-- Dashboard: Lesson list with completion status
-- Lesson: Content display + code input
-- Settings: Interactive form for user preferences
+- **Learn Command List**: Centered lesson selection form (90 width, centered using lipgloss.Place)
+- **Lesson Detail**: Horizontally centered content (90 width, full height viewport, top-aligned)
+- **Code Input**: User answer entry after exiting sandbox
+- **Success**: Completion confirmation screen
+- **Settings**: Interactive form for user preferences
+
+### TUI Layout Patterns
+
+**Centering Content:**
+```go
+// Center both horizontally and vertically (lesson list)
+return lipgloss.Place(
+    m.width,
+    m.height,
+    lipgloss.Center,
+    lipgloss.Center,
+    content,
+)
+
+// Center horizontally, top-align vertically (lesson detail)
+return lipgloss.Place(
+    m.width,
+    m.height,
+    lipgloss.Center,
+    lipgloss.Top,
+    content,
+)
+```
+
+**Content Width Consistency:**
+- Form width: 90 characters (set in createForm)
+- Detail view: 90 characters (matches form for visual consistency)
+- Viewport: 90 width, dynamic height (m.height - 8 for UI chrome)
+
+**Key Principle:** Constrain content width for readability, center horizontally, use full screen height
 
 ### Settings & Database
 Settings are persisted to SQLite and loaded on startup:
@@ -97,8 +156,64 @@ type Welcome3Model struct {
 }
 ```
 
+### Lab/Sandbox Startup Flow
+
+**Auto-Spawn Pattern:** Terminal automatically opens and displays instructions when user starts lab.
+
+**Implementation:** `internal/tui/learn_command.go` - `startLab()`
+```go
+instructions := fmt.Sprintf(`clear
+cat << 'EOF'
+╔═══════════════════════════════════════════════╗
+║           ROOT CAMP - LAB SESSION            ║
+╚═══════════════════════════════════════════════╝
+
+Lesson: %s
+%s
+
+Your sandbox is located at: %s
+When you're done, type 'exit' to return to Root Camp.
+EOF
+exec bash`, lesson.Title, lesson.Instructions, startPath)
+
+c := exec.Command("bash", "-c", instructions)
+c.Env = append(os.Environ(), fmt.Sprintf("PS1=rootcamp:%s$ ", lesson.Code))
+```
+
+**Flow:**
+1. User presses 'S' to start lab
+2. `bash -c` executes script that:
+   - Clears terminal (`clear`)
+   - Prints instructions via heredoc
+   - Replaces shell with interactive bash (`exec bash`)
+3. User completes task in sandbox
+4. User types `exit` → returns to Root Camp code input screen
+
+**Sandbox ID Generation:**
+```go
+// internal/lab/sandbox.go
+func generateShortID() string {
+    const charset = "abcdefghijklmnopqrstuvwxyz0123456789"
+    const length = 5
+    // Returns 5-char alphanumeric (e.g., "a3x9z")
+}
+```
+
+**Key Benefits:**
+- Clean terminal on entry
+- Instructions visible while working
+- Simple exit mechanism
+- Readable sandbox paths (`/tmp/rootcamp-a3x9z`)
+
 ### Progress Tracking
 SQLite tracks `lesson_id`, `completed`, `completed_at`, `attempts`
+
+### Requirement Validation
+Flexible validation system in `internal/lab/validate.go`:
+- **exact**: Simple string match
+- **path_match**: Replaces `{uuid}` placeholder with actual sandbox ID before comparison
+- **file_check**: Verifies file existence in sandbox
+- **regex**: Pattern matching
 
 ## Dependencies
 
@@ -109,7 +224,8 @@ SQLite tracks `lesson_id`, `completed`, `completed_at`, `attempts`
 - `github.com/charmbracelet/glamour` - Markdown rendering
 - `github.com/charmbracelet/harmonica` - Spring animations
 - `github.com/mattn/go-sqlite3` - SQLite driver (requires CGO)
-- `github.com/google/uuid` - UUID generation for sandbox paths
+
+**Note:** Sandbox IDs use custom 5-character alphanumeric generation (stdlib `math/rand`), not UUIDs.
 
 **Preference: Use Huh for Forms**
 When implementing any user input forms (settings, configuration, multi-select, etc.), prefer using the `huh` library. It provides:
@@ -218,6 +334,39 @@ func (m *FunFactsModel) setupDetailView() {
 - Pre-computation over on-demand computation
 - Map lookups over repeated operations
 - Cached data over live generation
+
+### Lesson Implementation Pattern
+
+**When adding new lessons:**
+
+1. **Create JSON file** in `internal/lessons/data/lessons/*.json`
+2. **Structure** each lesson with:
+   - Unique ID/code (command name)
+   - Complete About section (what, history, example, commonUses)
+   - Instructions with markdown heading: `"## Your Task\n\n..."`
+   - Sandbox config (dirs, files, startDir)
+   - Requirements array for validation
+   - Hints array (stored but not displayed)
+
+3. **Instructions format:**
+   - Include full markdown with heading
+   - Don't duplicate headings (formatLessonAbout displays instructions directly)
+   - Be clear about task and exit mechanism
+
+4. **Validation:**
+   - Use `{uuid}` placeholder in expected paths (replaced with actual sandbox ID)
+   - Choose appropriate validator: exact, path_match, file_check, regex
+
+**Example structure:**
+```json
+{
+  "instructions": "## Your Task\n\nRun the `pwd` command...",
+  "requirements": [{
+    "validator": "path_match",
+    "expected": "/tmp/rootcamp-{uuid}/projects/rootcamp"
+  }]
+}
+```
 
 ## CGO Note
 
