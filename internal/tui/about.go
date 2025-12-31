@@ -22,8 +22,8 @@ type AboutModel struct {
 
 func NewAboutModel(database *sql.DB) AboutModel {
 	renderer, _ := glamour.NewTermRenderer(
-		glamour.WithAutoStyle(),
-		glamour.WithWordWrap(72),
+		glamour.WithStandardStyle("dark"),
+		glamour.WithWordWrap(80),
 	)
 
 	return AboutModel{
@@ -107,6 +107,9 @@ func (m *AboutModel) Open(width, height int) tea.Cmd {
 	m.height = height
 	m.isOpen = true
 
+	vpWidth := 80
+	vpHeight := height - 12
+
 	aboutContent := `# What is RootCamp?
 
 Most modern interfaces are designed to hide how things actually work. We're here to do the opposite.
@@ -165,9 +168,6 @@ RootCamp is for anyone who wants to feel comfortable in the terminal—whether y
 	if err != nil {
 		renderedContent = aboutContent
 	}
-
-	vpWidth := 76
-	vpHeight := height - 12
 
 	vp := viewport.New(vpWidth, vpHeight)
 	vp.SetContent(strings.TrimSpace(renderedContent))
