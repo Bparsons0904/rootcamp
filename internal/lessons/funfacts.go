@@ -1,17 +1,19 @@
 package lessons
 
 import (
-	_ "embed"
+	"embed"
 	"encoding/json"
 	"fmt"
 	"math/rand"
+	"path/filepath"
 	"slices"
+	"strings"
 
 	"github.com/bobparsons/rootcamp/internal/types"
 )
 
-//go:embed data/funfacts.json
-var embeddedFunFacts []byte
+//go:embed data/funfacts/*.json
+var embeddedFunFactsFS embed.FS
 
 var cachedFacts *types.FunFactsData
 
@@ -20,13 +22,42 @@ func LoadFunFacts() (*types.FunFactsData, error) {
 		return cachedFacts, nil
 	}
 
-	var data types.FunFactsData
-	if err := json.Unmarshal(embeddedFunFacts, &data); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal fun facts: %w", err)
+	data := &types.FunFactsData{
+		Version: "1.0",
+		Facts:   []types.FunFact{},
 	}
 
-	cachedFacts = &data
+	entries, err := embeddedFunFactsFS.ReadDir("data/funfacts")
+	if err != nil {
+		return nil, fmt.Errorf("failed to read funfacts directory: %w", err)
+	}
+
+	for _, entry := range entries {
+		if !entry.IsDir() && strings.HasSuffix(entry.Name(), ".json") {
+			if err := loadFactsFromFile(entry.Name(), data); err != nil {
+				return nil, fmt.Errorf("failed to load %s: %w", entry.Name(), err)
+			}
+		}
+	}
+
+	cachedFacts = data
 	return cachedFacts, nil
+}
+
+func loadFactsFromFile(filename string, accumulator *types.FunFactsData) error {
+	filePath := filepath.Join("data/funfacts", filename)
+	content, err := embeddedFunFactsFS.ReadFile(filePath)
+	if err != nil {
+		return fmt.Errorf("read file error: %w", err)
+	}
+
+	var fileData types.FunFactsData
+	if err := json.Unmarshal(content, &fileData); err != nil {
+		return fmt.Errorf("unmarshal error: %w", err)
+	}
+
+	accumulator.Facts = append(accumulator.Facts, fileData.Facts...)
+	return nil
 }
 
 func GetRandomFact() (*types.FunFact, error) {

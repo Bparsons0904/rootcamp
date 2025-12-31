@@ -1,0 +1,40 @@
+{
+  "version": "1.0",
+  "facts": [
+    {
+      "id": "modern_ripgrep",
+      "tags": ["modern", "tools", "commands"],
+      "title": "ripgrep: grep's Rust-Powered Successor",
+      "short": "ripgrep (rg) is a modern replacement for grep that's often 10-100x faster.",
+      "full": "## ripgrep: grep's Rust-Powered Successor\n\nCreated by **Andrew Gallant** in 2016, `ripgrep` (command: `rg`) is a line-oriented search tool that combines the speed of **ag (The Silver Searcher)** with the usability of grep.\n\n### Why It's Fast\n\n- Written in **Rust** for memory safety and performance\n- Uses **parallel search** across multiple cores\n- Automatically respects `.gitignore` files\n- Smart defaults: skips hidden files, binary files\n\n### Speed Comparison\n\nSearching a large codebase:\n```bash\ngrep -r \"function\" .     # 2.5 seconds\nrg \"function\"            # 0.08 seconds\n```\n\n### Cool Features\n\n- **Regex by default**: No `-E` flag needed\n- **Type filtering**: `rg --type rust \"fn main\"`\n- **Multiline search**: Built-in support\n\n> **Fun fact**: The author created ripgrep because he was frustrated with existing tools while working on large codebases."
+    },
+    {
+      "id": "modern_fzf",
+      "tags": ["modern", "tools", "shell"],
+      "title": "fzf: The Fuzzy Finder Revolution",
+      "short": "fzf transformed command-line search with fuzzy matching for files, history, and more.",
+      "full": "## fzf: The Fuzzy Finder Revolution\n\nCreated by **Junegunn Choi** in 2013, `fzf` is a **general-purpose command-line fuzzy finder** that's become essential for modern shell users.\n\n### What It Does\n\nInstead of typing exact names, fuzzy matching finds what you mean:\n```bash\ncdproject  → matches \"cd ~/Development/my-project\"\nvimrc     → finds \"~/.vimrc\"\n```\n\n### Integration Power\n\n- **Ctrl-R**: Fuzzy search command history\n- **Ctrl-T**: Fuzzy find files in current directory\n- **Alt-C**: Fuzzy cd into subdirectories\n\n### Usage Examples\n\n```bash\n# Find and edit file\nvim $(fzf)\n\n# Kill process by name\nkill -9 $(ps aux | fzf | awk '{print $2}')\n\n# Git branch switcher\ngit checkout $(git branch | fzf)\n```\n\n### Why It's Revolutionary\n\nBefore fzf, finding files meant:\n1. `ls` to remember exact name\n2. Tab completion with exact prefix\n3. Or full find/grep commands\n\nNow: **type any part of the name** and fuzzy match handles it.\n\n> **Impact**: So influential that fuzzy finding is now built into VSCode, Sublime Text, and most modern editors."
+    },
+    {
+      "id": "modern_bat",
+      "tags": ["modern", "tools", "commands"],
+      "title": "bat: cat with Wings",
+      "short": "bat is a cat clone with syntax highlighting, line numbers, and Git integration.",
+      "full": "## bat: cat with Wings\n\nCreated by **David Peter** in 2018, `bat` is a `cat` replacement that brings **IDE-like features** to the terminal.\n\n### What It Adds to cat\n\n**Syntax Highlighting**\n```bash\ncat file.js     # Plain text\nbat file.js     # Beautiful syntax highlighting\n```\n\n**Line Numbers** (with `-n`)\n```\n1 │ function hello() {\n2 │   console.log(\"world\");\n3 │ }\n```\n\n**Git Integration**\n- Shows added/modified/deleted lines in the gutter\n- Like `git diff` but for file viewing\n\n**Automatic Paging**\n- Pipes to `less` automatically for long files\n- No more `cat huge-file.txt | less`\n\n### Smart Features\n\n- Detects file type from extension\n- Supports **200+ languages**\n- Theme customization (Dracula, Monokai, etc.)\n- Can act as a drop-in `cat` replacement\n\n### Alias It\n\nMany developers alias cat to bat:\n```bash\nalias cat='bat --paging=never'\n```\n\n> **Fun fact**: Written in Rust (like ripgrep), proving Rust's dominance in modern CLI tools."
+    },
+    {
+      "id": "modern_exa",
+      "tags": ["modern", "tools", "commands"],
+      "title": "exa: ls for the Modern Age",
+      "short": "exa is a modern ls replacement with colors, Git awareness, and tree views.",
+      "full": "## exa: ls for the Modern Age\n\nCreated by **Ben Longbons** (later maintained by community), `exa` modernizes the 50-year-old `ls` command.\n\n**Note**: `exa` is now maintained as `eza` after the original was archived.\n\n### What It Improves\n\n**Better Colors**\n- File types get distinct colors\n- Executable files highlighted\n- Broken symlinks shown clearly\n\n**Git Integration**\n```bash\nexa --long --git\n```\nShows Git status next to each file:\n```\n.rw-r--r-- M  1.2k user 14 Dec  main.rs\n.rw-r--r-- N   512 user 14 Dec  new.rs\n```\n\n**Tree View Built-In**\n```bash\nexa --tree --level=2\n```\nNo need for separate `tree` command!\n\n**Icons Support**\n```bash\nexa --icons\n```\nShows file-type icons (with Nerd Fonts)\n\n### Sensible Defaults\n\n- Groups directories first\n- Human-readable sizes by default\n- Better alignment and formatting\n\n### ls vs exa\n\n```bash\nls -la        # Classic, cryptic\nexa -la       # Modern, clear\nexa -la --git # + Git status\n```\n\n> **Successor**: Use `eza` (the maintained fork) for latest features and updates."
+    },
+    {
+      "id": "modern_zoxide",
+      "tags": ["modern", "tools", "shell", "navigation"],
+      "title": "zoxide: Smarter Directory Navigation",
+      "short": "zoxide learns your habits and lets you jump to directories with just a few letters.",
+      "full": "## zoxide: Smarter Directory Navigation\n\nCreated by **Ajeet D'Souza** in 2020, `zoxide` is a **smarter cd command** that learns from your behavior.\n\n### The Problem with cd\n\nTraditional navigation:\n```bash\ncd ~/Development/projects/rust/my-awesome-project\n```\n\nWith zoxide:\n```bash\nz awesome\n```\n\n### How It Works\n\n**Frecency Algorithm** (frequency + recency)\n- Tracks directories you visit\n- Ranks by how often AND how recently\n- Jumps to best match\n\n### Usage Examples\n\n```bash\n# After visiting directories a few times:\nz conf    → ~/.config\nz dev     → ~/Development\nz root    → ~/Development/rootcamp\n```\n\n**Interactive Selection**\n```bash\nzi dev    # Opens fzf with all matches containing \"dev\"\n```\n\n### Smart Matching\n\n- **Substring**: `z camp` finds `rootcamp`\n- **Multiple words**: `z dev root` finds `~/Development/rootcamp`\n- **Path segments**: Works across directory levels\n\n### Integration\n\nReplaces cd entirely:\n```bash\nalias cd='z'\n```\n\nNow `cd` is smart!\n\n### Why It's Better\n\n| Old Way | zoxide Way |\n|---------|------------|\n| `cd ../../other-project` | `z other` |\n| `cd ~/Work/Client/ProjectName` | `z proj` |\n| `cd` then tab-complete path | `z` few letters |\n\n> **Fun fact**: Originally called 'z', following the tradition of 'z' (shell plugin) and 'autojump', but rewritten in Rust for speed and cross-platform support."
+    }
+  ]
+}
