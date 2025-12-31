@@ -1,6 +1,7 @@
 package tui
 
 import (
+	"database/sql"
 	"fmt"
 	"math/rand"
 	"strings"
@@ -153,16 +154,20 @@ const (
 )
 
 type Welcome3Model struct {
-	currentCheck    int
-	bootComplete    bool
-	phase           int
-	progress        int
-	fileNodes       []fileNode
-	currentFile     int
-	width           int
-	height          int
-	glamourRenderer *glamour.TermRenderer
-	selectedFact    string
+	currentCheck       int
+	bootComplete       bool
+	phase              int
+	progress           int
+	fileNodes          []fileNode
+	currentFile        int
+	width              int
+	height             int
+	glamourRenderer    *glamour.TermRenderer
+	selectedFact       string
+	database           *sql.DB
+	settingsModel      SettingsModel
+	settings2ModalOpen bool
+	settings2Model     Settings2Model
 }
 
 type (
@@ -171,7 +176,7 @@ type (
 	fileRevealMsg    int
 )
 
-func NewWelcome3Model() Welcome3Model {
+func NewWelcome3Model(database *sql.DB) Welcome3Model {
 	renderer, _ := glamour.NewTermRenderer(
 		glamour.WithAutoStyle(),
 		glamour.WithWordWrap(40),
@@ -303,12 +308,16 @@ func NewWelcome3Model() Welcome3Model {
 	randomIndex := rand.Intn(len(architectFacts))
 
 	return Welcome3Model{
-		phase:           phaseBootSequence,
-		glamourRenderer: renderer,
-		fileNodes:       files,
-		selectedFact:    architectFacts[randomIndex],
-		width:           120, // Default width to prevent "Loading..." hang
-		height:          40,  // Default height, will be updated by WindowSizeMsg
+		phase:              phaseBootSequence,
+		glamourRenderer:    renderer,
+		fileNodes:          files,
+		selectedFact:       architectFacts[randomIndex],
+		width:              120,
+		height:             40,
+		database:           database,
+		settingsModel:      NewSettingsModel(database),
+		settings2ModalOpen: false,
+		settings2Model:     NewSettings2Model(),
 	}
 }
 
@@ -344,6 +353,25 @@ func (m Welcome3Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 		}
 
+		if m.settingsModel.IsOpen() {
+			var cmd tea.Cmd
+			m.settingsModel, cmd = m.settingsModel.Update(msg)
+			return m, cmd
+		}
+
+		if m.phase == phaseComplete {
+			switch msg.String() {
+			case "5":
+				cmd := m.settingsModel.Open(m.width, m.height)
+				return m, cmd
+			case "6":
+				m.settings2ModalOpen = true
+				m.settings2Model.width = m.width
+				m.settings2Model.height = m.height
+				return m, m.settings2Model.Init()
+			}
+		}
+
 	case tea.WindowSizeMsg:
 		m.width = msg.Width
 		m.height = msg.Height
@@ -377,7 +405,7 @@ func (m Welcome3Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			// Update progress
 			if m.progress < 100 {
 				m.progress += 1
-				if m.progress > 100 {
+				if m.progress >= 100 {
 					m.progress = 100
 					m.phase = phaseComplete
 				}
@@ -396,6 +424,23 @@ func (m Welcome3Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	}
 
+	// Pass through to settings model if not already handled
+	if m.settingsModel.IsOpen() {
+		var cmd tea.Cmd
+		m.settingsModel, cmd = m.settingsModel.Update(msg)
+		return m, cmd
+	}
+
+	// Pass through to settings2 if open
+	if m.settings2ModalOpen {
+		var cmd tea.Cmd
+		m.settings2Model, cmd = m.settings2Model.Update(msg)
+		if m.settings2Model.quitting {
+			m.settings2ModalOpen = false
+		}
+		return m, cmd
+	}
+
 	return m, nil
 }
 
@@ -404,11 +449,22 @@ func (m Welcome3Model) View() string {
 		return "Loading..."
 	}
 
+	var baseView string
 	if m.phase == phaseBootSequence {
-		return m.renderBootSequence()
+		baseView = m.renderBootSequence()
+	} else {
+		baseView = m.renderProvisioningView()
 	}
 
-	return m.renderProvisioningView()
+	if m.settingsModel.IsOpen() {
+		return m.settingsModel.View()
+	}
+
+	if m.settings2ModalOpen {
+		return m.settings2Model.View()
+	}
+
+	return baseView
 }
 
 func (m Welcome3Model) renderBootSequence() string {
@@ -493,7 +549,8 @@ func (m Welcome3Model) renderMenu() string {
 		{"2", "View Lessons", false},
 		{"3", "Lab Environment", false},
 		{"4", "Progress Tracker", false},
-		{"5", "Settings", false},
+		{"5", "Settings", m.phase == phaseComplete},
+		{"6", "Settings2 (Example)", m.phase == phaseComplete},
 		{"q", "Exit", true},
 	}
 

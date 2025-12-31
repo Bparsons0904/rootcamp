@@ -4,12 +4,20 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/bobparsons/rootcamp/internal/db"
 	"github.com/bobparsons/rootcamp/internal/tui"
 	tea "github.com/charmbracelet/bubbletea"
 )
 
 func main() {
-	m := tui.NewWelcome3Model()
+	database, err := db.InitDB()
+	if err != nil {
+		fmt.Printf("Failed to initialize database: %v\n", err)
+		os.Exit(1)
+	}
+	defer database.Close()
+
+	m := tui.NewWelcome3Model(database)
 	p := tea.NewProgram(m, tea.WithAltScreen())
 
 	if _, err := p.Run(); err != nil {

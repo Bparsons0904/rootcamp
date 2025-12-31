@@ -3,17 +3,23 @@ package tui
 import "github.com/charmbracelet/lipgloss"
 
 var (
-	ColorBlue       = lipgloss.Color("#5FB3FF")
-	ColorOrange     = lipgloss.Color("#FFB86C")
-	ColorPurple     = lipgloss.Color("#9D7CFF")
-	ColorCyan       = lipgloss.Color("#7DCFFF")
-	ColorGreen      = lipgloss.Color("#9ECE6A")
+	ColorBlue        = lipgloss.Color("#5FB3FF")
+	ColorOrange      = lipgloss.Color("#FFB86C")
+	ColorPurple      = lipgloss.Color("#9D7CFF")
+	ColorCyan        = lipgloss.Color("#7DCFFF")
+	ColorGreen       = lipgloss.Color("#9ECE6A")
 	ColorBrightGreen = lipgloss.Color("#00FF00")
-	ColorDarkBg     = lipgloss.Color("#1A1B26")
-	ColorGray       = lipgloss.Color("#565F89")
-	ColorDarkGray   = lipgloss.Color("#414868")
-	ColorLightGray  = lipgloss.Color("#999999")
-	ColorWhite      = lipgloss.Color("#FFFFFF")
+	ColorDarkBg      = lipgloss.Color("#1A1B26")
+	ColorGray        = lipgloss.Color("#565F89")
+	ColorDarkGray    = lipgloss.Color("#414868")
+	ColorLightGray   = lipgloss.Color("#999999")
+	ColorWhite       = lipgloss.Color("#FFFFFF")
+
+	// Tokyo Night inspired palette for modals
+	AccentBlue      = lipgloss.AdaptiveColor{Light: "#00BBFF", Dark: "#7aa2f7"}
+	HighlightPurple = lipgloss.AdaptiveColor{Light: "#874BFD", Dark: "#bb9af7"}
+	SubtleGray      = lipgloss.AdaptiveColor{Light: "#D9DCCF", Dark: "#383838"}
+	DeepMidnight    = lipgloss.Color("#1a1b26")
 )
 
 func PanelStyle(width, height int, borderColor lipgloss.Color) lipgloss.Style {
@@ -95,3 +101,12 @@ func ProgressLabelStyle() lipgloss.Style {
 		Foreground(ColorGray).
 		Italic(true)
 }
+
+func ModalContainerStyle() lipgloss.Style {
+	return lipgloss.NewStyle().
+		Padding(1, 2).
+		Border(lipgloss.ThickBorder()).
+		BorderForeground(AccentBlue).
+		Background(DeepMidnight)
+}
+
