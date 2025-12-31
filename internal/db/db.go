@@ -131,3 +131,96 @@ func BoolToString(b bool) string {
 	}
 	return "false"
 }
+
+func GetProgress(db *sql.DB, lessonID string) (*types.UserProgress, error) {
+	query := `SELECT lesson_id, completed, completed_at, attempts
+	          FROM progress WHERE lesson_id = ?`
+
+	var progress types.UserProgress
+	var completedAt sql.NullTime
+
+	err := db.QueryRow(query, lessonID).Scan(
+		&progress.LessonID,
+		&progress.Completed,
+		&completedAt,
+		&progress.Attempts,
+	)
+
+	if err == sql.ErrNoRows {
+		return &types.UserProgress{
+			LessonID:  lessonID,
+			Completed: false,
+			Attempts:  0,
+		}, nil
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	if completedAt.Valid {
+		progress.CompletedAt = &completedAt.Time
+	}
+
+	return &progress, nil
+}
+
+func GetAllProgress(db *sql.DB) (map[string]*types.UserProgress, error) {
+	query := `SELECT lesson_id, completed, completed_at, attempts FROM progress`
+
+	rows, err := db.Query(query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	progressMap := make(map[string]*types.UserProgress)
+
+	for rows.Next() {
+		var progress types.UserProgress
+		var completedAt sql.NullTime
+
+		err := rows.Scan(
+			&progress.LessonID,
+			&progress.Completed,
+			&completedAt,
+			&progress.Attempts,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		if completedAt.Valid {
+			progress.CompletedAt = &completedAt.Time
+		}
+
+		progressMap[progress.LessonID] = &progress
+	}
+
+	return progressMap, nil
+}
+
+func IncrementAttempts(db *sql.DB, lessonID string) error {
+	query := `
+		INSERT INTO progress (lesson_id, attempts)
+		VALUES (?, 1)
+		ON CONFLICT(lesson_id) DO UPDATE SET
+			attempts = attempts + 1
+	`
+
+	_, err := db.Exec(query, lessonID)
+	return err
+}
+
+func MarkComplete(db *sql.DB, lessonID string) error {
+	query := `
+		INSERT INTO progress (lesson_id, completed, completed_at, attempts)
+		VALUES (?, TRUE, CURRENT_TIMESTAMP, 1)
+		ON CONFLICT(lesson_id) DO UPDATE SET
+			completed = TRUE,
+			completed_at = CURRENT_TIMESTAMP
+	`
+
+	_, err := db.Exec(query, lessonID)
+	return err
+}

@@ -1,0 +1,44 @@
+{
+  "version": "1.0",
+  "lessons": [
+    {
+      "id": "pwd",
+      "code": "pwd",
+      "title": "Print Working Directory",
+      "tags": ["navigation", "basics", "filesystem"],
+      "level": "beginner",
+      "about": {
+        "what": "The `pwd` command shows your current location in the filesystem. It stands for **'print working directory'**. Think of it as asking \"where am I?\" in the terminal.\n\nEvery time you open a terminal, you start in some directory. The `pwd` command tells you exactly where that is by showing the full, absolute path from the root of your filesystem.",
+        "history": "The name 'pwd' comes from early Unix systems in the 1970s. The 'print' in pwd is a reminder of the teletype era when 'printing' meant displaying on any output device, not just paper printers.\n\nIn the early days of Unix, terminals didn't show your current directory in the prompt by default, so `pwd` was essential for navigation. Even today, it remains one of the most fundamental commands every user learns.",
+        "example": "```bash\n# Basic usage\npwd\n# Output: /home/user/projects\n\n# Common pattern: save current directory\ncurrent_dir=$(pwd)\necho \"I'm working in: $current_dir\"\n\n# Use in scripts to get absolute paths\nscript_dir=$(cd \"$(dirname \"$0\")\" && pwd)\n```",
+        "commonUses": [
+          "**Getting absolute paths** - When you need the full path to pass to scripts or programs",
+          "**Confirming location** - Before running potentially dangerous commands like `rm`",
+          "**Scripting** - Finding the directory where a script is located",
+          "**Debugging** - Verifying you're in the right directory when commands fail"
+        ]
+      },
+      "hints": [
+        "Just type 'pwd' and press Enter - no arguments needed",
+        "The output shows the complete path from the root directory (/)",
+        "Copy the exact path shown - that's your answer"
+      ],
+      "sandbox": {
+        "startDir": "projects/rootcamp",
+        "dirs": ["projects", "projects/rootcamp"],
+        "files": {
+          "README.txt": "Welcome to the pwd lesson!\n\nYour task is simple: run the pwd command to see where you are.\nThe path shown is your secret code for completing this lesson.\n\nGood luck!"
+        }
+      },
+      "instructions": "**Your Task:**\n\nRun the `pwd` command in the sandbox environment and observe the output. The full path displayed is your answer.\n\nOnce you have it, exit the sandbox by typing `exit`, then enter the path you saw.",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The full path shown by pwd",
+          "validator": "path_match",
+          "expected": "/tmp/rootcamp-{uuid}/projects/rootcamp"
+        }
+      ]
+    }
+  ]
+}

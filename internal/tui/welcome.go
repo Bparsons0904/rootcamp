@@ -28,10 +28,10 @@ type WelcomeModel struct {
 	architectLog        ArchitectLogModel
 	width               int
 	height              int
-	database            *sql.DB
-	settingsModel       *SettingsModel
+	database               *sql.DB
+	settingsModel          *SettingsModel
 	guidedLearningModel *GuidedLearningModel
-	learnCommandModel   *LearnCommandModel
+	learnCommandModel      *LearnCommandModel
 	viewProgressModel   *ViewProgressModel
 	funFactsModel       *FunFactsModel
 	aboutModel          *AboutModel
@@ -76,11 +76,11 @@ func NewWelcomeModel(database *sql.DB) WelcomeModel {
 		mainMenu:            &mainMenuModel,
 		architectLog:        NewArchitectLogModel(rightWidth),
 		width:               totalWidth,
-		height:              40,
-		database:            database,
-		settingsModel:       &settingsModel,
+		height:                 40,
+		database:               database,
+		settingsModel:          &settingsModel,
 		guidedLearningModel: &guidedLearningModel,
-		learnCommandModel:   &learnCommandModel,
+		learnCommandModel:      &learnCommandModel,
 		viewProgressModel:   &viewProgressModel,
 		funFactsModel:       &funFactsModel,
 		aboutModel:          &aboutModel,
