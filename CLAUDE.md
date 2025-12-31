@@ -138,6 +138,87 @@ When adding new settings:
 - Check settings during model initialization, not every render
 - Use phase-based state management for multi-step animations
 
+### Embedded Content: Multi-File Loading Pattern
+
+**Architecture:** Fun facts are loaded from multiple JSON files using Go's `embed.FS`
+
+**Pattern:** `internal/lessons/funfacts.go`
+```go
+//go:embed data/funfacts/*.json
+var embeddedFunFactsFS embed.FS
+
+func LoadFunFacts() (*types.FunFactsData, error) {
+    entries, err := embeddedFunFactsFS.ReadDir("data/funfacts")
+    // Iterate through all .json files
+    // Merge facts from each file into single array
+}
+```
+
+**Benefits:**
+- Add/remove JSON files without modifying Go code
+- Organize content by category (commands.json, terminal.json, etc.)
+- All files merged into single cached data structure
+- Standard library approach (no external dependencies)
+
+**Directory Structure:**
+```
+internal/lessons/data/funfacts/
+├── all.json           # Original facts
+├── modern-tools.json  # Modern CLI tools
+└── <category>.json    # Additional themed files
+```
+
+### TUI Performance: Pre-Rendering Pattern
+
+**CRITICAL for TUI responsiveness:** Never perform expensive operations (markdown rendering, heavy parsing) on user interaction.
+
+**Problem:** On-demand Glamour markdown rendering causes multi-second delays when selecting facts.
+
+**Solution:** Pre-render during model initialization, cache in map for O(1) lookup.
+
+**Pattern:** `internal/tui/fun_facts.go`
+```go
+type FunFactsModel struct {
+    allFacts      []types.FunFact
+    renderedFacts map[string]string  // Pre-rendered markdown cache
+}
+
+func NewFunFactsModel(database *sql.DB) FunFactsModel {
+    // Load facts
+    data, _ := lessons.LoadFunFacts()
+
+    // Pre-render ALL markdown at startup
+    renderedFacts := make(map[string]string)
+    renderer, _ := glamour.NewTermRenderer(...)
+
+    for _, fact := range data.Facts {
+        rendered, _ := renderer.Render(fact.Full)
+        renderedFacts[fact.ID] = rendered  // Cache it
+    }
+
+    return FunFactsModel{
+        allFacts:      data.Facts,
+        renderedFacts: renderedFacts,
+    }
+}
+
+func (m *FunFactsModel) setupDetailView() {
+    // Instant lookup - no rendering!
+    rendered := m.renderedFacts[m.selectedFactID]
+    m.viewport.SetContent(rendered)
+}
+```
+
+**Result:**
+- Startup: All rendering happens once (acceptable delay)
+- User interaction: Instant (simple map lookup)
+- TUI stays snappy and responsive
+
+**General Rule:** For TUI apps, prefer:
+- Pre-computation over on-demand computation
+- Map lookups over repeated operations
+- Cached data over live generation
+
 ## CGO Note
 
 This project uses `go-sqlite3` which requires CGO. Ensure `CGO_ENABLED=1` and a C compiler is available:
