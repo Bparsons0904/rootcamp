@@ -302,23 +302,17 @@ func (m *LearnCommandModel) startLab() tea.Cmd {
 	var instructions string
 	if useBasicBash {
 		instructions = fmt.Sprintf(`clear
+printf '\033[1;96m╔══════════════════════════════════════════════════════════════════════════════╗\n'
+printf '║\033[0m\033[1;92m                          ROOT CAMP - LAB SESSION                             \033[1;96m║\n'
+printf '╚══════════════════════════════════════════════════════════════════════════════╝\033[0m\n\n'
+printf '\033[1;33mLesson:\033[0m \033[1;97m%s\033[0m\n\n'
 cat << 'EOF'
-╔══════════════════════════════════════════════════════════════════════════════╗
-║                          ROOT CAMP - LAB SESSION                             ║
-╚══════════════════════════════════════════════════════════════════════════════╝
-
-Lesson: %s
-
 %s
-
-Your sandbox is located at:
-  %s
-
-When you're done, type 'exit' to return to Root Camp and enter your answer.
-
-Good luck!
-
 EOF
+printf '\n\033[1;36mYour sandbox is located at:\033[0m\n'
+printf '  \033[36m%s\033[0m\n\n'
+printf '\033[35mWhen you'"'"'re done, type \033[1;91mexit\033[0m\033[35m to return to Root Camp and enter your answer.\033[0m\n\n'
+printf '\033[1;32mGood luck!\033[0m\n\n'
 cd '%s'
 exec bash`, m.currentLesson.Title, m.currentLesson.Instructions, startPath, startPath)
 	} else {
@@ -328,23 +322,17 @@ exec bash`, m.currentLesson.Title, m.currentLesson.Instructions, startPath, star
 		}
 
 		instructions = fmt.Sprintf(`clear
+printf '\033[1;96m╔══════════════════════════════════════════════════════════════════════════════╗\n'
+printf '║\033[0m\033[1;92m                          ROOT CAMP - LAB SESSION                             \033[1;96m║\n'
+printf '╚══════════════════════════════════════════════════════════════════════════════╝\033[0m\n\n'
+printf '\033[1;33mLesson:\033[0m \033[1;97m%s\033[0m\n\n'
 cat << 'EOF'
-╔══════════════════════════════════════════════════════════════════════════════╗
-║                          ROOT CAMP - LAB SESSION                             ║
-╚══════════════════════════════════════════════════════════════════════════════╝
-
-Lesson: %s
-
 %s
-
-Your sandbox is located at:
-  %s
-
-When you're done, type 'exit' to return to Root Camp and enter your answer.
-
-Good luck!
-
 EOF
+printf '\n\033[1;36mYour sandbox is located at:\033[0m\n'
+printf '  \033[36m%s\033[0m\n\n'
+printf '\033[35mWhen you'"'"'re done, type \033[1;91mexit\033[0m\033[35m to return to Root Camp and enter your answer.\033[0m\n\n'
+printf '\033[1;32mGood luck!\033[0m\n\n'
 cd '%s'
 exec %s`, m.currentLesson.Title, m.currentLesson.Instructions, startPath, startPath, userShell)
 	}
