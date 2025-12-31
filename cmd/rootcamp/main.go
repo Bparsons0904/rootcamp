@@ -17,7 +17,7 @@ func main() {
 	}
 	defer database.Close()
 
-	model := tui.NewWelcome3Model(database)
+	model := tui.NewWelcomeModel(database)
 	p := tea.NewProgram(&model, tea.WithAltScreen())
 
 	if _, err := p.Run(); err != nil {
