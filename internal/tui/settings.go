@@ -16,10 +16,10 @@ type SettingsModel struct {
 	width    int
 	height   int
 
-	// Selected settings (enabled = true)
-	selectedSettings []string
 	// All available settings
 	allSettings []settingOption
+	// Current selected settings (bound to form)
+	selectedSettings []string
 }
 
 type settingOption struct {
@@ -37,12 +37,16 @@ func NewSettingsModel(database *sql.DB) SettingsModel {
 	return SettingsModel{
 		database:         database,
 		isOpen:           false,
-		selectedSettings: []string{},
 		allSettings:      []settingOption{},
+		selectedSettings: []string{},
 	}
 }
 
 func (m *SettingsModel) createForm(options []settingOption, selected []string) {
+	// Initialize selectedSettings with current values
+	m.selectedSettings = make([]string, len(selected))
+	copy(m.selectedSettings, selected)
+
 	// Build huh options
 	huhOptions := make([]huh.Option[string], len(options))
 	for i, opt := range options {
@@ -52,6 +56,7 @@ func (m *SettingsModel) createForm(options []settingOption, selected []string) {
 	m.form = huh.NewForm(
 		huh.NewGroup(
 			huh.NewMultiSelect[string]().
+				Key("settings").
 				Title("Station Settings").
 				Description("Select settings to enable (Space to toggle, Enter to save)").
 				Options(huhOptions...).
@@ -64,7 +69,7 @@ func (m SettingsModel) Init() tea.Cmd {
 	return nil
 }
 
-func (m SettingsModel) Update(msg tea.Msg) (SettingsModel, tea.Cmd) {
+func (m *SettingsModel) Update(msg tea.Msg) (*SettingsModel, tea.Cmd) {
 	if !m.isOpen {
 		return m, nil
 	}
@@ -80,7 +85,6 @@ func (m SettingsModel) Update(msg tea.Msg) (SettingsModel, tea.Cmd) {
 	case settingsLoadedMsg:
 		// Store settings and create form
 		m.allSettings = msg.options
-		m.selectedSettings = msg.selected
 		m.createForm(msg.options, msg.selected)
 		return m, m.form.Init()
 	}
@@ -182,20 +186,18 @@ func (m SettingsModel) IsOpen() bool {
 
 func (m SettingsModel) saveSettings() tea.Cmd {
 	return func() tea.Msg {
-		// Create a map of selected settings for quick lookup
 		selectedMap := make(map[string]bool)
 		for _, key := range m.selectedSettings {
 			selectedMap[key] = true
 		}
 
-		// Save all settings based on selection
 		for _, option := range m.allSettings {
 			isEnabled := selectedMap[option.key]
-			err := db.SetSetting(m.database, option.key, db.BoolToString(isEnabled))
-			if err != nil {
-				// Handle error - for now just log it
-				_ = err
+			value := "false"
+			if isEnabled {
+				value = "true"
 			}
+			_ = db.SetSetting(m.database, option.key, value)
 		}
 		return nil
 	}

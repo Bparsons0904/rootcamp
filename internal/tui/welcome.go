@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/bobparsons/rootcamp/internal/db"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/glamour"
 	"github.com/charmbracelet/harmonica"
@@ -154,20 +155,19 @@ const (
 )
 
 type Welcome3Model struct {
-	currentCheck       int
-	bootComplete       bool
-	phase              int
-	progress           int
-	fileNodes          []fileNode
-	currentFile        int
-	width              int
-	height             int
-	glamourRenderer    *glamour.TermRenderer
-	selectedFact       string
-	database           *sql.DB
-	settingsModel      SettingsModel
-	settings2ModalOpen bool
-	settings2Model     Settings2Model
+	currentCheck      int
+	bootComplete      bool
+	phase             int
+	progress          int
+	fileNodes         []fileNode
+	currentFile       int
+	width             int
+	height            int
+	glamourRenderer   *glamour.TermRenderer
+	selectedFact      string
+	database          *sql.DB
+	settingsModel     *SettingsModel
+	skippedAnimations bool
 }
 
 type (
@@ -307,21 +307,55 @@ func NewWelcome3Model(database *sql.DB) Welcome3Model {
 
 	randomIndex := rand.Intn(len(architectFacts))
 
+	// Check if animations should be skipped
+	skipAnimations := false
+	if database != nil {
+		settings, err := db.GetAllSettings(database)
+		if err == nil && settings.SkipIntroAnimation {
+			skipAnimations = true
+		}
+	}
+
+	// If skipping animations, set everything to completed state
+	phase := phaseBootSequence
+	bootComplete := false
+	progress := 0
+	currentFile := 0
+
+	if skipAnimations {
+		phase = phaseComplete
+		bootComplete = true
+		progress = 100
+		currentFile = len(files)
+		// Reveal all files
+		for i := range files {
+			files[i].revealed = true
+		}
+	}
+
+	settingsModel := NewSettingsModel(database)
 	return Welcome3Model{
-		phase:              phaseBootSequence,
-		glamourRenderer:    renderer,
-		fileNodes:          files,
-		selectedFact:       architectFacts[randomIndex],
-		width:              120,
-		height:             40,
-		database:           database,
-		settingsModel:      NewSettingsModel(database),
-		settings2ModalOpen: false,
-		settings2Model:     NewSettings2Model(),
+		phase:             phase,
+		bootComplete:      bootComplete,
+		progress:          progress,
+		currentFile:       currentFile,
+		glamourRenderer:   renderer,
+		fileNodes:         files,
+		selectedFact:      architectFacts[randomIndex],
+		width:             120,
+		height:            40,
+		database:          database,
+		settingsModel:     &settingsModel,
+		skippedAnimations: skipAnimations,
 	}
 }
 
 func (m Welcome3Model) Init() tea.Cmd {
+	// Skip animations if already in complete phase
+	if m.phase == phaseComplete {
+		return nil
+	}
+
 	return tea.Batch(
 		tickForBootCheck(),
 		tickForProvisionAnimation(),
@@ -364,11 +398,6 @@ func (m Welcome3Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			case "5":
 				cmd := m.settingsModel.Open(m.width, m.height)
 				return m, cmd
-			case "6":
-				m.settings2ModalOpen = true
-				m.settings2Model.width = m.width
-				m.settings2Model.height = m.height
-				return m, m.settings2Model.Init()
 			}
 		}
 
@@ -431,16 +460,6 @@ func (m Welcome3Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, cmd
 	}
 
-	// Pass through to settings2 if open
-	if m.settings2ModalOpen {
-		var cmd tea.Cmd
-		m.settings2Model, cmd = m.settings2Model.Update(msg)
-		if m.settings2Model.quitting {
-			m.settings2ModalOpen = false
-		}
-		return m, cmd
-	}
-
 	return m, nil
 }
 
@@ -458,10 +477,6 @@ func (m Welcome3Model) View() string {
 
 	if m.settingsModel.IsOpen() {
 		return m.settingsModel.View()
-	}
-
-	if m.settings2ModalOpen {
-		return m.settings2Model.View()
 	}
 
 	return baseView
@@ -492,7 +507,6 @@ func (m Welcome3Model) renderProvisioningView() string {
 	fileTree := m.renderFileTree()
 	menu := m.renderMenu()
 	architectLog := m.renderArchitectLog()
-	progressBar := m.renderProgressBar()
 
 	leftWidth := 50
 	rightWidth := 50
@@ -508,27 +522,43 @@ func (m Welcome3Model) renderProvisioningView() string {
 	header := HeaderStyle(m.width).Render("ROOT CAMP v0.1")
 	footer := FooterStyle().Render("(q) to exit")
 
-	centeredProgressBar := lipgloss.NewStyle().
-		Width(m.width).
-		Align(lipgloss.Center).
-		Render(progressBar)
-
 	centeredFooter := lipgloss.NewStyle().
 		Width(m.width).
 		Align(lipgloss.Center).
 		Render(footer)
 
-	content := lipgloss.JoinVertical(
-		lipgloss.Left,
-		"",
-		header,
-		"",
-		mainContent,
-		"",
-		centeredProgressBar,
-		"",
-		centeredFooter,
-	)
+	var content string
+	if m.skippedAnimations {
+		// No progress bar when animations are skipped
+		content = lipgloss.JoinVertical(
+			lipgloss.Left,
+			"",
+			header,
+			"",
+			mainContent,
+			"",
+			centeredFooter,
+		)
+	} else {
+		// Show progress bar during animations
+		progressBar := m.renderProgressBar()
+		centeredProgressBar := lipgloss.NewStyle().
+			Width(m.width).
+			Align(lipgloss.Center).
+			Render(progressBar)
+
+		content = lipgloss.JoinVertical(
+			lipgloss.Left,
+			"",
+			header,
+			"",
+			mainContent,
+			"",
+			centeredProgressBar,
+			"",
+			centeredFooter,
+		)
+	}
 
 	return lipgloss.Place(
 		m.width,
@@ -550,7 +580,6 @@ func (m Welcome3Model) renderMenu() string {
 		{"3", "Lab Environment", false},
 		{"4", "Progress Tracker", false},
 		{"5", "Settings", m.phase == phaseComplete},
-		{"6", "Settings2 (Example)", m.phase == phaseComplete},
 		{"q", "Exit", true},
 	}
 
