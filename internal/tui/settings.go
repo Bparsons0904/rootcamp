@@ -16,7 +16,6 @@ type SettingsModel struct {
 	width    int
 	height   int
 
-	// All available settings
 	allSettings []settingOption
 	// Current selected settings (bound to form)
 	selectedSettings []string
@@ -43,11 +42,9 @@ func NewSettingsModel(database *sql.DB) SettingsModel {
 }
 
 func (m *SettingsModel) createForm(options []settingOption, selected []string) {
-	// Initialize selectedSettings with current values
 	m.selectedSettings = make([]string, len(selected))
 	copy(m.selectedSettings, selected)
 
-	// Build huh options
 	huhOptions := make([]huh.Option[string], len(options))
 	for i, opt := range options {
 		huhOptions[i] = huh.NewOption(opt.title, opt.key)
@@ -83,13 +80,11 @@ func (m *SettingsModel) Update(msg tea.Msg) (*SettingsModel, tea.Cmd) {
 		}
 
 	case settingsLoadedMsg:
-		// Store settings and create form
 		m.allSettings = msg.options
 		m.createForm(msg.options, msg.selected)
 		return m, m.form.Init()
 	}
 
-	// Pass message to form (if it exists)
 	if m.form != nil {
 		var cmd tea.Cmd
 		form, cmd := m.form.Update(msg)
@@ -97,7 +92,6 @@ func (m *SettingsModel) Update(msg tea.Msg) (*SettingsModel, tea.Cmd) {
 			m.form = f
 		}
 
-		// Check if form completed
 		if m.form.State == huh.StateCompleted {
 			m.isOpen = false
 			return m, m.saveSettings()
@@ -114,10 +108,8 @@ func (m SettingsModel) View() string {
 		return ""
 	}
 
-	// Render form
 	formView := m.form.View()
 
-	// Add custom border and styling
 	modal := lipgloss.NewStyle().
 		Border(lipgloss.ThickBorder()).
 		BorderForeground(AccentBlue).
@@ -140,37 +132,24 @@ func (m *SettingsModel) Open(width, height int) tea.Cmd {
 	m.height = height
 	m.isOpen = true
 
-	// Load current settings from database
 	return func() tea.Msg {
 		settings, err := db.GetAllSettings(m.database)
 		if err != nil {
 			return settingsLoadedMsg{options: []settingOption{}, selected: []string{}}
 		}
 
-		// Define all available settings
 		options := []settingOption{
 			{
 				key:         "skip_intro_animation",
 				title:       "Skip Intro Animation",
 				description: "Skip the boot sequence and provisioning animation on startup",
 			},
-			// Add more settings here as needed
-			// {
-			//     key:         "another_setting",
-			//     title:       "Another Setting",
-			//     description: "Description",
-			// },
 		}
 
-		// Build list of currently selected (enabled) settings
 		selected := []string{}
 		if settings.SkipIntroAnimation {
 			selected = append(selected, "skip_intro_animation")
 		}
-		// Add more settings checks here
-		// if settings.AnotherSetting {
-		//     selected = append(selected, "another_setting")
-		// }
 
 		return settingsLoadedMsg{options: options, selected: selected}
 	}

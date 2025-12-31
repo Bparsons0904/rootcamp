@@ -39,7 +39,6 @@ type WelcomeModel struct {
 }
 
 func NewWelcomeModel(database *sql.DB) WelcomeModel {
-	// Check if animations should be skipped
 	skipAnimations := false
 	if database != nil {
 		settings, err := db.GetAllSettings(database)
@@ -48,13 +47,11 @@ func NewWelcomeModel(database *sql.DB) WelcomeModel {
 		}
 	}
 
-	// Calculate panel widths
 	totalWidth := 120
 	leftWidth := 50
 	rightWidth := 50
 	middleWidth := totalWidth - leftWidth - rightWidth - 10
 
-	// Set initial phase based on animation preference
 	phase := phaseBootSequence
 	progress := 0
 
@@ -63,7 +60,6 @@ func NewWelcomeModel(database *sql.DB) WelcomeModel {
 		progress = 100
 	}
 
-	// Initialize sub-models
 	settingsModel := NewSettingsModel(database)
 	guidedLearningModel := NewGuidedLearningModel(database)
 	learnCommandModel := NewLearnCommandModel(database)
@@ -95,10 +91,8 @@ func NewWelcomeModel(database *sql.DB) WelcomeModel {
 func (m *WelcomeModel) Init() tea.Cmd {
 	var cmds []tea.Cmd
 
-	// Always initialize menu
 	cmds = append(cmds, m.mainMenu.Init())
 
-	// Start animations only if not skipped
 	if !m.skippedAnimations {
 		cmds = append(cmds, m.bootScreen.Init(), tickForProvisionAnimation())
 	}
@@ -113,7 +107,6 @@ func tickForProvisionAnimation() tea.Cmd {
 }
 
 func (m *WelcomeModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	// Check for open sub-models first
 	if m.settingsModel.IsOpen() {
 		var cmd tea.Cmd
 		m.settingsModel, cmd = m.settingsModel.Update(msg)
@@ -150,7 +143,6 @@ func (m *WelcomeModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, cmd
 	}
 
-	// Handle global keys
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		if msg.String() == "q" || msg.String() == "ctrl+c" {
@@ -166,7 +158,6 @@ func (m *WelcomeModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			var cmd tea.Cmd
 			m.bootScreen, cmd = m.bootScreen.Update(msg)
 			if m.bootScreen.IsComplete() {
-				// Transition to provisioning
 				m.phase = phaseProvisioning
 				return m, tea.Batch(cmd, m.fileTree.Init(), tickForProvisionAnimation())
 			}
@@ -175,7 +166,6 @@ func (m *WelcomeModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case provisionTickMsg:
 		if m.phase == phaseProvisioning {
-			// Update progress
 			if m.progress < 100 {
 				m.progress += 1
 				if m.progress >= 100 {
@@ -195,14 +185,12 @@ func (m *WelcomeModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	}
 
-	// Update components based on phase
 	if m.phase == phaseBootSequence {
 		var cmd tea.Cmd
 		m.bootScreen, cmd = m.bootScreen.Update(msg)
 		return m, cmd
 	}
 
-	// Update all components in provisioning/complete phase
 	var cmds []tea.Cmd
 
 	fileTreeCmd := m.updateFileTree(msg)
@@ -230,14 +218,11 @@ func (m *WelcomeModel) updateMainMenu(msg tea.Msg) tea.Cmd {
 	updatedMenu, cmd = m.mainMenu.Update(msg)
 	m.mainMenu = updatedMenu
 
-	// Check if menu selection was made
 	if m.mainMenu.IsCompleted() {
 		selection := m.mainMenu.GetSelection()
 
-		// Reset the form first
 		resetCmd := m.mainMenu.Reset()
 
-		// Only process if we have a valid selection
 		if selection != "" {
 			switch selection {
 			case "guided_learning":
@@ -268,7 +253,6 @@ func (m WelcomeModel) View() string {
 		return "Loading..."
 	}
 
-	// Show sub-model views if open
 	if m.settingsModel.IsOpen() {
 		return m.settingsModel.View()
 	}
@@ -288,7 +272,6 @@ func (m WelcomeModel) View() string {
 		return m.aboutModel.View()
 	}
 
-	// Render main view based on phase
 	if m.phase == phaseBootSequence {
 		return m.bootScreen.View()
 	}
@@ -302,7 +285,6 @@ func (m WelcomeModel) renderProvisioningView() string {
 	middleWidth := m.width - leftWidth - rightWidth - 10
 	panelHeight := m.height - 10
 
-	// Render each component
 	left := PanelStyle(leftWidth, panelHeight, ColorBlue).Render(m.fileTree.View())
 	middle := PanelStyle(middleWidth, panelHeight, ColorOrange).Render(m.mainMenu.View())
 	right := PanelStyle(rightWidth, panelHeight, ColorPurple).Render(m.architectLog.View())
