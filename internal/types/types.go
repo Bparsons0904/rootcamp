@@ -11,6 +11,7 @@ type UserProgress struct {
 
 type Settings struct {
 	SkipIntroAnimation bool
+	UseBasicBash       bool
 }
 
 type SettingItem struct {
@@ -35,6 +36,7 @@ type FunFactsData struct {
 
 type Lesson struct {
 	ID           string         `json:"id"`
+	Command      string         `json:"command"`
 	Code         string         `json:"code"`
 	Title        string         `json:"title"`
 	Tags         []string       `json:"tags"`
@@ -57,6 +59,7 @@ type SandboxConfig struct {
 	StartDir string            `json:"startDir"`
 	Dirs     []string          `json:"dirs"`
 	Files    map[string]string `json:"files"`
+	Symlinks map[string]string `json:"symlinks"`
 }
 
 type Requirement struct {

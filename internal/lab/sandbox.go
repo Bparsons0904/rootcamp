@@ -54,6 +54,21 @@ func Create(lesson types.Lesson) (string, error) {
 		}
 	}
 
+	for linkName, target := range lesson.Sandbox.Symlinks {
+		linkPath := filepath.Join(sandboxPath, linkName)
+
+		dirPath := filepath.Dir(linkPath)
+		if err := os.MkdirAll(dirPath, 0755); err != nil {
+			Cleanup(sandboxPath)
+			return "", fmt.Errorf("failed to create parent directory for symlink: %w", err)
+		}
+
+		if err := os.Symlink(target, linkPath); err != nil {
+			Cleanup(sandboxPath)
+			return "", fmt.Errorf("failed to create symlink %s: %w", linkName, err)
+		}
+	}
+
 	return sandboxPath, nil
 }
 

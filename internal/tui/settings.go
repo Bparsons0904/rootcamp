@@ -144,11 +144,19 @@ func (m *SettingsModel) Open(width, height int) tea.Cmd {
 				title:       "Skip Intro Animation",
 				description: "Skip the boot sequence and provisioning animation on startup",
 			},
+			{
+				key:         "use_basic_bash",
+				title:       "Use Basic Bash Shell",
+				description: "Use basic bash instead of your configured shell (for compatibility)",
+			},
 		}
 
 		selected := []string{}
 		if settings.SkipIntroAnimation {
 			selected = append(selected, "skip_intro_animation")
+		}
+		if settings.UseBasicBash {
+			selected = append(selected, "use_basic_bash")
 		}
 
 		return settingsLoadedMsg{options: options, selected: selected}

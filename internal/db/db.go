@@ -64,6 +64,7 @@ func createSchema(db *sql.DB) error {
 func InitDefaultSettings(db *sql.DB) error {
 	defaults := map[string]string{
 		"skip_intro_animation": "false",
+		"use_basic_bash":       "false",
 	}
 
 	for name, value := range defaults {
@@ -116,8 +117,14 @@ func GetAllSettings(db *sql.DB) (*types.Settings, error) {
 		return nil, err
 	}
 
+	useBasicBash, err := GetSetting(db, "use_basic_bash", "false")
+	if err != nil {
+		return nil, err
+	}
+
 	return &types.Settings{
 		SkipIntroAnimation: stringToBool(skipIntro),
+		UseBasicBash:       stringToBool(useBasicBash),
 	}, nil
 }
 

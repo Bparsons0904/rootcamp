@@ -3,6 +3,7 @@
   "lessons": [
     {
       "id": "pwd",
+      "command": "pwd",
       "code": "pwd",
       "title": "Print Working Directory",
       "tags": ["navigation", "basics", "filesystem"],
@@ -37,6 +38,95 @@
           "description": "The full path shown by pwd",
           "validator": "path_match",
           "expected": "/tmp/rootcamp-{uuid}/projects/rootcamp"
+        }
+      ]
+    },
+    {
+      "id": "pwd-l",
+      "command": "pwd",
+      "code": "pwd -L",
+      "title": "Logical Path",
+      "tags": ["navigation", "basics", "filesystem", "symlinks"],
+      "level": "intermediate",
+      "about": {
+        "what": "The `pwd -L` command displays the **logical** current working directory. This means it shows the path as you navigated to it, including any symbolic links.\n\nA **symbolic link** (or symlink) is like a shortcut that points to another directory. When you navigate through a symlink, your shell remembers the path you took. The `-L` flag tells `pwd` to show you that logical path, preserving the symlink in the output.\n\n**This is the default behavior** - running `pwd` without flags is the same as running `pwd -L`.\n\nFor example:\n- Real directory: `/var/projects/web-app`\n- Symlink: `/home/user/workspace` → `/var/projects/web-app`\n- If you `cd /home/user/workspace`, then `pwd -L` shows: `/home/user/workspace`",
+        "history": "The `-L` (logical) flag became the default behavior in most modern shells because it matches how users think about navigation.\n\nIn the early days of Unix, symlinks were introduced in BSD 4.2 (1983) to allow flexible filesystem organization. The shell needed to decide: should it track where you *think* you are (the logical path through symlinks), or where you *actually* are (the physical location on disk)?\n\nMost shells chose to track the logical path by default, storing it in the `$PWD` environment variable. This made navigation more intuitive - if you `cd` into a directory called `workspace`, you expect `pwd` to show `workspace`, not some completely different path.\n\nThe `-L` flag was formalized to explicitly request this default behavior, mainly for scripts that need to be clear about their intent.",
+        "example": "```bash\n# Create a symlink (just for illustration)\nln -s /var/projects/web-app ~/workspace\n\n# Navigate through the symlink\ncd ~/workspace\n\n# Show the logical path (includes the symlink)\npwd -L\n# Output: /home/user/workspace\n\n# Compare with the physical path\npwd -P\n# Output: /var/projects/web-app\n\n# Verify $PWD shows logical path\necho $PWD\n# Output: /home/user/workspace\n```",
+        "commonUses": [
+          "**Understanding your navigation path** - See the route you took through symlinks",
+          "**Debugging shell issues** - Verify what path your shell thinks you're in",
+          "**Working with development environments** - Many projects use symlinked directories for organization",
+          "**Script context awareness** - Scripts can preserve the user's expected working directory"
+        ]
+      },
+      "hints": [
+        "You're already in the right location - no need to navigate anywhere",
+        "Just run 'pwd -L' and observe the output",
+        "The answer includes the symlink name 'workspace', not the target directory"
+      ],
+      "sandbox": {
+        "startDir": "home/workspace",
+        "dirs": [
+          "home",
+          "projects/actual-project"
+        ],
+        "files": {},
+        "symlinks": {
+          "home/workspace": "../projects/actual-project"
+        }
+      },
+      "instructions": "## Your Task\n\nYou're currently in a directory called `workspace`, which is actually a **symbolic link** pointing to `projects/actual-project`.\n\nRun `pwd -L` to see the **logical path** - the path as you navigated to it, preserving the symlink name.\n\nNotice how it shows `workspace` in the path, not `actual-project`.\n\nOnce you have the path shown by `pwd -L`, type `exit` and enter your answer.",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The logical path shown by pwd -L",
+          "validator": "path_match",
+          "expected": "/tmp/rootcamp-{uuid}/home/workspace"
+        }
+      ]
+    },
+    {
+      "id": "pwd-p",
+      "command": "pwd",
+      "code": "pwd -P",
+      "title": "Physical Path",
+      "tags": ["navigation", "basics", "filesystem", "symlinks"],
+      "level": "intermediate",
+      "about": {
+        "what": "The `pwd -P` command displays the **physical** current working directory. This means it resolves all symbolic links to show the actual, real location of the directory on disk.\n\nWhile `pwd -L` (the default) shows you the path as you navigated including symlinks, `pwd -P` shows you where the directory really lives in the filesystem hierarchy.\n\nThis is crucial when:\n- You need to know the actual location of files on disk\n- Working with tools that don't follow symlinks\n- Debugging filesystem structure\n- Understanding where data is physically stored\n\nFor example:\n- Real directory: `/var/projects/web-app`\n- Symlink: `/home/user/workspace` → `/var/projects/web-app`\n- If you `cd /home/user/workspace`, then `pwd -P` shows: `/var/projects/web-app`",
+        "history": "The `-P` (physical) flag exists because not all programs follow symbolic links. Some operations need to know the actual, physical location of files.\n\nWhen Unix introduced symbolic links in BSD 4.2 (1983), it created a dilemma: some programs needed to follow links (like text editors - you want to edit the target file, not the link itself), while others needed the real path (like backup tools - you don't want to back up the same files multiple times).\n\nThe `-P` flag gives you access to the real, resolved path. This became especially important with:\n- **Build systems**: Some compilers and linkers don't follow symlinks when searching for includes\n- **Version control**: Git and other VCS track the physical structure\n- **Deployment scripts**: Need to know actual disk layout for correct permissions and ownership\n- **Node.js projects**: The infamous `node_modules` often contains symlinks that need resolution",
+        "example": "```bash\n# Create a symlink (just for illustration)\nln -s /var/projects/web-app ~/workspace\n\n# Navigate through the symlink\ncd ~/workspace\n\n# Show the physical path (resolves symlinks)\npwd -P\n# Output: /var/projects/web-app\n\n# Compare with the logical path\npwd -L\n# Output: /home/user/workspace\n\n# Find real location of current script\nscript_dir=$(cd \"$(dirname \"$0\")\" && pwd -P)\necho \"Script actually located at: $script_dir\"\n\n# Resolve any symlinks in a path\nreal_path=$(cd \"/path/with/symlinks\" && pwd -P)\n```",
+        "commonUses": [
+          "**Finding real file locations** - See where files actually exist on disk, not through symlinks",
+          "**Build and deployment scripts** - Many tools need physical paths for correct operation",
+          "**Debugging symlink issues** - Understand the actual filesystem structure",
+          "**Version control operations** - Git and other VCS work with physical paths",
+          "**Finding script locations** - Determine where a script file actually lives for loading resources"
+        ]
+      },
+      "hints": [
+        "First run 'pwd' to see the logical path with the symlink",
+        "Then run 'pwd -P' to see the actual physical location",
+        "The answer shows 'actual-project', not 'workspace', because it resolves the symlink"
+      ],
+      "sandbox": {
+        "startDir": "home/workspace",
+        "dirs": [
+          "home",
+          "projects/actual-project"
+        ],
+        "files": {},
+        "symlinks": {
+          "home/workspace": "../projects/actual-project"
+        }
+      },
+      "instructions": "## Your Task\n\nYou're currently in a directory called `workspace`, which is actually a **symbolic link** pointing to `projects/actual-project`.\n\n**Compare the difference:**\n1. First run `pwd` (or `pwd -L`) - you'll see the logical path with `workspace`\n2. Then run `pwd -P` - you'll see the physical path showing where the directory really is\n\nNotice how `pwd -P` resolves the symlink and shows `actual-project` instead of `workspace`.\n\nOnce you have the path shown by `pwd -P`, type `exit` and enter your answer.",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The physical path shown by pwd -P",
+          "validator": "path_match",
+          "expected": "/tmp/rootcamp-{uuid}/projects/actual-project"
         }
       ]
     }

@@ -44,6 +44,7 @@ type LearnCommandModel struct {
 	codeInput        textinput.Model
 	feedback         string
 	currentLesson    *types.Lesson
+	settings         *types.Settings
 }
 
 func NewLearnCommandModel(database *sql.DB) LearnCommandModel {
@@ -293,7 +294,14 @@ func (m *LearnCommandModel) startLab() tea.Cmd {
 	m.sandboxPath = sandboxPath
 	startPath := lab.GetStartPath(sandboxPath, *m.currentLesson)
 
-	instructions := fmt.Sprintf(`clear
+	useBasicBash := false
+	if m.settings != nil {
+		useBasicBash = m.settings.UseBasicBash
+	}
+
+	var instructions string
+	if useBasicBash {
+		instructions = fmt.Sprintf(`clear
 cat << 'EOF'
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                          ROOT CAMP - LAB SESSION                             ║
@@ -311,7 +319,35 @@ When you're done, type 'exit' to return to Root Camp and enter your answer.
 Good luck!
 
 EOF
-exec bash`, m.currentLesson.Title, m.currentLesson.Instructions, startPath)
+cd '%s'
+exec bash`, m.currentLesson.Title, m.currentLesson.Instructions, startPath, startPath)
+	} else {
+		userShell := os.Getenv("SHELL")
+		if userShell == "" {
+			userShell = "/bin/bash"
+		}
+
+		instructions = fmt.Sprintf(`clear
+cat << 'EOF'
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                          ROOT CAMP - LAB SESSION                             ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+Lesson: %s
+
+%s
+
+Your sandbox is located at:
+  %s
+
+When you're done, type 'exit' to return to Root Camp and enter your answer.
+
+Good luck!
+
+EOF
+cd '%s'
+exec %s`, m.currentLesson.Title, m.currentLesson.Instructions, startPath, startPath, userShell)
+	}
 
 	c := exec.Command("bash", "-c", instructions)
 	c.Dir = startPath
@@ -557,7 +593,7 @@ func (m *LearnCommandModel) createForm() {
 		if progress, ok := m.progressMap[lesson.ID]; ok && progress.Completed {
 			completionMark = "✓"
 		}
-		label := fmt.Sprintf("[%s] %s (%s)", completionMark, lesson.Title, lesson.Level)
+		label := fmt.Sprintf("[%s] %-10s %s", completionMark, lesson.Code, lesson.Title)
 		options[i] = huh.NewOption(label, lesson.ID)
 	}
 
@@ -584,6 +620,9 @@ func (m *LearnCommandModel) Open(width, height int) tea.Cmd {
 	if m.database != nil {
 		progressMap, _ := db.GetAllProgress(m.database)
 		m.progressMap = progressMap
+
+		settings, _ := db.GetAllSettings(m.database)
+		m.settings = settings
 	}
 
 	m.createForm()
