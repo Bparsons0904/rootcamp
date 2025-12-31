@@ -1,0 +1,215 @@
+{
+  "version": "1.0",
+  "facts": [
+    {
+      "id": "term_tty",
+      "tags": ["history", "hardware", "terminal"],
+      "title": "The Original Computer Terminals",
+      "short": "Early computer terminals were repurposed teletypewriters from the 1960s.",
+      "full": "## The Original Computer Terminals\n\nIn the **1960s**, computer terminals weren't screens - they were **teletypewriters (TTY)**. These electromechanical typewriters could send and receive text at a blazing **10 characters per second**.\n\n### How It Worked\n\nYou'd type commands on a keyboard, and the computer would **literally print** responses on continuous paper. No screens involved!\n\n### Legacy Today\n\nThe term `TTY` persists in Unix/Linux systems:\n- Your terminal device files are still found in `/dev/tty*`\n- When early programmers talked about \"printing to the terminal,\" they meant it **literally**!"
+    },
+    {
+      "id": "term_vt100",
+      "tags": ["history", "terminal", "standards"],
+      "title": "The VT100: Terminal That Changed Everything",
+      "short": "The DEC VT100 from 1978 became the de facto standard for terminal emulation.",
+      "full": "## The VT100: Terminal That Changed Everything\n\nReleased by **Digital Equipment Corporation** in **1978**, the VT100 revolutionized computing.\n\n### What Made It Special\n\n- First **affordable terminal** to support ANSI escape codes\n- Enabled cursor movement, colors, and text formatting\n- Its control sequences became the universal standard\n\n### Legacy\n\nVirtually every terminal emulator today - from **iTerm2** to **Windows Terminal** - still claims `VT100 compatibility`. That's why you can run programs written **45 years ago** and they still display correctly.\n\n> Modern terminals are essentially VT100 emulators with extra features."
+    },
+    {
+      "id": "term_ansi",
+      "tags": ["terminal", "standards", "trivia"],
+      "title": "Secret Codes That Make Terminals Colorful",
+      "short": "ANSI escape codes are the 'magic spells' that create colors and formatting in terminals.",
+      "full": "## ANSI Escape Codes: Terminal Magic Spells\n\nEver wonder how terminals display colors, bold text, or move the cursor?\n\n### What Are They?\n\nANSI escape codes are special character sequences that start with **ESC** (ASCII 27).\n\n### Examples\n\n- `\\033[31m` → turns text red\n- `\\033[0m` → resets formatting\n- `\\033[1m` → makes text bold\n\n### Why They Matter\n\nThese codes enable:\n- Colorful command prompts\n- Progress bars\n- Syntax highlighting in terminal applications\n\nNext time you see colored output, remember there are **invisible escape sequences** scattered throughout that text telling your terminal how to display it!"
+    },
+    {
+      "id": "term_emulator",
+      "tags": ["terminal", "hardware", "history"],
+      "title": "Terminal Emulators vs Real Terminals",
+      "short": "Modern 'terminal emulators' simulate the behavior of physical terminals from the 1970s.",
+      "full": "## Terminal Emulators vs Real Terminals\n\nWhen you open **Terminal**, **iTerm2**, or **Kitty** on your computer, you're not using a \"terminal\" - you're using a **terminal emulator**.\n\n### Real Terminals\n\n- Physical hardware devices connected to mainframes via serial cables\n- Had **no processing power**\n- Just displayed characters sent by the remote computer\n\n### Terminal Emulators\n\nToday's terminal emulators are **programs** that simulate this old hardware, pretending to be a VT100 or similar device. The actual computing happens on your local machine.\n\n### Why Keep the Metaphor?\n\nWe keep the terminal metaphor because the **interaction model is so powerful**.\n\n> It's like how we still use 'save' icons that look like floppy disks!"
+    },
+    {
+      "id": "cmd_grep",
+      "tags": ["commands", "etymology", "unix"],
+      "title": "grep: A Command Named After Its Function",
+      "short": "The 'grep' command stands for 'Global Regular Expression Print'.",
+      "full": "## grep: A Command Named After Its Function\n\n### Origin Story\n\nIn the original Unix text editor `ed`, the command `g/re/p` meant:\n\n- **g** - globally search\n- **re** - for a regular expression\n- **p** - and print matching lines\n\n**Ken Thompson** found this so useful that he extracted it into its own standalone utility and named it `grep` - literally the letters from that `ed` command.\n\n### Impact\n\n- Today, `grep` is so common it's become a **verb**: \"I grepped the logs for errors\"\n- Spawned siblings: `egrep` (extended grep) and `fgrep` (fixed grep, now `grep -F`)\n\n> The command that started as editor shorthand became one of the most essential tools in computing."
+    },
+    {
+      "id": "cmd_ls",
+      "tags": ["commands", "unix", "trivia"],
+      "title": "Why 'ls' and Not 'dir'?",
+      "short": "Unix chose 'ls' for list while DOS/Windows used 'dir' for directory.",
+      "full": "## Why 'ls' and Not 'dir'?\n\n### Unix Philosophy\n\nUnix favored **short commands** because they were typed frequently on slow teletypewriters:\n- `ls` was shorter than `list` or `dir`\n- Saved precious keystrokes\n\n### DOS Chose Differently\n\nDOS later chose `dir` (short for directory) because it was more **intuitive for non-technical users**.\n\n### Design Philosophy\n\nThis reflects a fundamental difference:\n- **Unix**: optimized for expert efficiency\n- **DOS**: aimed for discoverability\n\n### The Peace Treaty\n\nModern systems support both:\n- Linux often includes `dir` as an alias to `ls`\n- Windows PowerShell supports both `dir` and `ls`\n\n> The 40-year command war ended in peaceful coexistence!"
+    },
+    {
+      "id": "cmd_awk",
+      "tags": ["commands", "etymology", "unix"],
+      "title": "A Command Named After Its Creators",
+      "short": "The 'awk' command is named after its three creators: Aho, Weinberger, and Kernighan.",
+      "full": "## AWK: A Command Named After Its Creators\n\nIn **1977**, three Bell Labs researchers created a text-processing language:\n\n### The Creators\n\n- **A**lfred **A**ho\n- Peter **W**einberger  \n- Brian **K**ernighan\n\nRather than choosing a descriptive name, they simply used their initials: **AWK**.\n\n### Fun Fact\n\n**Brian Kernighan** is the same Kernighan from **K&R C** - he co-wrote *The C Programming Language* with Dennis Ritchie.\n\n### Still Relevant\n\nDespite being **45+ years old**:\n- AWK is still the fastest way to do many text transformations\n- Installed by default on virtually every Unix-like system\n- Its pattern-action paradigm influenced languages like **Perl**"
+    },
+    {
+      "id": "cmd_sed",
+      "tags": ["commands", "unix", "etymology"],
+      "title": "sed: The Stream Editor",
+      "short": "'sed' stands for 'stream editor' - editing text as it flows through pipes.",
+      "full": "## sed: The Stream Editor\n\n### The Innovation\n\nWhile traditional editors like `ed` required loading files into memory, `sed` was designed to **edit text as it streamed** through Unix pipes.\n\n### Creator\n\n**Lee E. McMahon** created `sed` in **1973-74** at Bell Labs as a way to process text non-interactively.\n\n### Why \"Stream\" Editor?\n\nThe name reflects its purpose: transforming text streams in pipelines **without user interaction**. Perfect for automated text transformations in scripts.\n\n### The Syntax\n\nIts cryptic syntax (like `s/old/new/g`) is borrowed from `ed`, the original Unix line editor.\n\n> What looks like line noise to beginners is actually a carefully designed domain-specific language for text transformation."
+    },
+    {
+      "id": "cmd_cat",
+      "tags": ["commands", "etymology", "unix"],
+      "title": "cat: More Than Showing Files",
+      "short": "The 'cat' command actually stands for 'concatenate', not 'category' or 'catalog'.",
+      "full": "## cat: More Than Showing Files\n\n### The Real Purpose\n\nMost people use `cat` to display file contents, but its **real purpose** is **concatenating** (chaining together) multiple files.\n\n```bash\ncat file1.txt file2.txt\n```\n\nThis combines them into a single output stream.\n\n### The Name\n\nShort for **concatenate**. Displaying a single file (`cat file.txt`) is just the edge case where you're concatenating **one file**!\n\n### The Confusion\n\nThis confused early Unix users so much that alternatives were created:\n- `more` - for paginated viewing\n- `less` - because \"less is more\" (a Unix dad joke)\n\n### History\n\nOne of the **first utilities** written for Unix, appearing in Version 1 in **1971**."
+    },
+    {
+      "id": "cmd_pwd",
+      "tags": ["commands", "navigation", "unix"],
+      "title": "pwd: Print Working Directory",
+      "short": "'pwd' stands for 'print working directory', showing your current location in the filesystem.",
+      "full": "## pwd: Print Working Directory\n\n### The Problem\n\nIn early Unix, remembering where you were in the directory tree was **genuinely difficult**:\n- Terminals didn't show the path in the prompt by default\n- The filesystem could be deep and complex\n\n### The Solution\n\nThe `pwd` command - **print working directory** - was essential for staying oriented.\n\n### Seems Redundant Today?\n\nMost shell prompts now display the current directory, making `pwd` seem unnecessary.\n\n### Still Crucial For\n\n- Shell scripts\n- Getting the absolute path for other commands\n- When your prompt is minimal\n\n### Historical Note\n\nThe \"print\" in `pwd` is a reminder of the **teletype era** when \"printing\" meant displaying on any output device."
+    },
+    {
+      "id": "unix_philosophy",
+      "tags": ["unix", "culture", "history"],
+      "title": "The Unix Philosophy: Do One Thing Well",
+      "short": "Unix tools follow a simple rule: each program should do one thing and do it well.",
+      "full": "## The Unix Philosophy: Do One Thing Well\n\nArticulated by **Doug McIlroy** in **1978**, the Unix philosophy has three core tenets:\n\n### The Three Rules\n\n1. **Write programs that do one thing and do it well**\n2. **Write programs to work together**\n3. **Write programs to handle text streams** (universal interface)\n\n### Why Separate Tools?\n\nThis explains why Unix has separate tools for:\n- Listing (`ls`)\n- Sorting (`sort`) \n- Counting (`wc`)\n\nInstead of one mega-tool.\n\n### The Power\n\nYou combine simple tools with pipes to create complex workflows:\n\n```bash\nls | grep error | awk '{print $2}' | sort\n```\n\n### Influence Beyond Unix\n\n- Microservices architecture\n- Single responsibility principle\n- Composable software philosophy"
+    },
+    {
+      "id": "unix_creators",
+      "tags": ["unix", "history", "culture"],
+      "title": "Thompson and Ritchie: The Unix Inventors",
+      "short": "Ken Thompson and Dennis Ritchie created Unix at Bell Labs in 1969-1970.",
+      "full": "## Thompson and Ritchie: The Unix Inventors\n\n### The Origin Story\n\nIn **1969**, **Ken Thompson** started writing Unix on a PDP-7 minicomputer at Bell Labs, initially as a way to play the **Space Travel** game.\n\n### The Partnership\n\n**Dennis Ritchie** joined soon after, and together they:\n- Rewrote Unix in **C** (a language Ritchie created for this purpose)\n- Made the revolutionary decision to write an OS in a high-level language\n- Previous systems were all written in assembly\n\n### The Impact\n\nTheir creation spread throughout universities and research institutions, eventually becoming the foundation for:\n- **Linux**\n- **macOS**\n- **iOS** \n- **Android**\n\n### Recognition\n\n- Both won the **Turing Award** in 1983\n- Thompson later created the **Go** programming language at Google\n\n> The commands you type today are direct descendants of their 1970s design decisions."
+    },
+    {
+      "id": "unix_short_names",
+      "tags": ["unix", "culture", "history"],
+      "title": "Why Unix Commands Are So Short",
+      "short": "Unix commands are cryptically short because they were typed on slow teletypewriters.",
+      "full": "## Why Unix Commands Are So Short\n\n### The Hardware Constraint\n\nWhen Unix was created, interaction happened through **teletypewriters** that operated at **10-15 characters per second**.\n\n### The Solution\n\nEvery keystroke mattered:\n- `remove` → `rm`\n- `copy` → `cp`\n- `move` → `mv`\n\nTyping 'remove' would take precious seconds when the device physically typed each character.\n\n### The Efficiency Paradox\n\nModern developers sometimes wish for more readable commands (why `ls` instead of `list`?), but the brevity enabled a different kind of power:\n\n```bash\n# Try reading this:\nps aux | grep node | awk '{print $2}'\n\n# Versus this:\nprocess-snapshot all-users extended | \nglobal-regular-expression-print node | ...\n```\n\n> The cryptic names are actually efficiency."
+    },
+    {
+      "id": "unix_bell_labs",
+      "tags": ["unix", "history", "culture"],
+      "title": "Unix Was Born at Bell Labs",
+      "short": "Unix was created at AT&T's Bell Labs, one of history's greatest research institutions.",
+      "full": "## Unix Was Born at Bell Labs\n\n### The Institution\n\n**Bell Laboratories**, AT&T's research division, was where these were invented:\n- The **transistor**\n- The **laser**\n- **Information theory**\n- **Unix**\n\n### The Environment\n\nThe Unix team worked in a collaborative, academic-like environment that encouraged experimentation.\n\n### The Lucky Accident\n\nBecause AT&T was a **regulated monopoly**, they couldn't sell Unix commercially, so they licensed it **cheaply to universities**.\n\nThis accident led to:\n- Unix spreading throughout academia\n- Students learning, improving, and eventually creating open-source versions (**Linux**, **BSD**)\n\n### Other Contributions\n\n- **C**, **C++**\n- **awk**\n- **UTF-8** and **Go** (by former Bell Labs researchers at Google)"
+    },
+    {
+      "id": "unix_root",
+      "tags": ["unix", "etymology", "culture"],
+      "title": "Why Superuser Is Called 'root'",
+      "short": "The administrator account is called 'root' because it controls the root directory and all beneath.",
+      "full": "## Why Superuser Is Called 'root'\n\n### The Botanical Metaphor\n\nIn Unix filesystem hierarchy, everything branches from a single **root directory** `/`.\n\nThe superuser account that has access to everything in this tree is called **root** - the account at the base of the entire system tree.\n\n### Early Documentation\n\nEarly Unix documentation explicitly made this metaphor:\n- Filesystem = tree\n- **Root** = base\n- **Branches** = directories\n- **Leaves** = files\n\n### Technical Details\n\n- Root user has **UID 0**\n- Has **unlimited privileges**\n- Access via `sudo` (super user do)\n\n### The Metaphor Lives On\n\nWe still say:\n- \"root directory\"\n- \"parent directory\"\n- \"child processes\"\n- \"tree structure\""
+    },
+    {
+      "id": "shell_name",
+      "tags": ["shell", "etymology", "unix"],
+      "title": "Why It's Called a 'Shell'",
+      "short": "The command-line interface is called a 'shell' because it's the outer layer around the OS kernel.",
+      "full": "## Why It's Called a 'Shell'\n\n### The Biological Metaphor\n\nJust as a nut has a hard **shell** protecting the **kernel** inside, the Unix operating system has:\n- A protective **shell** (what users interact with)\n- A **kernel** (the core of the OS)\n\n### How It Works\n\nThe shell:\n- Interprets your commands\n- Makes system calls to the kernel on your behalf\n- Prevents you from accidentally (or intentionally) damaging the kernel\n\n### Who Named It?\n\n**Louis Pouzin** coined the term \"shell\" in the 1960s for the Multics system. Unix creators adopted it.\n\n### Many Shells, One Purpose\n\nToday there are many shells:\n- `bash`\n- `zsh`\n- `fish`\n- PowerShell\n\nBut they all serve the same purpose: being the protective, user-friendly **outer layer** around the kernel."
+    },
+    {
+      "id": "shell_bourne",
+      "tags": ["shell", "history", "unix"],
+      "title": "The Bourne Shell: Foundation of Modern Shells",
+      "short": "The Bourne shell (sh), created by Stephen Bourne in 1979, became the standard Unix shell.",
+      "full": "## The Bourne Shell: Foundation of Modern Shells\n\n### The Creator\n\n**Stephen Bourne** developed the Bourne shell at Bell Labs in **1979**, replacing the earlier Thompson shell.\n\n### Revolutionary Features\n\nIt introduced many features we take for granted:\n- Shell scripts\n- Command substitution with backticks\n- Proper flow control (`if/then/else`, `while` loops)\n\n### The Standard\n\n- Executable: `/bin/sh`\n- POSIX later standardized shell behavior based heavily on the Bourne shell\n- When a script starts with `#!/bin/sh`, it's invoking this lineage\n\n### Interesting Tidbit\n\nBourne wrote the shell in a **macro-heavy style** that made the C code look like **Algol-68**, his preferred language.\n\n> His coding style was so distinctive that you can spot Bourne shell source code immediately."
+    },
+    {
+      "id": "shell_bash",
+      "tags": ["shell", "etymology", "unix"],
+      "title": "Bash: A Unix Pun in a Name",
+      "short": "Bash stands for 'Bourne Again Shell', a playful religious pun on being 'born again'.",
+      "full": "## Bash: A Unix Pun in a Name\n\n### The Name\n\nWhen **Brian Fox** created a free software replacement for the Bourne shell in **1989** for the GNU Project, he named it the **Bourne Again Shell** - `bash`.\n\n### The Pun\n\nThis is a pun on:\n- **Born again** (Christian term for spiritual rebirth)\n- **Bourne** shell name\n\nThe joke: the Bourne shell is being \"reborn\" as free software.\n\n### The Success\n\nBash quickly became the standard on:\n- Linux systems\n- macOS (until 2019)\n\nAdding features like:\n- Command-line editing\n- Job control\n- Programmable completion\n\n### GNU's Naming Love\n\nThe GNU Project loved recursive and punny names:\n- **GNU** = \"GNU's Not Unix\"\n- **bash** = \"Bourne Again Shell\"\n\n> Probably the most widely used shell in history."
+    },
+    {
+      "id": "shell_zsh",
+      "tags": ["shell", "etymology", "trivia"],
+      "title": "zsh: Named After a Teaching Assistant",
+      "short": "The Z shell (zsh) is named after Zhong Shao, a teaching assistant at Princeton.",
+      "full": "## zsh: Named After a Teaching Assistant\n\n### The Origin\n\n**Paul Falstad** created zsh in **1990** while a student at Princeton. He named it after **Zhong Shao**, his teaching assistant, whose login name was `zsh` on the university computer system.\n\n### The Alphabetical Goal\n\nPaul wanted his shell's name to be the **last word** (alphabetically) in shells:\n- `zsh` came after `bash`, `csh`, `ksh`, and `sh` ✓\n\n### Powerful Features\n\n- Spelling correction\n- Shared command history\n- Themeable prompts (popularized by **Oh My Zsh**)\n\n### Modern Adoption\n\nmacOS switched from `bash` to `zsh` as the default shell in **2019**.\n\n### The Namesake\n\n**Zhong Shao** became a Yale computer science professor specializing in programming languages.\n\n> He likely has the distinction of being the only person with a shell named after them who isn't the shell's author."
+    },
+    {
+      "id": "shell_prompt",
+      "tags": ["shell", "trivia", "unix"],
+      "title": "Why the $ in Your Command Prompt?",
+      "short": "The $ symbol in shell prompts indicates you're a regular user, not root (which uses #).",
+      "full": "## Why the $ in Your Command Prompt?\n\n### The Convention\n\nThe Bourne shell established this tradition:\n- `$` for regular users\n- `#` for root\n\n### The Visual Feedback\n\nGives users instant visual feedback about privilege level:\n- `$` suggests limited powers (like a regular transaction)\n- `#` is sharper and dangerous-looking (warning: root access!)\n\n### Safety Feature\n\nThis small UI decision has prevented countless accidents:\n\n> Seeing `#` makes experienced users pause before running destructive commands.\n\n### Modern Enhancements\n\nModern shells enhance this with:\n- Colors (red for root, green for regular user)\n- Showing username\n- But the `$` and `#` symbols remain nearly universal\n\n### The Icon\n\n`$` is so iconic it's become the symbol for \"command line\" itself in documentation."
+    },
+    {
+      "id": "fs_root",
+      "tags": ["filesystem", "unix", "trivia"],
+      "title": "Why '/' Is the Root Directory",
+      "short": "The forward slash '/' represents the root directory because it's the shortest possible path.",
+      "full": "## Why '/' Is the Root Directory\n\n### The Design\n\nIn Unix's hierarchical filesystem, every file has a path that starts from a single **root**.\n\nThe designers chose `/` as:\n- The path separator **AND**\n- The root directory itself\n\nBecause it was the **simplest possible syntax**.\n\n### Path Types\n\n- **Absolute paths** start with `/`: `/home/user/file.txt`\n- **Relative paths** don't start with slash\n\n### Unix vs Windows\n\nThis differs from Windows:\n- Windows uses backslash `\\` separators (from DOS)\n- Has multiple roots (`C:`, `D:`, etc.)\n\n### The Unix Way Won\n\nThe Unix approach of a **single root** with everything mounted within it proved so elegant that it was adopted by:\n- Linux\n- macOS\n- Android  \n- Web URLs\n\n> Make the common case (absolute paths) as simple as possible."
+    },
+    {
+      "id": "fs_hidden",
+      "tags": ["filesystem", "unix", "trivia"],
+      "title": "Hidden Files: An Accidental Feature",
+      "short": "Files starting with '.' are hidden because of a bug that became a feature.",
+      "full": "## Hidden Files: An Accidental Feature\n\n### The \"Bug\"\n\nThe convention that files starting with `.` are hidden was actually an **accident**.\n\n### What Happened\n\nIn early Unix, the `ls` command needed to skip:\n- `.` (current directory)\n- `..` (parent directory)\n\nTo avoid clutter.\n\n### The Implementation\n\nA programmer implemented this by simply **not displaying any file starting with a period**.\n\nThis made configuration files (like `.profile` or `.bashrc`) invisible by default.\n\n### Bug Becomes Feature\n\nThe \"bug\" was so useful it became a **feature**!\n\n### Today\n\n- To see hidden files: `ls -a` (all files)\n- This accidental design influenced hidden files across **all operating systems**\n\n### The Lesson\n\n> What started as a quick fix to skip directory entries became a fundamental Unix pattern."
+    },
+    {
+      "id": "fs_tmp",
+      "tags": ["filesystem", "unix", "trivia"],
+      "title": "/tmp: The Self-Cleaning Directory",
+      "short": "The /tmp directory stores temporary files that are automatically deleted on reboot.",
+      "full": "## /tmp: The Self-Cleaning Directory\n\n### The Purpose\n\nThe `/tmp` directory is Unix's designated space for **temporary files**. Applications can create files there knowing they'll be cleaned up eventually.\n\n### The Cleanup\n\nMost Unix systems **delete everything** in `/tmp` during reboot (exact timing varies).\n\n### Modern Enhancement: tmpfs\n\nSome modern systems use **tmpfs**, which:\n- Stores `/tmp` in **RAM** instead of disk\n- Makes temporary file access **extremely fast**\n- Files disappear automatically when computer shuts down\n\n### Security: The Sticky Bit\n\nThe `/tmp` directory is:\n- **World-writable** (anyone can create files)\n- Has the **sticky bit** set (users can only delete their own files)\n\nThis prevents malicious users from deleting others' temp files.\n\n### The Philosophy\n\n> Every program needs temporary storage, and managing cleanup is tedious. Let the OS handle it automatically."
+    },
+    {
+      "id": "fs_home",
+      "tags": ["filesystem", "unix", "trivia"],
+      "title": "The ~ Symbol: Your Home Sweet Home",
+      "short": "The tilde '~' is shorthand for your home directory path in Unix shells.",
+      "full": "## The ~ Symbol: Your Home Sweet Home\n\n### What It Represents\n\nThe tilde `~` represents your **home directory**:\n- Linux: `/home/username`\n- macOS: `/Users/username`\n\n### History\n\nPopularized by the **C shell (csh)** in the 1970s and adopted by virtually every Unix shell since.\n\n### Usage\n\n```bash\n# Instead of typing:\ncd /home/username\n\n# Just type:\ncd ~\n\n# Reference other users:\ncd ~otheruser\n```\n\n### Why the Tilde?\n\nChosen because it was:\n- A rarely-used character\n- Didn't conflict with common command syntax\n- Required Shift on old keyboards (harder to type accidentally)\n\n### Impact\n\n> This small convenience feature saves thousands of keystrokes over a career."
+    },
+    {
+      "id": "fs_bin_split",
+      "tags": ["filesystem", "unix", "history"],
+      "title": "The /bin and /usr/bin Mystery",
+      "short": "/bin and /usr/bin split happened because early Unix systems ran out of disk space.",
+      "full": "## The /bin and /usr/bin Mystery\n\n### The Question\n\nWhy does Unix have **both** `/bin` and `/usr/bin` for executables?\n\n### The Historical Reason\n\nIn early Unix:\n- **Root filesystem** (including `/bin`) lived on a **small disk** that could boot quickly\n- **Essential system commands** went in `/bin`: `ls`, `cat`, `sh`\n- **User-space programs** went in `/usr/bin`: compilers, editors\n- `/usr/bin` could be on a **separate, larger disk** that mounted after boot\n\n### The Benefit\n\nThis allowed the system to **boot even if the user disk was unavailable**.\n\n### Today's Reality\n\nOver time, the distinction blurred:\n- Computers have plenty of storage now\n- Historical reason vanished\n- Modern systems often **symlink** `/bin` to `/usr/bin`, merging them\n\n### Why It Persists\n\nThe split persists because of **50 years of scripts** expecting specific paths.\n\n> A fossil of early Unix's disk space constraints, preserved in every Linux system today."
+    },
+    {
+      "id": "modern_tab",
+      "tags": ["terminal", "trivia", "shell"],
+      "title": "Tab Completion: The Feature That Saves Careers",
+      "short": "Tab completion auto-finishes filenames and commands, saving millions of keystrokes.",
+      "full": "## Tab Completion: The Feature That Saves Careers\n\n### The Innovation\n\nIntroduced in the **C shell (csh)** in the late 1970s and refined in `tcsh` and `bash`.\n\n### How It Works\n\nPress **Tab** while typing a filename or command:\n- Shell intelligently completes it, OR\n- Shows options if multiple matches exist\n\n### The Impact\n\nThis might be the **most impactful UI innovation** in command-line history. Without it, typing long file paths would be unbearable.\n\n### Modern Sophistication\n\nModern shells complete:\n- Git branch names\n- Command options\n- Environment variables\n- Context-aware suggestions (like hostnames after `ssh`)\n\n### The Muscle Memory\n\nThe muscle memory of hitting Tab becomes so ingrained that using a shell without completion **feels broken**.\n\n### The Statistics\n\n> Some estimate tab completion has saved humanity **billions of keystrokes**.\n\nNext time you hit Tab, appreciate this 40-year-old UX masterpiece."
+    },
+    {
+      "id": "modern_ctrl_keys",
+      "tags": ["terminal", "trivia", "unix"],
+      "title": "Ctrl-C vs Ctrl-D: Signal vs EOF",
+      "short": "Ctrl-C sends an interrupt signal to kill a program; Ctrl-D signals end-of-file to close input.",
+      "full": "## Ctrl-C vs Ctrl-D: Signal vs EOF\n\nThese two keyboard shortcuts are fundamental to terminal control but do **completely different things**.\n\n### Ctrl-C: Interrupt Signal\n\n- Sends **SIGINT** (interrupt signal) to the foreground process\n- Asks the program to terminate\n- Most programs honor this by shutting down\n- Use: stopping a running script\n\n### Ctrl-D: End of File\n\n- Sends **EOF** (end-of-file) signal\n- Tells a program \"no more input is coming\"\n- At an empty prompt: logs you out (by signaling EOF to the shell)\n- Use: finishing input to a program\n\n### Other Control Keys\n\n- **Ctrl-Z**: suspend process\n- **Ctrl-\\\\**: quit signal\n\n### Historical Note\n\nThese control sequences date back to **ASCII standards from the 1960s** and remain muscle memory for every terminal user.\n\n> Learning these keystrokes is a rite of passage for command-line users."
+    },
+    {
+      "id": "modern_history",
+      "tags": ["shell", "trivia", "unix"],
+      "title": "Command History: Your Personal Time Machine",
+      "short": "Modern shells remember command history, accessible with arrow keys or the 'history' command.",
+      "full": "## Command History: Your Personal Time Machine\n\nShell command history is a feature so essential it's hard to imagine terminals without it, yet **early Unix shells had no history at all**.\n\n### The Introduction\n\nThe **C shell (csh)** introduced command history in **1978**:\n- Recall with arrow keys\n- Use `!` operator:\n  - `!!` - last command\n  - `!grep` - last grep command\n\n### Bash Enhancements\n\n- **Ctrl-R**: reverse-search\n- Type part of a command and find matching history entries\n\n### Where It Lives\n\nYour command history is saved in:\n- `~/.bash_history`\n- `~/.zsh_history`\n\nSome users have **100,000+ entries** spanning years.\n\n### The Power\n\nCombined with Ctrl-R search, this becomes a **personal database** of every command you've ever run.\n\nInvaluable for:\n- Remembering complex commands\n- Investigating what you did last week\n\n### Modern Tools\n\nTools like **fzf** make history search even more powerful with fuzzy matching."
+    },
+    {
+      "id": "dev_shebang",
+      "tags": ["unix", "trivia", "etymology"],
+      "title": "The Shebang: #! Explained",
+      "short": "The '#!' at the start of scripts is called a 'shebang' and tells Unix which interpreter to use.",
+      "full": "## The Shebang: #! Explained\n\nWhen you see `#!/bin/bash` at the top of a script, that `#!` is called a **shebang** (or **hashbang**).\n\n### What It Does\n\nTells the operating system **which interpreter** should run this script:\n- Without it: system doesn't know if file is Python, Bash, Ruby, etc.\n- With it: just run `./script.sh` and the system figures it out\n\n### The Name Origin\n\n- **Sharp** = programmer slang for `#`\n- **Bang** = slang for `!`\n\n### When Was It Added?\n\nAdded to Unix in **1980** to make scripts executable like binaries.\n\n### Technical Requirement\n\nThe shebang **must be the first two bytes** of the file to work.\n\n### Spread\n\nSuch a useful convention that it spread to:\n- Windows PowerShell\n- Many other systems\n\n### Impact\n\n> That simple two-character sequence enables the entire scripting ecosystem."
+    },
+    {
+      "id": "dev_pipe",
+      "tags": ["unix", "history", "culture"],
+      "title": "The Pipe: Unix's Most Powerful Invention",
+      "short": "The pipe operator '|' connects command output to input, enabling Unix's composability.",
+      "full": "## The Pipe: Unix's Most Powerful Invention\n\n**Douglas McIlroy** invented the pipe operator `|` in **1973**, and it fundamentally changed how software works.\n\n### Before Pipes\n\nYou had to save output to temporary files:\n\n```bash\ncommand1 > temp.txt\ncommand2 < temp.txt\n```\n\n### After Pipes\n\nConnect commands directly:\n\n```bash\ncommand1 | command2\n```\n\n### The Philosophy\n\nEnabled the Unix philosophy of **small, focused tools** that combine into powerful workflows.\n\n### Example\n\n```bash\ncat file.txt | grep error | sort | uniq | wc -l\n```\n\nCounts unique error messages without creating any temporary files.\n\n### How It Works\n\nThe pipe creates an **in-memory buffer** between processes.\n\n### Legacy\n\nMcIlroy's idea was so transformative that pipes appear in:\n- PowerShell\n- F# data processing (`|>`)\n- Modern data engineering tools\n\n### Why `|`?\n\nThe vertical bar was chosen because:\n- Visually represents a pipe or conduit\n- Wasn't used for anything else in Unix syntax"
+    }
+  ]
+}
