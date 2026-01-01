@@ -1,0 +1,16 @@
+{
+  "version": "1.0",
+  "course": {
+    "id": "fundamentals",
+    "title": "Terminal Fundamentals",
+    "description": "Learn essential terminal commands in sequential order",
+    "lessons": [
+      { "lessonId": "pwd", "sequence": 1 },
+      { "lessonId": "pwd-l", "sequence": 2 },
+      { "lessonId": "pwd-p", "sequence": 3 },
+      { "lessonId": "cat", "sequence": 4 },
+      { "lessonId": "cat-multiple", "sequence": 5 },
+      { "lessonId": "cat-n", "sequence": 6 }
+    ]
+  }
+}

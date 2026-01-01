@@ -75,3 +75,34 @@ type LessonsData struct {
 	Version string   `json:"version"`
 	Lessons []Lesson `json:"lessons"`
 }
+
+type CourseLesson struct {
+	LessonId string `json:"lessonId"`
+	Sequence int    `json:"sequence"`
+}
+
+type Course struct {
+	ID          string         `json:"id"`
+	Title       string         `json:"title"`
+	Description string         `json:"description"`
+	Lessons     []CourseLesson `json:"lessons"`
+}
+
+type CourseData struct {
+	Version string `json:"version"`
+	Course  Course `json:"course"`
+}
+
+type LessonStatus string
+
+const (
+	LessonLocked   LessonStatus = "locked"
+	LessonUnlocked LessonStatus = "unlocked"
+	LessonComplete LessonStatus = "completed"
+)
+
+type CourseLessonItem struct {
+	Lesson   Lesson
+	Status   LessonStatus
+	Sequence int
+}
