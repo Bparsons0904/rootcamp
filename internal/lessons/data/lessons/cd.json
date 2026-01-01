@@ -1,0 +1,199 @@
+{
+  "version": "1.0",
+  "lessons": [
+    {
+      "id": "cd",
+      "command": "cd",
+      "code": "cd",
+      "title": "Change Directory",
+      "tags": ["navigation", "basics", "filesystem"],
+      "level": "beginner",
+      "module": "navigation",
+      "about": {
+        "what": "The `cd` command lets you **change directory** - moving from one folder to another in the filesystem. It stands for **'change directory'** and is essential for navigating your file system.\n\nThink of your filesystem as a tree of folders. `pwd` tells you where you are, `ls` shows you what's nearby, and `cd` lets you move around. Together, these three commands are the foundation of terminal navigation.\n\nWithout `cd`, you'd be stuck in one location, unable to access files in other directories.",
+        "history": "The `cd` command has existed since the earliest Unix shells in the 1970s. Interestingly, `cd` is not a standalone program like `ls` or `cat` - it's a **shell built-in** command.\n\nThis is because changing directories requires modifying the shell's own state (its current working directory). If `cd` were an external program, it would change that program's directory, not the shell's, and you'd end up right back where you started when the program exited.\n\nThis design decision was made by Ken Thompson when creating the original Unix shell, and it's been part of every shell since - bash, zsh, fish, and others all implement `cd` as a built-in.\n\nThe command is so fundamental that most Unix tutorials start with three commands: `pwd` (where am I?), `ls` (what's here?), and `cd` (go somewhere else).",
+        "example": "```bash\n# Change to a specific directory\ncd documents\ncd /home/user/projects\n\n# Go to parent directory\ncd ..\n\n# Go to home directory\ncd ~\ncd  # cd with no arguments also goes home\n\n# Go to previous directory\ncd -\n\n# Use relative paths\ncd ../other-folder\ncd ../../parent/sibling\n\n# Use absolute paths\ncd /var/log\ncd /usr/local/bin\n```",
+        "commonUses": [
+          "**Project navigation** - Move between different projects and folders",
+          "**Running commands** - Navigate to a directory before running scripts or programs",
+          "**File organization** - Move around while copying, moving, or organizing files",
+          "**Exploring codebases** - Browse project structure to understand organization",
+          "**System administration** - Access log directories, config folders, etc."
+        ]
+      },
+      "hints": [
+        "Use 'cd' followed by the directory name",
+        "First use 'ls' to see what directories are available",
+        "Navigate to the 'secrets' directory to find the code"
+      ],
+      "sandbox": {
+        "startDir": "home",
+        "dirs": [
+          "home",
+          "home/documents",
+          "home/pictures",
+          "home/secrets"
+        ],
+        "files": {
+          "home/README.txt": "Welcome! The secret is hidden in one of the subdirectories.\nUse 'ls' to see what's available, then use 'cd' to navigate.",
+          "home/secrets/code.txt": "Congratulations! You successfully navigated to the secrets directory.\n\n================================\nCOMPLETION CODE: CD-NAVIGATION-SUCCESS\n================================\n\nYou used:\n- ls to see available directories\n- cd to change into the secrets directory\n- pwd to confirm your location (optional)\n- cat to read this file\n\nThese basic navigation commands are the foundation of working in the terminal!"
+        }
+      },
+      "instructions": "## Your Task\n\nNavigate to the `secrets` directory and find the completion code.\n\n**Steps:**\n1. Run `ls` to see the available directories\n2. Use `cd secrets` to change into the secrets directory\n3. Run `ls` again to see what's in the secrets directory\n4. Use `cat code.txt` to view the completion code\n5. Type `exit` and paste the code\n\n**Tip:** You can use `pwd` at any time to check your current location.",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from secrets/code.txt",
+          "validator": "exact",
+          "expected": "CD-NAVIGATION-SUCCESS"
+        }
+      ]
+    },
+    {
+      "id": "cd-parent",
+      "command": "cd",
+      "code": "cd ..",
+      "title": "Navigate to Parent Directory",
+      "tags": ["navigation", "intermediate", "filesystem"],
+      "level": "intermediate",
+      "module": "navigation",
+      "about": {
+        "what": "The `cd ..` command moves you **up one level** to the parent directory. The `..` is a special reference that exists in every directory, pointing to its parent.\n\nEvery directory has two special entries:\n- `.` (single dot) - represents the current directory\n- `..` (double dot) - represents the parent directory\n\nUsing `cd ..` is the most common way to navigate backwards up the directory tree. You can chain them together: `cd ../..` moves up two levels.",
+        "history": "The `.` and `..` convention was introduced in early Unix as a clever way to reference directories relatively. They aren't real files - they're special directory entries maintained by the filesystem.\n\nIn the original Unix filesystem (early 1970s), directories were simple files containing name-to-inode mappings. The filesystem automatically added `.` and `..` entries to every directory:\n- `.` pointed to the directory's own inode  \n- `..` pointed to the parent directory's inode\n\nThis simple design enabled relative navigation without complex path parsing. Want to go up? Just `cd ..`. Want to reference the current directory explicitly? Use `.`\n\nThe pattern was so elegant that every filesystem since has maintained this convention, including modern filesystems like ext4, NTFS, and APFS.\n\nFun fact: The root directory (`/`) is special - its `..` entry points to itself, since it has no parent.",
+        "example": "```bash\n# Go up one level\ncd ..\n\n# Go up two levels\ncd ../..\n\n# Go up and into a sibling directory\ncd ../sibling-folder\n\n# Go up multiple levels and into another path\ncd ../../../other/path\n\n# Common pattern: go up, then into another branch\ncd ../../another-project\n\n# Verify where you are\npwd\ncd ..\npwd  # Now you're one level up\n```",
+        "commonUses": [
+          "**Backing out of directories** - Return to parent folders during navigation",
+          "**Relative navigation** - Move between sibling directories efficiently",
+          "**Script cleanup** - Return to original directory after operations",
+          "**Exploring unfamiliar codebases** - Move up and down the tree while learning structure",
+          "**Quick corrections** - Fix navigation mistakes by backing up"
+        ]
+      },
+      "hints": [
+        "You start deep in the directory tree",
+        "Use 'cd ..' to go up one level",
+        "You may need to go up multiple times - use 'pwd' to check your location"
+      ],
+      "sandbox": {
+        "startDir": "project/src/components/buttons",
+        "dirs": [
+          "project",
+          "project/src",
+          "project/src/components",
+          "project/src/components/buttons",
+          "project/src/utils"
+        ],
+        "files": {
+          "project/secret.txt": "You made it to the project root!\n\n================================\nCOMPLETION CODE: CD-PARENT-CLIMBER\n================================\n\nYou started at: project/src/components/buttons/\nYou needed to: cd ../../../\nYou ended at: project/\n\nThe .. symbol is one of the most useful navigation tools.\nYou can chain it: cd ../../.. to go up multiple levels!",
+          "project/src/components/buttons/README.md": "You're deep in the directory tree.\nUse 'cd ..' multiple times to reach the project root.\nThe secret is in project/secret.txt"
+        }
+      },
+      "instructions": "## Your Task\n\nYou're currently deep in a nested directory structure at `project/src/components/buttons/`. Navigate to the **project root** directory using `cd ..`.\n\n**Steps:**\n1. Run `pwd` to see your current location (you're 3 levels deep)\n2. Use `cd ..` to go up one level to `components/`\n3. Use `cd ..` again to go to `src/`\n4. Use `cd ..` once more to reach `project/` (the root)\n5. Run `ls` to verify - you should see `secret.txt`\n6. Use `cat secret.txt` to get the completion code\n7. Type `exit` and paste the code\n\n**Shortcut:** You can also use `cd ../../..` to go up three levels at once!",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from project root",
+          "validator": "exact",
+          "expected": "CD-PARENT-CLIMBER"
+        }
+      ]
+    },
+    {
+      "id": "cd-previous",
+      "command": "cd",
+      "code": "cd -",
+      "title": "Return to Previous Directory",
+      "tags": ["navigation", "intermediate", "productivity"],
+      "level": "intermediate",
+      "module": "navigation",
+      "about": {
+        "what": "The `cd -` command is a **shortcut** that takes you back to your previous working directory - wherever you were before your last `cd` command.\n\nThe shell keeps track of your previous directory in the `$OLDPWD` environment variable. When you run `cd -`, the shell swaps your current directory (`$PWD`) with your previous directory (`$OLDPWD`).\n\nThis is incredibly useful when you're bouncing between two locations:\n```bash\ncd /var/log      # Go to logs\ncd ~/projects    # Go to projects\ncd -             # Back to /var/log\ncd -             # Back to ~/projects\n```",
+        "history": "The `cd -` feature was introduced in the Korn shell (ksh) in the early 1980s and became popular enough that bash and other shells adopted it.\n\nBefore `cd -`, users had to manually type paths or use complex shell aliases to return to previous directories. David Korn's innovation was to make the shell automatically track the previous directory in `$OLDPWD`.\n\nThe `-` symbol was chosen because it was already used in other Unix commands to mean \"previous\" or \"standard input/output\" (like `tar -` or `diff - file.txt`).\n\nInterestingly, `cd -` also prints the directory it's switching to, which helps you confirm where you ended up. This small usability feature has saved countless users from confusion.\n\nToday, `cd -` is so common that it's one of the first shortcuts experienced terminal users teach to beginners.",
+        "example": "```bash\n# Navigate between two directories\ncd ~/projects\ncd /var/log\ncd -  # Back to ~/projects\ncd -  # Back to /var/log\n\n# Common workflow: check something and return\ncd /etc\n# ... do some work ...\ncd /tmp\n# ... do something else ...\ncd -  # Back to /etc\n\n# Verify the previous directory\necho $OLDPWD\n\n# Use in scripts\noriginal=$(pwd)\ncd /some/path\n# ... do work ...\ncd -  # Return to original location\n```",
+        "commonUses": [
+          "**Toggling between directories** - Quickly switch between two work locations",
+          "**Quick comparisons** - Compare files in different directories",
+          "**Workflow efficiency** - Jump to a location, do something, and jump back",
+          "**Undoing navigation** - Quickly return if you cd'd to the wrong place",
+          "**Script debugging** - Return to previous location after operations"
+        ]
+      },
+      "hints": [
+        "Navigate to different directories in sequence",
+        "Use 'cd -' to jump back to where you were before",
+        "The code is split between two locations - you'll need to visit both"
+      ],
+      "sandbox": {
+        "startDir": "workspace",
+        "dirs": [
+          "workspace",
+          "workspace/location-a",
+          "workspace/location-b"
+        ],
+        "files": {
+          "workspace/README.txt": "The completion code is split between two directories.\n\nFirst part is in: location-a/part1.txt\nSecond part is in: location-b/part2.txt\n\nUse cd - to navigate efficiently between them!",
+          "workspace/location-a/part1.txt": "First part of the code: CD-DASH",
+          "workspace/location-b/part2.txt": "Second part of the code: MASTER-TOGGLE\n\nCombine both parts: PART1-PART2"
+        }
+      },
+      "instructions": "## Your Task\n\nThe completion code is split between two directories. Use `cd -` to efficiently navigate between them.\n\n**Steps:**\n1. Run `cat README.txt` to see the task\n2. Navigate to location-a: `cd location-a`\n3. Read part1.txt: `cat part1.txt` (remember this code)\n4. Navigate to location-b: `cd ../location-b`\n5. Read part2.txt: `cat part2.txt` (remember this code)\n6. Use `cd -` to go back to location-a (optional: verify with `pwd`)\n7. Use `cd -` again to return to location-b\n8. Combine both parts in format: `PART1-PART2`\n9. Type `exit` and enter the combined code\n\n**Learn:** `cd -` toggles between your current and previous directories!",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "Combined code from both locations",
+          "validator": "exact",
+          "expected": "CD-DASH-MASTER-TOGGLE"
+        }
+      ]
+    },
+    {
+      "id": "cd-absolute-relative",
+      "command": "cd",
+      "code": "cd (paths)",
+      "title": "Absolute vs Relative Paths",
+      "tags": ["navigation", "intermediate", "filesystem", "paths"],
+      "level": "intermediate",
+      "module": "navigation",
+      "about": {
+        "what": "When using `cd`, you can specify paths in two ways:\n\n**Absolute paths** start from the root (`/`) and describe the complete location:\n- `/home/user/documents`\n- `/var/log/nginx`\n- Always start with `/`\n- Work from anywhere\n\n**Relative paths** start from your current location:\n- `documents/reports`\n- `../sibling-folder`\n- `../../parent-folder`\n- Shorter but context-dependent\n\nUnderstanding when to use each type is crucial for efficient navigation and writing portable scripts.",
+        "history": "The distinction between absolute and relative paths has existed since the earliest filesystems in the 1960s-70s.\n\nEarly Unix (1969-1971) established the `/` (slash) as the root of the filesystem tree. Any path starting with `/` was absolute - describing the complete route from root to destination. Paths without a leading `/` were interpreted relative to the current directory.\n\nThis design was influenced by Multics (Unix's predecessor), which pioneered hierarchical filesystems. The Unix creators simplified Multics' approach, making the distinction between absolute and relative paths intuitive:\n- Starts with `/`? Absolute.\n- Doesn't start with `/`? Relative.\n\nThe `.` and `..` special directories (introduced in early Unix) made relative paths more powerful, enabling navigation like `../../../other/location`.\n\nThis simple, elegant system has remained unchanged for over 50 years and is used by virtually every modern operating system.",
+        "example": "```bash\n# Absolute paths (start with /)\ncd /home/user/projects\ncd /var/log\ncd /usr/local/bin\n\n# Relative paths (from current location)\ncd documents\ncd ../other-folder\ncd ../../parent/sibling\n\n# Combining both\npwd  # /home/user\ncd projects/web-app        # Relative\ncd /home/user/projects     # Absolute (same result)\n\n# In scripts: absolute paths are more reliable\ncd /opt/myapp/logs  # Always works\ncd logs             # Only works if you're in /opt/myapp\n\n# Relative paths are shorter for nearby locations\ncd ../../../../../../../  # Go up many levels\ncd /                      # Easier: just go to root\n```",
+        "commonUses": [
+          "**Absolute paths** - Scripts, automation, and unambiguous navigation",
+          "**Relative paths** - Quick navigation, shorter commands, context-aware movement",
+          "**Script portability** - Use `cd \"$(dirname \"$0\")\"` to make scripts location-independent",
+          "**Configuration** - Absolute paths in configs ensure services start correctly",
+          "**Daily work** - Mix both: absolute for known locations, relative for nearby navigation"
+        ]
+      },
+      "hints": [
+        "Read the instructions file to understand the path structure",
+        "Try navigating using both absolute and relative paths",
+        "The absolute path starts from the sandbox root"
+      ],
+      "sandbox": {
+        "startDir": "tutorial",
+        "dirs": [
+          "tutorial",
+          "tutorial/basics",
+          "tutorial/advanced",
+          "vault",
+          "vault/treasure"
+        ],
+        "files": {
+          "tutorial/instructions.txt": "Your mission: Navigate to /vault/treasure\n\nYou can use either:\n\nRelative path from here:\n  cd ../../vault/treasure\n\nAbsolute path (see your sandbox path with pwd):\n  cd /tmp/rootcamp-{uuid}/vault/treasure\n\nTry both methods to understand the difference!",
+          "vault/treasure/prize.txt": "Congratulations! You've mastered path navigation.\n\n================================\nCOMPLETION CODE: CD-PATHS-EXPERT\n================================\n\nYou learned:\n\n✓ Absolute paths - Start with / and work from anywhere\n  Example: cd /tmp/rootcamp-abc12/vault/treasure\n\n✓ Relative paths - Start from current location  \n  Example: cd ../../vault/treasure\n\nAbsolute paths are:\n- Unambiguous and always work\n- Longer to type\n- Better for scripts and automation\n\nRelative paths are:\n- Shorter and quicker for nearby navigation\n- Context-dependent (rely on current location)\n- Great for interactive use\n\nMost terminal users mix both strategies!"
+        }
+      },
+      "instructions": "## Your Task\n\nNavigate to the `vault/treasure` directory using **either** an absolute or relative path.\n\n**Method 1 - Relative Path:**\n1. Run `pwd` to see you're in `tutorial/`\n2. Navigate with: `cd ../vault/treasure`\n   - `..` goes up to sandbox root\n   - `vault/treasure` goes into the vault\n\n**Method 2 - Absolute Path:**\n1. Run `pwd` to see your full sandbox path\n2. Navigate with: `cd /tmp/rootcamp-XXXXX/vault/treasure`\n   - Replace XXXXX with your actual sandbox ID from pwd\n\n**Either method works!**\n\n3. Run `cat prize.txt` to get the code\n4. Type `exit` and paste the code\n\n**Learn:** Absolute paths start with `/` and work from anywhere. Relative paths start from your current location.",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The code from vault/treasure/prize.txt",
+          "validator": "exact",
+          "expected": "CD-PATHS-EXPERT"
+        }
+      ]
+    }
+  ]
+}

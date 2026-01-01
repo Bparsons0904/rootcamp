@@ -1,0 +1,184 @@
+{
+  "version": "1.0",
+  "lessons": [
+    {
+      "id": "ls",
+      "command": "ls",
+      "code": "ls",
+      "title": "List Directory Contents",
+      "tags": ["navigation", "basics", "filesystem"],
+      "level": "beginner",
+      "module": "navigation",
+      "about": {
+        "what": "The `ls` command **lists** the contents of a directory - showing you what files and folders are present. It stands for **'list'** and is one of the most frequently used commands in the terminal.\n\nThink of `ls` as opening a folder in your file browser - it shows you what's inside. By default, it lists the contents of your current directory, but you can also list any other directory by providing its path.\n\nWithout `ls`, you'd be navigating blind, not knowing what files exist in each location.",
+        "history": "The `ls` command has been part of Unix since Version 1 in 1971, making it one of the original Unix commands alongside `cat`, `cp`, and `mv`.\n\nIn the earliest Unix systems, the command was even simpler - just `ls` with no options. As Unix evolved through the 1970s and 1980s, various flags were added (`-l`, `-a`, `-t`, etc.) to meet different needs.\n\nInterestingly, `ls` was originally written in assembly language for the PDP-7 computer. It's been rewritten many times since, but the core behavior remains the same as it was 50+ years ago.\n\nThe command is so fundamental that it's often the first command new users learn, right after `pwd`. Every Unix-like system - Linux, macOS, BSD - includes `ls` as a core utility.",
+        "example": "```bash\n# List current directory\nls\n\n# List a specific directory\nls /home/user/documents\n\n# List with wildcards\nls *.txt\nls project-*\n\n# Common usage in scripts\nif ls *.log 1> /dev/null 2>&1; then\n    echo \"Log files found\"\nfi\n```",
+        "commonUses": [
+          "**Exploring directories** - See what files and folders are in a location",
+          "**Finding files** - Check if a specific file exists before using it",
+          "**Checking script output** - Verify that programs created expected files",
+          "**File management** - See what's present before copying, moving, or deleting",
+          "**Learning a codebase** - Browse project structure to understand organization"
+        ]
+      },
+      "hints": [
+        "Just type 'ls' and press Enter",
+        "Look at the list of files - one of them contains the code",
+        "Use 'cat filename' to view the contents of files"
+      ],
+      "sandbox": {
+        "startDir": "workspace",
+        "dirs": ["workspace"],
+        "files": {
+          "workspace/README.md": "# Welcome to the workspace\n\nThis directory contains several files.",
+          "workspace/notes.txt": "Just some notes here.\nNothing important.",
+          "workspace/secret.txt": "You found it!\n\nCompletion Code: LS-BASIC-COMPLETE",
+          "workspace/todo.txt": "Things to do:\n- Learn ls command\n- Practice file navigation"
+        }
+      },
+      "instructions": "## Your Task\n\nYou're in the `workspace` directory. Use `ls` to see what files are present, then find and read the file that contains your completion code.\n\n**Steps:**\n1. Run `ls` to see the files in this directory\n2. Find the file that might contain the secret code (hint: check the filename)\n3. Use `cat <filename>` to view its contents\n4. Copy the completion code\n5. Type `exit` and paste the code",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from secret.txt",
+          "validator": "exact",
+          "expected": "LS-BASIC-COMPLETE"
+        }
+      ]
+    },
+    {
+      "id": "ls-l",
+      "command": "ls",
+      "code": "ls -l",
+      "title": "Long Format Listing",
+      "tags": ["navigation", "intermediate", "filesystem", "permissions"],
+      "level": "intermediate",
+      "module": "navigation",
+      "about": {
+        "what": "The `ls -l` command displays directory contents in **long format**, showing detailed information about each file:\n\n- **Permissions** - Who can read, write, or execute the file\n- **Link count** - Number of hard links to the file\n- **Owner** - The user who owns the file\n- **Group** - The group that owns the file\n- **Size** - File size in bytes\n- **Modified date** - When the file was last changed\n- **Name** - The filename\n\nThis detailed view is essential for understanding file properties, debugging permission issues, and managing systems.",
+        "history": "The `-l` (long format) flag was added early in Unix history when users needed to see file permissions and ownership.\n\nIn early multi-user Unix systems (1970s), permission management was critical - multiple users shared the same computer, and you needed to control who could access your files. The long format made it easy to see at a glance:\n- Who owns a file\n- What permissions are set\n- How large files are\n- When they were last modified\n\nThe format became standardized across Unix variants and remains virtually unchanged today. Every system administrator and developer learns to read `ls -l` output as a fundamental skill.\n\nFun fact: The permissions string (like `rwxr-xr-x`) is so iconic that experienced users can \"read\" it instantly, parsing permissions in milliseconds.",
+        "example": "```bash\n# Long format listing\nls -l\n# Output:\n# -rw-r--r-- 1 user group  1024 Dec 31 10:30 file.txt\n# drwxr-xr-x 2 user group  4096 Dec 31 09:15 mydir\n\n# Breaking down the output:\n# -rw-r--r--  = permissions (file type + rwx for user/group/others)\n# 1           = number of links\n# user        = owner\n# group       = group owner\n# 1024        = size in bytes\n# Dec 31 10:30 = modification time\n# file.txt    = filename\n\n# List specific directory in long format\nls -l /var/log\n\n# Combine with other flags\nls -la  # Long format + hidden files\nls -lh  # Long format + human-readable sizes\nls -lt  # Long format + sort by time\n```",
+        "commonUses": [
+          "**Checking permissions** - Diagnose why a file can't be read or executed",
+          "**Finding large files** - See file sizes to identify space hogs",
+          "**Sorting by date** - Find recently modified files (with `-lt`)",
+          "**Verifying ownership** - Ensure files have correct user/group",
+          "**System administration** - Essential for managing servers and permissions"
+        ]
+      },
+      "hints": [
+        "Use 'ls -l' to see detailed file information",
+        "Look at the file sizes (the number before the date)",
+        "The largest file contains your code"
+      ],
+      "sandbox": {
+        "startDir": "data",
+        "dirs": ["data"],
+        "files": {
+          "data/small.txt": "Tiny file",
+          "data/medium.txt": "This is a medium-sized file with some content.\nIt has multiple lines.\nBut it's not the biggest.",
+          "data/large.txt": "This is the largest file in the directory.\n\nIt contains your completion code.\n\n=================================\nCODE: LS-LONG-FORMAT-MASTER\n=================================\n\nThe -l flag shows you file details including size,\nwhich helped you find this file!\n\nPermissions, ownership, size, and modification time\nare all visible in long format.",
+          "data/tiny.txt": "Hi"
+        }
+      },
+      "instructions": "## Your Task\n\nUse `ls -l` to view detailed information about the files in this directory. The **largest file** contains your completion code.\n\n**Steps:**\n1. Run `ls -l` to see the long format listing\n2. Look at the file sizes (the number in bytes, shown before the date)\n3. Identify which file is the largest\n4. Use `cat <filename>` to view the largest file\n5. Copy the completion code\n6. Type `exit` and paste the code\n\n**Learn:** The long format shows file size, permissions, owner, and modification time.",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The code from the largest file",
+          "validator": "exact",
+          "expected": "LS-LONG-FORMAT-MASTER"
+        }
+      ]
+    },
+    {
+      "id": "ls-a",
+      "command": "ls",
+      "code": "ls -a",
+      "title": "Show Hidden Files",
+      "tags": ["navigation", "intermediate", "filesystem", "hidden-files"],
+      "level": "intermediate",
+      "module": "navigation",
+      "about": {
+        "what": "The `ls -a` command shows **all** files, including hidden ones. In Unix/Linux, any file or directory that starts with a dot (`.`) is considered hidden and won't show up in a regular `ls` listing.\n\nHidden files typically store:\n- **Configuration files** - `.bashrc`, `.zshrc`, `.gitconfig`\n- **Application data** - `.cache`, `.config`, `.ssh`\n- **Git repository data** - `.git` directory\n- **Environment settings** - `.env` files\n\nThe `-a` flag reveals these hidden files, which is essential for configuration, debugging, and understanding your system.",
+        "history": "The convention of hiding files that start with a dot was actually a **bug** that became a feature!\n\nIn early Unix, directories contained special entries `.` (current directory) and `..` (parent directory). The `ls` command was modified to skip any filename starting with `.` to avoid showing these entries in every listing, as they cluttered the output.\n\nUsers quickly realized this was useful and started naming configuration files with a leading dot to keep them hidden. By the mid-1970s, this had become a deliberate convention.\n\nDot files became the standard way to store user configurations, keeping home directories clean while still allowing easy access when needed. Today, almost every Unix tool stores its config as a dot file.\n\nThe `-a` flag (\"all\") was added to explicitly show these hidden files when you need to see or edit them.",
+        "example": "```bash\n# Show all files including hidden\nls -a\n\n# Combine with long format\nls -la\n\n# Common pattern: find hidden config files\nls -a ~/\n# Shows: .bashrc .zshrc .gitconfig .ssh/ etc.\n\n# List hidden files only\nls -d .*\n\n# Useful for debugging\nls -la  # Check if .env file exists\nls -a | grep git  # Find git-related hidden files\n```",
+        "commonUses": [
+          "**Finding config files** - Access `.bashrc`, `.gitconfig`, and other settings",
+          "**Checking for .env files** - Locate environment variable files in projects",
+          "**Git repository work** - See the `.git` directory and `.gitignore` files",
+          "**Debugging issues** - Find hidden cache or config files causing problems",
+          "**System administration** - View all files including hidden system files"
+        ]
+      },
+      "hints": [
+        "Use 'ls -a' to see ALL files, including hidden ones",
+        "Hidden files start with a dot (.)",
+        "Look for a file that doesn't appear with regular 'ls'"
+      ],
+      "sandbox": {
+        "startDir": "project",
+        "dirs": ["project"],
+        "files": {
+          "project/README.md": "# Project Files\n\nThis directory contains visible and hidden files.",
+          "project/main.py": "# Main application file\nprint('Hello, World!')",
+          "project/.env": "# Environment configuration\nSECRET_KEY=abc123\nDEBUG=true",
+          "project/.hidden-secret": "You found the hidden file!\n\n============================\nCODE: LS-ALL-FILES-FOUND\n============================\n\nHidden files (starting with a dot) are commonly used for:\n- Configuration (.bashrc, .gitconfig)\n- Environment variables (.env)\n- Git data (.git directory)\n- Application caches (.cache)\n\nAlways use ls -a when looking for config files!"
+        }
+      },
+      "instructions": "## Your Task\n\nSome files are **hidden** and won't show up with regular `ls`. Use `ls -a` to reveal them and find the completion code.\n\n**Steps:**\n1. First run `ls` to see the visible files\n2. Now run `ls -a` to see ALL files including hidden ones\n3. Notice the files starting with a dot (.) - these are hidden\n4. Find the hidden file that contains the secret code\n5. Use `cat <filename>` to view it\n6. Copy the completion code\n7. Type `exit` and paste the code\n\n**Remember:** Hidden files start with a dot and are only visible with `ls -a`",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The code from the hidden file",
+          "validator": "exact",
+          "expected": "LS-ALL-FILES-FOUND"
+        }
+      ]
+    },
+    {
+      "id": "ls-lh",
+      "command": "ls",
+      "code": "ls -lh",
+      "title": "Human-Readable Sizes",
+      "tags": ["navigation", "intermediate", "filesystem"],
+      "level": "intermediate",
+      "module": "navigation",
+      "about": {
+        "what": "The `ls -lh` command combines two flags:\n- `-l` for long format (detailed information)\n- `-h` for **human-readable** file sizes\n\nInstead of showing sizes in bytes (like `1048576`), the `-h` flag displays them in KB, MB, GB, etc. (like `1.0M`). This makes it much easier to quickly understand file sizes at a glance.\n\nThis is especially useful when:\n- Finding large files that are taking up space\n- Comparing file sizes\n- Managing disk usage\n- Working with media files, databases, or archives",
+        "history": "The `-h` (human-readable) flag was added to GNU coreutils in the late 1990s as hard drives grew larger and file sizes became harder to comprehend in raw bytes.\n\nIn the early Unix days, files were typically measured in kilobytes. A 10KB file was considered reasonable, and users could easily compare sizes like `1024` vs `2048` bytes.\n\nBut as storage grew, files expanded to megabytes, gigabytes, and beyond. Seeing `1073741824` bytes for a 1GB file became impractical. The `-h` flag was introduced to automatically choose appropriate units:\n- Bytes for small files\n- K (kilobytes) for medium files  \n- M (megabytes) for large files\n- G (gigabytes) for very large files\n- T (terabytes) for huge files\n\nToday, `-lh` is one of the most common flag combinations, as it provides the perfect balance of detailed information in a readable format.",
+        "example": "```bash\n# Long format with human-readable sizes\nls -lh\n# Output:\n# -rw-r--r-- 1 user group  1.5K Dec 31 10:30 small.txt\n# -rw-r--r-- 1 user group  2.3M Dec 31 10:31 image.jpg\n# -rw-r--r-- 1 user group  1.2G Dec 31 10:32 video.mp4\n\n# Compare with regular -l (bytes only)\nls -l\n# -rw-r--r-- 1 user group  1536 Dec 31 10:30 small.txt\n# -rw-r--r-- 1 user group  2411520 Dec 31 10:31 image.jpg\n# -rw-r--r-- 1 user group  1288490189 Dec 31 10:32 video.mp4\n\n# Find large files in a directory\nls -lhS  # Sort by size, largest first\nls -lht  # Sort by time, most recent first\n\n# Common usage\nls -lha  # Long format, human sizes, all files (including hidden)\n```",
+        "commonUses": [
+          "**Disk space management** - Quickly identify large files using space",
+          "**File comparison** - See relative sizes of files at a glance",
+          "**Media file work** - Check sizes of videos, images, or audio files",
+          "**Database management** - Monitor database file growth",
+          "**Download verification** - Check downloaded file sizes match expected values"
+        ]
+      },
+      "hints": [
+        "Use 'ls -lh' to see file sizes in human-readable format (KB, MB, GB)",
+        "Look for the file that's in megabytes (M), not bytes or kilobytes",
+        "The largest file contains your code"
+      ],
+      "sandbox": {
+        "startDir": "media",
+        "dirs": ["media"],
+        "files": {
+          "media/thumbnail.jpg": "Small thumbnail image - just a few bytes",
+          "media/document.pdf": "A medium-sized PDF document.\nIt contains several pages of text and some images.\nThis file is measured in kilobytes.",
+          "media/archive.zip": "This is a large archive file that would be measured in megabytes.\n\nInside this archive is your completion code:\n\n=============================================\nCOMPLETION CODE: LS-HUMAN-READABLE-EXPERT\n=============================================\n\nThe -h flag makes file sizes easy to read:\n- Bytes for tiny files\n- K for kilobytes  \n- M for megabytes\n- G for gigabytes\n\nThis helps you quickly find large files and manage disk space!\n\nWhen combined with -l, you get detailed info in a readable format.\nMost users run 'ls -lh' or 'ls -lha' by default.\n\n" + ("X" * 1000)
+        }
+      },
+      "instructions": "## Your Task\n\nUse `ls -lh` to see file sizes in an easy-to-read format. Find the largest file (measured in kilobytes or megabytes, not bytes) and retrieve the code.\n\n**Steps:**\n1. Run `ls -lh` to see file sizes in human-readable format (KB, MB, GB)\n2. Compare the file sizes - look for K (kilobytes) or M (megabytes)\n3. Identify the largest file\n4. Use `cat <filename>` to view it\n5. Copy the completion code\n6. Type `exit` and paste the code\n\n**Compare:** Try `ls -l` first to see raw bytes, then `ls -lh` to see the difference!",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The code from the largest file",
+          "validator": "exact",
+          "expected": "LS-HUMAN-READABLE-EXPERT"
+        }
+      ]
+    }
+  ]
+}

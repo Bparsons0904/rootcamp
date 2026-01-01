@@ -44,6 +44,7 @@ type Lesson struct {
 	Module       string         `json:"module"`
 	About        LessonAbout    `json:"about"`
 	Hints        []string       `json:"hints"`
+	SkipSandbox  bool           `json:"skipSandbox,omitempty"`
 	Sandbox      SandboxConfig  `json:"sandbox"`
 	Instructions string         `json:"instructions"`
 	Requirements []Requirement  `json:"requirements"`

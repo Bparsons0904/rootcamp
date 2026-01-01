@@ -1,0 +1,135 @@
+{
+  "version": "1.0",
+  "lessons": [
+    {
+      "id": "cat",
+      "command": "cat",
+      "code": "cat",
+      "title": "Concatenate and Display Files",
+      "tags": ["basics", "files", "reading"],
+      "level": "beginner",
+      "module": "file-operations",
+      "about": {
+        "what": "The `cat` command displays the contents of files in your terminal. The name stands for **'concatenate'** because it can combine multiple files, but its most common use is simply viewing what's inside a single file.\n\nThink of `cat` as opening a file and reading it out loud. It's one of the most frequently used commands for quickly checking file contents without opening an editor.",
+        "history": "The `cat` command has been part of Unix since Version 1 in 1971, making it one of the oldest Unix commands still in everyday use.\n\nIt was created by Ken Thompson and Dennis Ritchie (the inventors of Unix) as a simple utility to concatenate files - hence the name. In the early days of Unix, combining text files was a common task for processing data.\n\nThe name caused some confusion over the years because most people use it to view a single file, not to concatenate multiple files. But by the time this became the primary use case, the name was already established and couldn't be changed without breaking thousands of scripts.\n\nInterestingly, `cat` became so ubiquitous that \"catting a file\" became common programmer slang for viewing file contents.",
+        "example": "```bash\n# View a single file\ncat README.txt\n\n# Concatenate multiple files\ncat file1.txt file2.txt file3.txt\n\n# Display with line numbers\ncat -n script.sh\n\n# Show non-printing characters\ncat -A config.txt\n\n# Combine files and save to new file\ncat header.txt body.txt footer.txt > complete.txt\n\n# Append to existing file\ncat additional.txt >> existing.txt\n```",
+        "commonUses": [
+          "**Quick file viewing** - See what's in a file without opening an editor",
+          "**Combining files** - Merge multiple files into one output",
+          "**Creating simple files** - Use with redirection to write quick text files",
+          "**Piping to other commands** - Feed file contents to grep, sed, or other tools",
+          "**Debugging scripts** - Check file contents during troubleshooting"
+        ]
+      },
+      "hints": [
+        "Use 'cat' followed by the filename: cat welcome.txt",
+        "Make sure you're spelling the filename exactly right - Linux is case-sensitive",
+        "The output will show the file contents - copy exactly what you see"
+      ],
+      "sandbox": {
+        "startDir": "documents",
+        "dirs": ["documents"],
+        "files": {
+          "documents/welcome.txt": "Congratulations! You've successfully used the cat command.\n\nYour secret completion code is: CAT-2024-SUCCESS\n\nThe cat command is one of the most useful tools in your terminal toolkit.",
+          "documents/notes.txt": "This is just a decoy file.\nNothing important here!",
+          "documents/README.md": "# Sample Directory\n\nThis directory contains example files for practicing the cat command."
+        }
+      },
+      "instructions": "## Your Task\n\nYou're in the `documents` directory with several text files. Your goal is to use the `cat` command to view the contents of `welcome.txt`.\n\n**Steps:**\n1. Run `cat welcome.txt` to display its contents\n2. Look for the secret completion code in the output\n3. Type `exit` to return to Root Camp\n4. Enter the completion code you found\n\n**Tip:** The code will be in the format: `CAT-XXXX-XXXXXX`",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The secret code from welcome.txt",
+          "validator": "exact",
+          "expected": "CAT-2024-SUCCESS"
+        }
+      ]
+    },
+    {
+      "id": "cat-multiple",
+      "command": "cat",
+      "code": "cat (multiple files)",
+      "title": "Concatenate Multiple Files",
+      "tags": ["intermediate", "files", "concatenation"],
+      "level": "intermediate",
+      "module": "file-operations",
+      "about": {
+        "what": "When you pass multiple filenames to `cat`, it **concatenates** them - combining them one after another in the order you specify. This is the original purpose that gave `cat` its name.\n\nThe real power comes when you use the `>` redirect operator to save the merged output to a new file:\n```bash\ncat file1.txt file2.txt file3.txt > combined.txt\n```\n\nThis creates a new file containing all the contents merged together. It's incredibly useful for merging data, combining logs, or assembling documents from parts.",
+        "history": "File concatenation was essential in early Unix workflows. Before databases and structured file formats became common, text processing involved combining many small files.\n\nTypical 1970s Unix workflows:\n- Generating reports by combining headers, data, and footers\n- Processing log files split by date or system\n- Building documentation from modular sections\n- Creating configuration files from templates and custom settings\n\nThe `>` redirect operator (introduced in the original Unix shell) made this workflow powerful: combine files with `cat`, redirect to a new file, then process it further. Combined with pipes and redirection, it enabled complex text processing without special tools.",
+        "example": "```bash\n# Combine files and save result\ncat part1.txt part2.txt part3.txt > complete.txt\n\n# Build a document from sections\ncat header.md content.md footer.md > article.md\n\n# Combine logs chronologically\ncat log-2024-01.txt log-2024-02.txt log-2024-03.txt > q1-logs.txt\n\n# Merge with redirection to append\ncat new-data.txt >> existing-data.txt\n\n# Common pattern: merge then view\ncat intro.txt body.txt outro.txt > final.txt\ncat final.txt  # View the merged result\n```",
+        "commonUses": [
+          "**Merging data files** - Combine CSVs, logs, or text files into one",
+          "**Building documents** - Assemble reports from modular sections",
+          "**Config file management** - Merge base configs with custom overrides",
+          "**Log file analysis** - Combine logs from different time periods or sources",
+          "**Data preparation** - Merge split files before processing"
+        ]
+      },
+      "hints": [
+        "Use redirection: cat file1 file2 file3 > newfile.txt",
+        "The > operator saves the combined output to a new file",
+        "After creating the combined file, use cat to view it and copy the code"
+      ],
+      "sandbox": {
+        "startDir": "project",
+        "dirs": ["project"],
+        "files": {
+          "project/header.txt": "=================================\n   SECRET MESSAGE ARCHIVE\n=================================\n",
+          "project/message.txt": "Your completion code is:\n\nCAT-REDIRECT-MASTER-2024\n",
+          "project/footer.txt": "\n=================================\nEnd of transmission.\n================================="
+        }
+      },
+      "instructions": "## Your Task\n\nYou have three files that need to be combined: `header.txt`, `message.txt`, and `footer.txt`.\n\n**Steps:**\n1. Concatenate all three files and redirect the output to a new file:\n   ```\n   cat header.txt message.txt footer.txt > complete.txt\n   ```\n2. View the new combined file:\n   ```\n   cat complete.txt\n   ```\n3. Copy the completion code from the output\n4. Type `exit` and paste the code\n\n**This teaches you:** The power of `cat` for merging files plus the `>` redirect operator for saving output to files.",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The secret code from the combined file",
+          "validator": "exact",
+          "expected": "CAT-REDIRECT-MASTER-2024"
+        }
+      ]
+    },
+    {
+      "id": "cat-n",
+      "command": "cat",
+      "code": "cat -n",
+      "title": "Display with Line Numbers",
+      "tags": ["intermediate", "files", "line-numbers"],
+      "level": "intermediate",
+      "module": "file-operations",
+      "about": {
+        "what": "The `cat -n` flag adds **line numbers** to the output. Each line is prefixed with its line number, making it easy to reference specific lines when discussing code, debugging, or analyzing files.\n\nLine numbers start at 1 and increment for every line, including blank lines. This is especially useful when:\n- Discussing code with teammates (\"check line 42\")\n- Debugging error messages that reference line numbers\n- Analyzing log files or data files\n- Understanding file structure at a glance",
+        "history": "The `-n` flag was added to `cat` in early Unix to support text editing and programming workflows. Before graphical IDEs, programmers worked entirely in terminals.\n\nWhen error messages said \"syntax error on line 127\", you needed a quick way to find that line. You could:\n1. Open the file in `ed` or `vi` and jump to that line\n2. Use `cat -n` to display the file with numbers\n3. Use `sed -n '127p'` to print just that line\n\nThe `-n` flag made code review and debugging much faster. Combined with `grep`, it became a powerful tool for finding and referencing specific lines in large files.",
+        "example": "```bash\n# Show file with line numbers\ncat -n script.py\n\n# Find specific error line in code\ncat -n app.js | grep -A 2 -B 2 'function processData'\n\n# Number lines in multiple files\ncat -n *.txt\n\n# Compare with -b (number only non-blank lines)\ncat -b document.txt\n\n# Save numbered output to new file\ncat -n source.txt > numbered-source.txt\n\n# Debug configuration files\ncat -n /etc/ssh/sshd_config | grep -i port\n```",
+        "commonUses": [
+          "**Code debugging** - Find the exact line mentioned in error messages",
+          "**Code review** - Reference specific lines when discussing changes",
+          "**Log analysis** - Track line positions in log files",
+          "**Documentation** - Include line numbers when explaining code in tutorials",
+          "**File comparison** - Easier to spot differences when lines are numbered"
+        ]
+      },
+      "hints": [
+        "Use the -n flag: cat -n filename.txt",
+        "Look for the line that contains the secret code",
+        "Pay attention to the line number - that's part of your answer"
+      ],
+      "sandbox": {
+        "startDir": "code",
+        "dirs": ["code"],
+        "files": {
+          "code/program.py": "# Python Program Example\n# This file demonstrates the cat -n command\n\ndef main():\n    print('Hello, World!')\n\n# Secret code is on line 7\n# CODE: LINE-7-FOUND\n\nif __name__ == '__main__':\n    main()"
+        }
+      },
+      "instructions": "## Your Task\n\nUse `cat -n` to display the `program.py` file with line numbers.\n\n**Steps:**\n1. Run `cat -n program.py`\n2. Look at the line numbers on the left side of the output\n3. Find the line that contains the secret code (hint: the file tells you which line to look at)\n4. Copy the code exactly as shown\n5. Type `exit` and enter the code\n\n**Note:** The `-n` flag adds line numbers to every line of output.",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The secret code from the numbered file",
+          "validator": "exact",
+          "expected": "LINE-7-FOUND"
+        }
+      ]
+    }
+  ]
+}

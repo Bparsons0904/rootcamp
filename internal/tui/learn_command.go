@@ -3,9 +3,12 @@ package tui
 import (
 	"database/sql"
 	"fmt"
+	"math/rand"
 	"os"
 	"os/exec"
+	"runtime"
 	"strings"
+	"time"
 
 	"github.com/bobparsons/rootcamp/internal/db"
 	"github.com/bobparsons/rootcamp/internal/lab"
@@ -45,6 +48,7 @@ type LearnCommandModel struct {
 	feedback         string
 	currentLesson    *types.Lesson
 	settings         *types.Settings
+	generatedSecret  string
 }
 
 func NewLearnCommandModel(database *sql.DB) LearnCommandModel {
@@ -138,6 +142,35 @@ func formatLessonAbout(lesson types.Lesson) string {
 	return strings.Join(parts, "\n")
 }
 
+func generateSecretCode() string {
+	const charset = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
+	const length = 12
+	rng := rand.New(rand.NewSource(time.Now().UnixNano()))
+	b := make([]byte, length)
+	for i := range b {
+		b[i] = charset[rng.Intn(len(charset))]
+	}
+	result := string(b)
+	return result[:4] + "-" + result[4:8] + "-" + result[8:]
+}
+
+func getOSShortcuts() (copy, paste string) {
+	if runtime.GOOS == "darwin" {
+		return "Cmd + C", "Cmd + V"
+	}
+	return "Ctrl + Shift + C", "Ctrl + Shift + V"
+}
+
+func replacePlaceholders(text, secretCode string) string {
+	copyShortcut, pasteShortcut := getOSShortcuts()
+
+	text = strings.ReplaceAll(text, "{SECRET_CODE}", secretCode)
+	text = strings.ReplaceAll(text, "{COPY_SHORTCUT}", copyShortcut)
+	text = strings.ReplaceAll(text, "{PASTE_SHORTCUT}", pasteShortcut)
+
+	return text
+}
+
 func (m LearnCommandModel) Init() tea.Cmd {
 	return nil
 }
@@ -189,6 +222,11 @@ func (m *LearnCommandModel) Update(msg tea.Msg) (*LearnCommandModel, tea.Cmd) {
 				m.createForm()
 				return m, m.form.Init()
 			case "s":
+				if m.currentLesson != nil && m.currentLesson.SkipSandbox {
+					m.state = stateCodeInput
+					m.codeInput.Focus()
+					return m, nil
+				}
 				return m, m.startLab()
 			case "c":
 				m.state = stateCodeInput
@@ -244,7 +282,19 @@ func (m *LearnCommandModel) validateAnswer() tea.Cmd {
 	}
 
 	userInput := strings.TrimSpace(m.codeInput.Value())
-	valid, errorMsg := lab.ValidateLesson(*m.currentLesson, userInput, m.sandboxPath)
+
+	lesson := *m.currentLesson
+	if lesson.SkipSandbox && m.generatedSecret != "" {
+		for i := range lesson.Requirements {
+			lesson.Requirements[i].Expected = strings.ReplaceAll(
+				lesson.Requirements[i].Expected,
+				"{SECRET_CODE}",
+				m.generatedSecret,
+			)
+		}
+	}
+
+	valid, errorMsg := lab.ValidateLesson(lesson, userInput, m.sandboxPath)
 
 	if valid {
 		db.MarkComplete(m.database, m.currentLesson.ID)
@@ -562,6 +612,11 @@ func (m *LearnCommandModel) setupDetailView() {
 	rendered, ok := m.renderedAbout[m.selectedLessonID]
 	if !ok {
 		rendered = "Lesson content not found"
+	}
+
+	if m.currentLesson != nil && m.currentLesson.SkipSandbox {
+		m.generatedSecret = generateSecretCode()
+		rendered = replacePlaceholders(rendered, m.generatedSecret)
 	}
 
 	m.viewport.SetContent(rendered)

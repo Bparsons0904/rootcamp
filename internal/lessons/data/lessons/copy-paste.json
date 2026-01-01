@@ -1,0 +1,42 @@
+{
+  "version": "1.0",
+  "lessons": [
+    {
+      "id": "copy-paste",
+      "command": "copy-paste",
+      "code": "copy-paste",
+      "title": "Terminal Copy & Paste",
+      "tags": ["basics", "terminal-skills"],
+      "level": "beginner",
+      "module": "fundamentals",
+      "skipSandbox": true,
+      "about": {
+        "what": "Copy and paste in the terminal works differently than in regular applications. Understanding how to copy and paste is **essential** because you'll frequently need to:\n\n- Copy commands from tutorials or documentation\n- Paste error messages for searching\n- Copy file paths and command outputs\n- Share terminal commands with others\n\n**The key difference:** Most terminals use different keyboard shortcuts than regular applications to avoid conflicts with terminal control sequences.",
+        "history": "In the early days of computing, terminals used control characters (like Ctrl+C) for special purposes. Ctrl+C, for example, sends an interrupt signal to stop a running program - it doesn't copy text!\n\nWhen graphical terminals were developed, they needed different shortcuts for copy/paste to avoid breaking these control sequences. Most Linux and Windows terminals settled on adding the Shift key (Ctrl+Shift+C/V), while macOS kept its standard Cmd+C/V shortcuts since they don't conflict.\n\nThis historical baggage is why terminal copy/paste feels different - it's preserving decades of Unix terminal conventions.",
+        "example": "```bash\n# Example workflow:\n# 1. Run a command\npwd\n# Output: /home/user/projects\n\n# 2. Select the output path with your mouse\n# 3. Copy it using your OS keyboard shortcut\n# 4. Use it in another command by pasting\ncd [paste here]\n\n# Common use case: copying error messages\nnpm install some-package\n# Error appears - select and copy it\n# Paste into Google/Stack Overflow to find solutions\n```",
+        "commonUses": [
+          "**Copying commands from documentation** - Paste tutorial commands directly into your terminal",
+          "**Sharing error messages** - Copy errors to search engines or share with teammates",
+          "**Working with file paths** - Copy long paths instead of typing them",
+          "**Reusing previous outputs** - Copy command results to use in other commands",
+          "**Collaborative debugging** - Share command history with colleagues"
+        ]
+      },
+      "hints": [
+        "Select the secret code text with your mouse",
+        "Use the keyboard shortcut shown for your operating system",
+        "Paste it into the answer field when prompted"
+      ],
+      "sandbox": {},
+      "instructions": "## Your Task\n\nBelow is your **Secret Code**. Select it with your mouse and copy it using the keyboard shortcut for your system:\n\n**🔐 Secret Code:**\n```\n{SECRET_CODE}\n```\n\n### Keyboard Shortcuts:\n\n- **Copy:** `{COPY_SHORTCUT}`\n- **Paste:** `{PASTE_SHORTCUT}`\n\n**Note:** Some terminals may also support right-click copy/paste, but keyboard shortcuts are faster once you learn them!\n\n---\n\n**When you're ready,** press 'S' to go to the answer field and paste your secret code.",
+      "requirements": [
+        {
+          "type": "exact_match",
+          "description": "The secret code copied from instructions",
+          "validator": "exact",
+          "expected": "{SECRET_CODE}"
+        }
+      ]
+    }
+  ]
+}

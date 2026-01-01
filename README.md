@@ -16,6 +16,9 @@ A CLI application for learning terminal commands through interactive lessons and
 - Go 1.21 or later
 - CGO-enabled (required for SQLite)
 - C compiler (gcc, clang, etc.)
+- **Windows Users**: WSL (Windows Subsystem for Linux) or Git Bash required
+  - RootCamp teaches POSIX/Unix commands that require a Unix-like environment
+  - Running in WSL or Git Bash provides the same experience as Linux/macOS users
 
 ### Building
 
@@ -65,11 +68,13 @@ RootCamp features an **embedded terminal** that runs directly in the lesson view
 
 ## Lessons
 
-1. **cd** - Navigate directories
-2. **ls** - List directory contents
-3. **cat** - Display file contents
-4. **cp** - Copy files and directories
-5. **mv** - Move and rename files
+### Fundamentals
+1. **Terminal Copy & Paste** - Master terminal keyboard shortcuts (OS-specific)
+
+### Navigation & File Basics
+2. **pwd** - Print working directory
+3. **pwd -L** - Logical path (with symlinks)
+4. **pwd -P** - Physical path (resolved symlinks)
 
 ## Project Structure
 
