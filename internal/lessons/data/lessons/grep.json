@@ -1,0 +1,147 @@
+{
+  "version": "1.0",
+  "lessons": [
+    {
+      "id": "grep",
+      "command": "grep",
+      "code": "grep",
+      "title": "Search for Text in Files",
+      "tags": ["basics", "text", "search"],
+      "level": "beginner",
+      "module": "text-operations",
+      "about": {
+        "what": "The `grep` command **searches for text patterns in files**. The name comes from **'Global Regular Expression Print'**.\n\n```bash\ngrep 'search-term' filename\n```\n\n`grep` finds and displays all lines containing your search term. It's one of the most powerful and frequently used commands in Unix.\n\nBasic usage:\n```bash\ngrep 'error' logfile.txt     # Find all lines with 'error'\ngrep 'TODO' *.js             # Search all JavaScript files\n```\n\n`grep` is essential for:\n- Finding specific text in log files\n- Searching code for function names or variables\n- Filtering command output\n- Debugging by locating error messages\n- Data analysis and text processing",
+        "history": "`grep` was created by Ken Thompson in 1973 for Unix. The story of its creation is legendary in computing history.\n\nThompson had written a text editor called `ed` that could search for patterns using the command `g/re/p` (globally search for a regular expression and print). A colleague asked if this search feature could be made into a standalone tool for quickly searching large files.\n\nThompson stayed up late one night and extracted the search logic into a separate program, naming it `grep` after the `ed` command. The next morning, he presented it - and it became an instant hit.\n\n`grep` was revolutionary because:\n- It could search files faster than any previous tool\n- It used **regular expressions** for powerful pattern matching\n- It worked with pipes, fitting the Unix philosophy\n- It was small, fast, and did one thing well\n\nThe tool was so successful that 'grep' became a verb: 'just grep for it' means 'search for it.' Over 50 years later, `grep` remains fundamentally unchanged and is one of the most-used Unix commands.\n\nVariants emerged: `egrep` (extended grep), `fgrep` (fast grep), and modern `ripgrep` - but basic `grep` is still the standard.",
+        "example": "```bash\n# Search for a word in a file\ngrep 'error' application.log\n# Shows all lines containing 'error'\n\n# Search multiple files\ngrep 'TODO' *.js\n# Searches all .js files for 'TODO'\n\n# Case-insensitive search\ngrep -i 'error' log.txt\n# Finds 'error', 'Error', 'ERROR', etc.\n\n# Show line numbers\ngrep -n 'function' script.js\n# Output: 15:function calculateTotal()\n\n# Count matches\ngrep -c 'error' log.txt\n# Output: 23 (found 23 lines with 'error')\n\n# Invert match (show lines NOT containing pattern)\ngrep -v 'debug' log.txt\n# Shows all lines except those with 'debug'\n\n# Search recursively in directories\ngrep -r 'TODO' src/\n# Searches all files in src/ directory\n```",
+        "commonUses": [
+          "**Log analysis** - Find errors, warnings, or specific events in log files",
+          "**Code search** - Locate function definitions, variable usage, or TODOs",
+          "**Data filtering** - Extract specific records from data files",
+          "**Debugging** - Find where errors occur in output or logs",
+          "**System administration** - Search configuration files, process lists, etc."
+        ]
+      },
+      "hints": [
+        "Syntax: grep 'search-term' filename",
+        "Use quotes around search terms with spaces",
+        "The output shows all lines containing the search term"
+      ],
+      "sandbox": {
+        "startDir": "workspace",
+        "dirs": ["workspace"],
+        "files": {
+          "workspace/task.txt": "Task: Use grep to search for the word 'SUCCESS' in the file 'results.txt'\n\nThe output will contain your completion code.\n\nOnce you see it, check completion.txt for verification.",
+          "workspace/results.txt": "Test 1: PASSED\nTest 2: FAILED\nTest 3: PASSED\nTest 4: SUCCESS - GREP-SEARCH-MASTER\nTest 5: PASSED\nTest 6: FAILED\nTest 7: PASSED",
+          "workspace/completion.txt": "Great work! You've used grep to find text in a file.\n\n=========================================\nCOMPLETION CODE: GREP-SEARCH-MASTER\n=========================================\n\nGrep is one of the most powerful text search tools.\nYou'll use it constantly for:\n- Searching log files\n- Finding code patterns\n- Filtering data\n- Debugging issues\n\nIt's an essential skill for any terminal user!"
+        }
+      },
+      "instructions": "## Your Task\n\nUse `grep` to search for the word **SUCCESS** in the file `results.txt`.\n\n**Steps:**\n1. Read the task: `cat task.txt`\n2. View the file: `cat results.txt` - notice it has many test results\n3. Run `grep 'SUCCESS' results.txt` to find the matching line\n4. Observe the output shows only the line with 'SUCCESS'\n5. Note the completion code in the output\n6. Read completion file: `cat completion.txt`\n7. Type `exit` and paste the code\n\n**Learn:** `grep` searches files and shows matching lines - incredibly useful for finding specific text!",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from grep output",
+          "validator": "exact",
+          "expected": "GREP-SEARCH-MASTER"
+        }
+      ]
+    },
+    {
+      "id": "grep-i",
+      "command": "grep",
+      "code": "grep -i",
+      "title": "Case-Insensitive Search",
+      "tags": ["intermediate", "text", "search"],
+      "level": "intermediate",
+      "module": "text-operations",
+      "about": {
+        "what": "The `grep -i` flag performs **case-insensitive searches**, matching text regardless of uppercase or lowercase.\n\n```bash\ngrep -i 'error' log.txt\n```\n\nThis finds: 'error', 'Error', 'ERROR', 'ErRoR', etc.\n\n**Without `-i`** (case-sensitive, default):\n```bash\ngrep 'error' log.txt\n# Only matches exact case: 'error'\n```\n\n**With `-i`** (case-insensitive):\n```bash\ngrep -i 'error' log.txt\n# Matches: 'error', 'Error', 'ERROR', 'ErRoR'\n```\n\nThis is essential when:\n- You're not sure of the exact capitalization\n- Searching logs with inconsistent formatting\n- Looking for words that might be capitalized (start of sentences)\n- Searching code with mixed naming conventions",
+        "history": "The `-i` flag (ignore case) was added to `grep` in the late 1970s after users repeatedly complained about missing matches due to capitalization.\n\nEarly Unix was strictly case-sensitive - `FILE` and `file` were completely different. This precision was intentional, but it made searching frustrating:\n\n```bash\ngrep 'error' log.txt      # Misses 'Error: Connection failed'\ngrep 'Error' log.txt      # Misses 'error: timeout'\n```\n\nUsers would run `grep` multiple times with different capitalizations, or use complex regular expressions: `grep '[Ee][Rr][Rr][Oo][Rr]'` - incredibly tedious!\n\nThe `-i` flag solved this elegantly. It became one of the most-used flags, appearing in countless scripts and daily commands.\n\nInterestingly, some developers prefer case-sensitive search for precision (especially in code), while others always use `-i` to avoid missing matches. Modern tools like `ripgrep` made smart case-sensitivity the default: case-insensitive if your pattern is all lowercase, case-sensitive if it has capitals.\n\nThe debate continues, but `-i` remains the standard way to search flexibly.",
+        "example": "```bash\n# Case-sensitive (default) - very specific\ngrep 'error' log.txt\n# Matches: 'error'\n# Misses: 'Error', 'ERROR'\n\n# Case-insensitive - catches everything\ngrep -i 'error' log.txt\n# Matches: 'error', 'Error', 'ERROR', 'ErRoR'\n\n# Real-world example: searching logs\ngrep -i 'failed' application.log\n# Finds: 'Failed', 'FAILED', 'failed'\n\n# Searching code for a function\ngrep -i 'calculatetotal' *.js\n# Finds: calculateTotal, CalculateTotal, CALCULATETOTAL\n\n# Finding names (which might be capitalized)\ngrep -i 'alice' users.txt\n# Finds: 'Alice', 'alice', 'ALICE'\n\n# Combining with other flags\ngrep -in 'warning' log.txt\n# -i = ignore case\n# -n = show line numbers\n```",
+        "commonUses": [
+          "**Log analysis** - Find errors with inconsistent capitalization",
+          "**Code search** - Locate functions regardless of naming convention",
+          "**Data search** - Find names or terms that might be capitalized",
+          "**Documentation search** - Find words used in sentences (capitalized) or mid-text",
+          "**Flexible matching** - When you're unsure of exact capitalization"
+        ]
+      },
+      "hints": [
+        "Use -i flag for case-insensitive search",
+        "Syntax: grep -i 'search-term' filename",
+        "This matches regardless of uppercase/lowercase"
+      ],
+      "sandbox": {
+        "startDir": "workspace",
+        "dirs": ["workspace"],
+        "files": {
+          "workspace/task.txt": "Task: Use case-insensitive grep to find all occurrences of 'warning'\nin the file 'system.log' (regardless of capitalization).\n\nCount how many lines contain 'warning' in any case.\nThen check completion.txt for your code.",
+          "workspace/system.log": "INFO: System startup complete\nWARNING: Low disk space on /dev/sda1\nERROR: Failed to connect to database\nwarning: Cache size exceeding threshold\nINFO: User login successful\nWarning: High memory usage detected\nDEBUG: Processing request #1234\nWARNING: SSL certificate expires soon\nINFO: Background job completed",
+          "workspace/completion.txt": "Perfect! You understand case-insensitive search.\n\n===============================================\nCOMPLETION CODE: GREP-CASE-INSENSITIVE-PRO\n===============================================\n\nThe -i flag is essential for flexible searching:\n\ngrep -i 'error' log.txt\n  Finds: error, Error, ERROR, ErRoR, etc.\n\nWithout -i, you might miss important matches!\n\nCombine flags for powerful searches:\n  grep -in 'warning' log.txt\n    -i = ignore case\n    -n = show line numbers"
+        }
+      },
+      "instructions": "## Your Task\n\nUse case-insensitive `grep` to find all lines containing 'warning' in `system.log`, regardless of capitalization.\n\n**Steps:**\n1. Read the task: `cat task.txt`\n2. View the file: `cat system.log`\n3. Try case-sensitive: `grep 'warning' system.log` - notice it misses some\n4. Try case-insensitive: `grep -i 'warning' system.log` - finds all variations\n5. Count them: `grep -i 'warning' system.log | wc -l` - should find 4 lines\n6. Read completion file: `cat completion.txt`\n7. Copy the code\n8. Type `exit` and paste the code\n\n**Learn:** The `-i` flag makes grep ignore case differences - essential for thorough searches!",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from completion.txt",
+          "validator": "exact",
+          "expected": "GREP-CASE-INSENSITIVE-PRO"
+        }
+      ]
+    },
+    {
+      "id": "grep-r",
+      "command": "grep",
+      "code": "grep -r",
+      "title": "Recursive Search in Directories",
+      "tags": ["intermediate", "text", "search"],
+      "level": "intermediate",
+      "module": "text-operations",
+      "about": {
+        "what": "The `grep -r` flag performs **recursive searches** through entire directory trees, searching all files in a directory and its subdirectories.\n\n```bash\ngrep -r 'search-term' directory/\n```\n\nThis searches:\n- All files in the directory\n- All files in subdirectories\n- All files in sub-subdirectories\n- And so on, recursively\n\n**Without `-r`** (single file):\n```bash\ngrep 'TODO' file.js\n# Searches only that file\n```\n\n**With `-r`** (entire directory tree):\n```bash\ngrep -r 'TODO' src/\n# Searches all files in src/ and all subdirectories\n```\n\nThis is essential for:\n- Searching codebases for function definitions\n- Finding TODOs or FIXMEs across a project\n- Locating configuration values\n- Discovering where specific text appears in a project",
+        "history": "The `-r` (recursive) flag was added to GNU `grep` in the 1990s as projects grew larger with deeper directory structures.\n\nBefore `-r`, developers used complex `find` and `xargs` combinations:\n```bash\n# Old way (still works, but complex)\nfind . -type f -exec grep 'pattern' {} \\;\n```\n\nWith `-r`, it became simple:\n```bash\n# Modern way\ngrep -r 'pattern' .\n```\n\nThe `-r` flag was controversial initially - some argued `grep` should only search files, not traverse directories. But practicality won: developers needed an easy way to search entire projects.\n\nInteresting evolution:\n- `-r` follows symbolic links (can cause infinite loops)\n- `-R` was added later to NOT follow symlinks (safer)\n- Modern versions treat `-r` and `-R` the same (both safe)\n\nThe rise of large codebases in the 2000s made recursive search essential. Tools like `ack` and `ripgrep` were created specifically to improve on `grep -r` performance for code search.\n\nDespite newer tools, `grep -r` remains the standard, appearing in countless tutorials and scripts. It's one of the first things developers learn when working with large projects.",
+        "example": "```bash\n# Search all files in a directory recursively\ngrep -r 'TODO' src/\n# Searches every file in src/ and subdirectories\n\n# Search current directory recursively\ngrep -r 'function calculateTotal' .\n# Searches all files from current directory down\n\n# Recursive case-insensitive search\ngrep -ri 'error' /var/log/\n# Searches all log files for 'error' (any case)\n\n# Show filenames and line numbers\ngrep -rn 'import React' src/\n# Output: src/App.js:1:import React from 'react'\n\n# Exclude certain file types\ngrep -r --exclude='*.min.js' 'console.log' src/\n# Searches but skips minified files\n\n# Search specific file types only\ngrep -r --include='*.py' 'def main' .\n# Searches only Python files\n\n# Real-world: find all API endpoints\ngrep -r 'app.get\\|app.post' routes/\n```",
+        "commonUses": [
+          "**Code search** - Find function definitions or variable usage across projects",
+          "**TODO hunting** - Locate all TODOs and FIXMEs in a codebase",
+          "**Configuration search** - Find where specific settings are defined",
+          "**Debugging** - Discover where specific strings or calls appear",
+          "**Refactoring** - Identify all uses of code you're changing"
+        ]
+      },
+      "hints": [
+        "Use -r flag to search recursively through directories",
+        "Syntax: grep -r 'search-term' directory/",
+        "This searches all files in the directory and subdirectories"
+      ],
+      "sandbox": {
+        "startDir": "workspace",
+        "dirs": [
+          "workspace",
+          "workspace/project",
+          "workspace/project/src",
+          "workspace/project/tests",
+          "workspace/project/docs"
+        ],
+        "files": {
+          "workspace/task.txt": "Task: Use recursive grep to search the entire 'project' directory\nfor the word 'SECRET' (case-sensitive).\n\nFind which file contains the SECRET completion code.\n\nOnce you find it, check completion.txt for verification.",
+          "workspace/project/README.md": "# Project Documentation\n\nThis is a sample project for learning grep -r.\n\nTODO: Add more examples",
+          "workspace/project/src/app.js": "function main() {\n  console.log('Application starting...');\n  return 0;\n}",
+          "workspace/project/src/config.js": "const config = {\n  port: 8080,\n  host: 'localhost',\n  // SECRET: This is not the code you're looking for\n};",
+          "workspace/project/tests/app.test.js": "test('main function', () => {\n  expect(main()).toBe(0);\n});",
+          "workspace/project/docs/api.md": "# API Documentation\n\nSECRET COMPLETION CODE: GREP-RECURSIVE-EXPERT\n\n## Endpoints\n\n- GET /api/users\n- POST /api/users",
+          "workspace/completion.txt": "Excellent! You've mastered recursive search.\n\n===============================================\nCOMPLETION CODE: GREP-RECURSIVE-EXPERT\n===============================================\n\nThe -r flag is essential for searching large codebases:\n\ngrep -r 'function_name' src/\n  Searches entire directory tree\n\nCombine with other flags:\n  grep -rn 'TODO' .        # Show file:line\n  grep -ri 'error' logs/   # Case-insensitive\n  grep -r --include='*.js' 'import' src/\n    Search only JavaScript files\n\nThis is how developers search large projects!"
+        }
+      },
+      "instructions": "## Your Task\n\nUse recursive `grep` to search the entire `project` directory for the word **SECRET**.\n\n**Steps:**\n1. Read the task: `cat task.txt`\n2. View the project structure: `ls -R project/`\n3. Run `grep -r 'SECRET' project/` to search all files recursively\n4. Observe the output shows which file(s) contain 'SECRET'\n5. Note the file path and the completion code in the output\n6. Read completion file: `cat completion.txt`\n7. Copy the code\n8. Type `exit` and paste the code\n\n**Learn:** The `-r` flag searches entire directory trees - essential for searching large projects!",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from grep output",
+          "validator": "exact",
+          "expected": "GREP-RECURSIVE-EXPERT"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "version": "1.0",
+  "lessons": [
+    {
+      "id": "zip",
+      "command": "zip",
+      "code": "zip",
+      "title": "Create ZIP Archives",
+      "tags": ["compression", "archives", "intermediate"],
+      "level": "intermediate",
+      "module": "archives",
+      "about": {
+        "what": "The `zip` command creates **ZIP archives** - compressed files that bundle multiple files and directories together. Unlike tar+gzip (which are two separate steps), ZIP combines archiving and compression into a single operation.\n\nZIP files (`.zip`) are the most universal archive format:\n- **Cross-platform** - Works on Windows, Mac, Linux, mobile devices\n- **Built-in support** - All operating systems can open ZIP files natively\n- **Selective extraction** - Extract individual files without unpacking the entire archive\n- **Password protection** - Can encrypt archives with passwords\n\nWhile `.tar.gz` is preferred on Linux/Unix, `.zip` is the go-to format when sharing files with Windows users or distributing files to a broad audience.",
+        "history": "The ZIP format was created in 1989 by Phil Katz for his PKZIP utility on MS-DOS. It became wildly popular on Windows because:\n- It was faster than other compression tools of the era\n- It allowed random access to archived files\n- It was free to implement (no patent restrictions after legal battles)\n\nIn the 1990s, ZIP became the de facto standard for file compression on Windows. Every file-sharing website, software download, and email attachment used ZIP format.\n\nOn Unix/Linux, the `zip` and `unzip` commands were created to maintain compatibility with Windows users. While Unix users prefer `.tar.gz` for Linux-to-Linux transfers, they use `.zip` when cross-platform compatibility is needed.\n\nToday, ZIP is everywhere:\n- Microsoft Office files (.docx, .xlsx) are actually ZIP archives\n- Android APK files are ZIP archives\n- Java JAR files are ZIP archives\n- EPUB ebooks are ZIP archives\n- GitHub's \"Download ZIP\" feature\n\nThe format has remained remarkably stable for over 30 years, with billions of ZIP files created daily.",
+        "example": "```bash\n# Create a ZIP archive of a directory\nzip -r archive.zip directory/\n# -r = recursive (include subdirectories)\n\n# Create a ZIP archive of specific files\nzip files.zip file1.txt file2.txt file3.txt\n\n# Add files to existing archive\nzip archive.zip newfile.txt\n\n# Create encrypted ZIP with password\nzip -e secure.zip sensitive.txt\n# (prompts for password)\n\n# Exclude certain files\nzip -r project.zip project/ -x '*.log' '*.tmp'\n\n# Maximum compression\nzip -9 -r archive.zip directory/\n\n# List contents of ZIP file\nzip -sf archive.zip\n# OR\nunzip -l archive.zip\n\n# Create ZIP without compression (store only)\nzip -0 -r archive.zip directory/\n```",
+        "commonUses": [
+          "**Cross-platform file sharing** - Share files with Windows and Mac users",
+          "**Web downloads** - Distribute software and files via websites",
+          "**Email attachments** - Bundle multiple files for email",
+          "**File distribution** - GitHub releases, software packages",
+          "**Backup archives** - Create compressed backups with wide compatibility"
+        ]
+      },
+      "hints": [
+        "Use 'zip -r archive.zip directory/' to create a ZIP file",
+        "The -r flag means recursive (include all subdirectories)",
+        "After creating the archive, read the confirmation file"
+      ],
+      "sandbox": {
+        "startDir": "project",
+        "dirs": ["project", "project/src", "project/docs", "project/tests"],
+        "files": {
+          "project/README.md": "# Project Distribution\n\nThis project will be packaged as a ZIP file for easy sharing.",
+          "project/src/main.js": "console.log('Main application');",
+          "project/src/utils.js": "export function helper() { return 'utility'; }",
+          "project/docs/manual.md": "# User Manual\n\nInstructions for using the application.",
+          "project/tests/test.js": "describe('Tests', () => { it('works', () => {}); });",
+          "project/completion.txt": "Excellent! You've successfully created a ZIP archive.\n\n================================\nCODE: ZIP-ARCHIVE-EXPERT\n================================\n\nZIP files combine archiving and compression in one step.\n\nKey differences from tar.gz:\n- Single command (vs tar + gzip)\n- Cross-platform standard\n- Built into all operating systems\n- Can extract individual files\n- Supports password protection\n\nUsage:\n- zip -r archive.zip directory/ → create ZIP\n- unzip archive.zip → extract ZIP\n- zip -e secure.zip file.txt → password-protected ZIP\n\nUse .tar.gz for Linux/Unix, .zip for cross-platform compatibility!"
+        }
+      },
+      "instructions": "## Your Task\n\nCreate a ZIP archive of the current directory, then verify it was created and read the completion code.\n\n**Steps:**\n1. List the current directory structure: `ls -R`\n2. Create a ZIP archive: `zip -r project-backup.zip .`\n   - `-r` = recursive (include all subdirectories)\n   - `.` = current directory\n3. Verify the archive was created: `ls -lh project-backup.zip`\n4. Read the completion file: `cat completion.txt`\n5. Copy the completion code\n6. Type `exit` and paste the code\n\n**Learn:** ZIP provides universal archive format that works across all platforms.",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from completion.txt",
+          "validator": "exact",
+          "expected": "ZIP-ARCHIVE-EXPERT"
+        }
+      ]
+    }
+  ]
+}

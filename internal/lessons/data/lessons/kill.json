@@ -1,0 +1,49 @@
+{
+  "version": "1.0",
+  "lessons": [
+    {
+      "id": "kill",
+      "command": "kill",
+      "code": "kill",
+      "title": "Terminate Processes",
+      "tags": ["processes", "system", "intermediate"],
+      "level": "intermediate",
+      "module": "processes",
+      "about": {
+        "what": "The `kill` command **terminates processes** by sending them signals. Despite its dramatic name, `kill` is actually a general-purpose signal-sending tool that can:\n\n- **Stop hung programs** - Terminate frozen or unresponsive applications\n- **Gracefully shut down** - Ask programs to exit cleanly\n- **Force termination** - Kill processes that won't respond to normal signals\n- **Reload configuration** - Tell programs to re-read their config files\n- **Pause/resume** - Suspend and continue processes\n\nThe most common usage is terminating programs that have frozen or need to be stopped. You first use `ps` or `pgrep` to find the process ID (PID), then use `kill` with that PID.\n\nDifferent signals tell processes to do different things. The two most important are:\n- **SIGTERM (15)** - Polite request to terminate (default)\n- **SIGKILL (9)** - Immediate forced termination",
+        "history": "The `kill` command dates back to early Unix in the 1970s. The name is misleading - it was originally designed to send any signal to a process, not just to terminate it. The \"kill\" name stuck because termination was the most common use case.\n\n**Why signals?** In multi-tasking Unix, processes needed a way to communicate. Signals became the mechanism:\n- SIGTERM (15) - \"Please shut down gracefully\"\n- SIGKILL (9) - \"Die immediately, no cleanup\"\n- SIGHUP (1) - \"Reload your configuration\"\n- SIGSTOP (19) - \"Pause execution\"\n- SIGCONT (18) - \"Resume execution\"\n\nThe number 9 for SIGKILL became legendary in Unix culture. \"Kill -9\" is universally understood as the \"nuclear option\" - forcing immediate termination without any cleanup. It's a last resort when programs are completely frozen.\n\nInterestingly, SIGKILL (9) can't be caught or ignored by programs. Every other signal can be handled by the process, but signal 9 is enforced by the kernel itself. This guarantees that `kill -9` will always work (unless the process is in an uninterruptible state).\n\nToday, system administrators joke about \"kill -9\" being the solution to every problem. While effective, it's actually better to try SIGTERM first to allow graceful shutdown.",
+        "example": "```bash\n# Terminate process (graceful - allows cleanup)\nkill 12345\n# OR explicitly send SIGTERM\nkill -15 12345\nkill -TERM 12345\n\n# Force kill (immediate - no cleanup)\nkill -9 12345\nkill -KILL 12345\n\n# Typical workflow: find and kill a process\nps aux | grep firefox    # Find the PID\nkill 12345               # Try graceful termination first\nsleep 2                  # Wait a moment\nps aux | grep firefox    # Check if it's gone\nkill -9 12345            # Force kill if still running\n\n# Kill by process name (using pkill)\npkill firefox\npkill -9 firefox\n\n# Kill all processes by name\nkillall firefox\n\n# Reload configuration (common for services)\nkill -HUP 12345\nkill -1 12345\n\n# List all available signals\nkill -l\n```",
+        "commonUses": [
+          "**Stop frozen programs** - Terminate applications that aren't responding",
+          "**End background processes** - Stop services or daemons",
+          "**Development** - Kill test servers or hung development processes",
+          "**Resource management** - Terminate processes consuming too much CPU/memory",
+          "**Service management** - Reload configurations or restart services"
+        ]
+      },
+      "hints": [
+        "Read the scenario in scenario.txt",
+        "Understand the difference between kill and kill -9",
+        "The completion code is in solution.txt"
+      ],
+      "sandbox": {
+        "startDir": "process-management",
+        "dirs": ["process-management"],
+        "files": {
+          "process-management/scenario.txt": "SCENARIO: Terminating a Hung Process\n\nYou have a Python script that's frozen and not responding.\nYou need to terminate it.\n\nStep 1: Find the process\n  $ ps aux | grep python\n  user  8472  98.5  2.3  123456  45678  pts/1  R  10:30  5:23  python3 stuck_script.py\n\nStep 2: Try graceful termination first\n  $ kill 8472\n  # This sends SIGTERM (15), asking the process to shut down gracefully\n  # Wait a few seconds...\n\nStep 3: Check if it's still running\n  $ ps aux | grep 8472\n  user  8472  98.5  2.3  123456  45678  pts/1  R  10:30  5:25  python3 stuck_script.py\n  # Still running! It's ignoring SIGTERM.\n\nStep 4: Force kill\n  $ kill -9 8472\n  # This sends SIGKILL (9), which cannot be ignored\n  # The process is immediately terminated by the kernel\n\nStep 5: Verify\n  $ ps aux | grep 8472\n  # No output - process is gone\n\nREMEMBER:\n- Always try 'kill PID' first (graceful)\n- Use 'kill -9 PID' only if necessary (forced)\n- SIGTERM allows cleanup, SIGKILL does not",
+          "process-management/signals.txt": "Common Kill Signals:\n\nSIGTERM (15) - Default signal\n  - Asks process to terminate gracefully\n  - Process can catch this signal and clean up\n  - Usage: kill 12345  OR  kill -15 12345\n\nSIGKILL (9) - Force kill\n  - Immediately terminates process\n  - Cannot be caught or ignored\n  - No cleanup happens\n  - Usage: kill -9 12345\n\nSIGHUP (1) - Hangup\n  - Often used to reload configuration\n  - Usage: kill -HUP 12345\n\nSIGINT (2) - Interrupt\n  - Same as pressing Ctrl+C\n  - Usage: kill -INT 12345\n\nSIGSTOP (19) - Stop/pause\n  - Pauses process execution\n  - Cannot be caught or ignored\n  - Usage: kill -STOP 12345\n\nSIGCONT (18) - Continue\n  - Resumes a stopped process\n  - Usage: kill -CONT 12345",
+          "process-management/solution.txt": "You've learned how to properly terminate processes!\n\n=================================\nCODE: KILL-PROCESS-EXPERT\n=================================\n\nBest Practices for Killing Processes:\n\n1. Find the PID first:\n   ps aux | grep process-name\n   OR\n   pgrep process-name\n\n2. Try graceful termination:\n   kill PID\n   (This sends SIGTERM/15)\n\n3. Wait a few seconds for cleanup\n\n4. Check if it's gone:\n   ps aux | grep PID\n\n5. Force kill if necessary:\n   kill -9 PID\n   (This sends SIGKILL/9)\n\nWhy graceful first?\n- Allows the process to:\n  - Save data\n  - Close files properly\n  - Release resources\n  - Notify other processes\n\nWhen to use -9?\n- Process is completely frozen\n- SIGTERM didn't work\n- Emergency situations\n\nRemember: kill -9 is powerful but prevents cleanup!"
+        }
+      },
+      "instructions": "## Your Task\n\nLearn about the `kill` command and how to properly terminate processes.\n\n**Steps:**\n1. Read the scenario: `cat scenario.txt`\n   - This shows a real-world example of killing a hung process\n2. Learn about signals: `cat signals.txt`\n   - Understand the difference between SIGTERM and SIGKILL\n3. Read the solution: `cat solution.txt`\n4. Copy the completion code\n5. Type `exit` and paste the code\n\n**Key Lessons:**\n- Always try `kill PID` first (graceful with SIGTERM)\n- Use `kill -9 PID` only if the process won't respond (forced with SIGKILL)\n- SIGTERM allows cleanup, SIGKILL does not\n\n**Note:** This lesson focuses on understanding `kill` usage. In real scenarios, you'd actually terminate running processes.",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from solution.txt",
+          "validator": "exact",
+          "expected": "KILL-PROCESS-EXPERT"
+        }
+      ]
+    }
+  ]
+}

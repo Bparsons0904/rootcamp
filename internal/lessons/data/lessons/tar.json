@@ -1,0 +1,51 @@
+{
+  "version": "1.0",
+  "lessons": [
+    {
+      "id": "tar",
+      "command": "tar",
+      "code": "tar",
+      "title": "Archive Files with Tar",
+      "tags": ["archives", "compression", "intermediate"],
+      "level": "intermediate",
+      "module": "archives",
+      "about": {
+        "what": "The `tar` command creates and extracts **archives** - single files that contain multiple files and directories bundled together. The name stands for **'Tape Archive'** because it was originally designed to write data to magnetic tape backups.\n\nThink of a tar file (`.tar`) as a container that packages multiple files and folders into one file. This makes it easy to:\n- **Distribute projects** - Share entire codebases as a single file\n- **Backup data** - Bundle directories for archival\n- **Transfer files** - Move many files with one download\n\nTar files are often combined with compression (like gzip) to create `.tar.gz` or `.tgz` files, which are both archived and compressed.",
+        "history": "The `tar` command was created in 1979 for Unix Version 7 by AT&T Bell Labs. At the time, magnetic tape was the primary backup medium, and administrators needed a way to write entire directory trees to tape while preserving permissions, ownership, and structure.\n\nThe original tar format could only archive files - it didn't compress them. Compression was handled separately by tools like `compress` and later `gzip`. The common practice of creating `.tar.gz` files (\"tarballs\") emerged from chaining these tools together: `tar` to archive, then `gzip` to compress.\n\nDespite being designed for tape drives that are now obsolete, tar remains the standard archival format for Unix/Linux systems. Every Linux distribution is distributed as tar archives, and GitHub's \"Download ZIP\" feature for repositories creates tar archives internally before converting to ZIP for Windows users.\n\nModern `tar` has evolved to support compression natively with flags like `-z` (gzip), `-j` (bzip2), and `-J` (xz).",
+        "example": "```bash\n# Create a tar archive\ntar -cvf archive.tar directory/\n# -c = create archive\n# -v = verbose (show files being added)\n# -f = filename to create\n\n# Extract a tar archive\ntar -xvf archive.tar\n# -x = extract\n# -v = verbose\n# -f = filename to extract\n\n# Create compressed tar.gz (tarball)\ntar -czvf archive.tar.gz directory/\n# -z = compress with gzip\n\n# Extract tar.gz\ntar -xzvf archive.tar.gz\n\n# List contents without extracting\ntar -tvf archive.tar\n# -t = list (table of contents)\n\n# Extract to specific directory\ntar -xvf archive.tar -C /destination/path\n\n# Create archive excluding files\ntar -czvf backup.tar.gz --exclude='*.log' project/\n```",
+        "commonUses": [
+          "**Software distribution** - Linux packages and source code are distributed as .tar.gz files",
+          "**Backups** - Archive entire directories with permissions and structure intact",
+          "**Project sharing** - Bundle entire projects for distribution or deployment",
+          "**Server deployment** - Deploy applications as tar archives to servers",
+          "**File compression** - Combine with gzip/bzip2 to create compressed archives"
+        ]
+      },
+      "hints": [
+        "Use 'tar -cvf' to create an archive",
+        "The syntax is: tar -cvf output.tar directory/",
+        "After creating the archive, cat the code.txt file inside the archive directory"
+      ],
+      "sandbox": {
+        "startDir": "backup",
+        "dirs": ["backup", "backup/project", "backup/project/src", "backup/project/docs"],
+        "files": {
+          "backup/project/README.md": "# Project Files\n\nThis is a sample project that needs to be archived.",
+          "backup/project/src/main.py": "#!/usr/bin/env python3\nprint('Hello from the project!')",
+          "backup/project/src/utils.py": "def helper():\n    return 'Utility function'",
+          "backup/project/docs/guide.md": "# User Guide\n\nThis is the project documentation.",
+          "backup/project/code.txt": "Great job creating your first tar archive!\n\n================================\nCODE: TAR-ARCHIVE-COMPLETE\n================================\n\nTar files bundle multiple files and directories into a single file.\nThis makes it easy to distribute, backup, and transfer collections of files.\n\nCommon uses:\n- .tar for archives\n- .tar.gz or .tgz for compressed archives\n- Preserves permissions and directory structure\n\nRemember: -c to create, -x to extract, -v for verbose, -f for filename"
+        }
+      },
+      "instructions": "## Your Task\n\nCreate a tar archive of the `project` directory, then find and read the completion code inside it.\n\n**Steps:**\n1. Use `tar -cvf project.tar project/` to create an archive\n   - `-c` = create archive\n   - `-v` = verbose (show progress)\n   - `-f` = specify filename\n2. Verify the archive was created: `ls -lh project.tar`\n3. Navigate into the project directory: `cd project`\n4. Find and read the file containing the code: `cat code.txt`\n5. Copy the completion code\n6. Type `exit` and paste the code\n\n**Learn:** Tar creates a single file containing multiple files and directories, preserving their structure.",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from code.txt",
+          "validator": "exact",
+          "expected": "TAR-ARCHIVE-COMPLETE"
+        }
+      ]
+    }
+  ]
+}

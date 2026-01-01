@@ -1,0 +1,186 @@
+{
+  "version": "1.0",
+  "lessons": [
+    {
+      "id": "paste",
+      "command": "paste",
+      "code": "paste",
+      "title": "Merge Lines from Multiple Files",
+      "tags": ["basics", "text", "merging"],
+      "level": "beginner",
+      "module": "text-operations",
+      "about": {
+        "what": "The `paste` command **merges lines from multiple files side-by-side**, creating columns separated by tabs.\n\n```bash\npaste file1.txt file2.txt\n```\n\n**How it works:**\n- Takes line 1 from each file and joins them with TAB\n- Takes line 2 from each file and joins them with TAB\n- Continues until all lines are processed\n\n**Example:**\n```\nfile1.txt:    file2.txt:    Output:\nAlice         25            Alice    25\nBob           30            Bob      30\nCharlie       35            Charlie  35\n```\n\nPerfect for:\n- Combining data from separate sources\n- Creating tables from column files\n- Building TSV/CSV files\n- Merging parallel data streams",
+        "history": "`paste` was created at Bell Labs in the 1970s as the complement to `cut`. While `cut` extracts columns, `paste` creates them by merging files.\n\nThe name \"paste\" comes from the physical act of pasting columns of paper together side-by-side - exactly what the command does digitally.\n\n**Design Philosophy:**\nPaste embodies Unix's compositional thinking:\n- `cut` breaks tables into columns\n- `paste` assembles columns into tables\n- Together they enable table manipulation\n\nThis pair became part of the Unix text processing toolkit alongside:\n- `sort` - order rows\n- `uniq` - remove duplicates\n- `join` - merge tables by key (like SQL JOIN)\n- `comm` - compare sorted files\n\n**Why TAB as default separator?**\nIn the 1970s-1980s, TAB was the standard field separator:\n- Compatible with TSV (tab-separated values)\n- Visible in editors as whitespace\n- Easy to process with `cut` (which also defaults to TAB)\n- Less likely to appear in data than commas\n\n**Original use cases:**\n1. **Data preparation:** Combining files exported from different programs\n2. **Report generation:** Building tables from separate data sources\n3. **Script output:** Merging parallel command outputs\n\nBefore `paste`, users had to write complex `awk` or `sed` scripts to merge files. The simple interface (`paste file1 file2`) made a common task trivial.\n\n**Interesting feature:**\nPaste can handle files of different lengths - it processes until the longest file ends, leaving empty fields for shorter files. This flexibility made it robust for real-world messy data.",
+        "example": "```bash\n# Merge two files side-by-side\npaste names.txt ages.txt\n# Output: Alice<TAB>25\n\n# Merge three files\npaste ids.txt names.txt emails.txt\n\n# Create TSV from separate columns\npaste col1.txt col2.txt col3.txt > data.tsv\n\n# Merge command outputs\npaste <(cut -d ':' -f 1 /etc/passwd) <(cut -d ':' -f 6 /etc/passwd)\n# (Usernames and home directories)\n\n# Combine with cut to reorder columns\npaste file2.txt file1.txt\n# (Swaps column order)\n\n# Files of different lengths\npaste short.txt long.txt\n# (Short file entries followed by empty fields)\n\n# Use with echo for labels\npaste <(echo \"Name\") <(echo \"Age\")\npaste names.txt ages.txt\n```",
+        "commonUses": [
+          "**Data merging** - Combine separate data files into single table",
+          "**Table creation** - Build TSV/CSV from column files",
+          "**Report generation** - Merge data for formatted output",
+          "**Data transformation** - Combine and reorder file contents",
+          "**Parallel processing** - Merge results from parallel operations"
+        ]
+      },
+      "hints": [
+        "Syntax: paste file1 file2",
+        "Merges lines side-by-side with TAB separator",
+        "Takes line N from each file and joins them"
+      ],
+      "sandbox": {
+        "startDir": "workspace",
+        "dirs": ["workspace"],
+        "files": {
+          "workspace/task.txt": "Task: Merge names.txt and ages.txt side-by-side.\n\nYou have two files - one with names, one with ages.\nUse paste to combine them into a single table.\n\nOnce merged, check completion.txt for your code.",
+          "workspace/names.txt": "Alice\nBob\nCharlie",
+          "workspace/ages.txt": "25\n30\nPASTE-BASIC-SUCCESS",
+          "workspace/completion.txt": "Great! You've merged files side-by-side.\n\n=========================================\nCOMPLETION CODE: PASTE-BASIC-SUCCESS\n=========================================\n\nThe paste command merges files line-by-line.\n\nHow it works:\n  Line 1 from each file → merged with TAB\n  Line 2 from each file → merged with TAB\n  ...\n\nExamples:\n  paste file1.txt file2.txt\n  paste names.txt ages.txt emails.txt\n\nDefault separator: TAB\n  Creates TSV (tab-separated values)\n  For CSV, use: paste -d ',' file1 file2\n\nComplement to cut:\n  cut: extracts columns\n  paste: creates columns\n\nTogether they enable table manipulation!"
+        }
+      },
+      "instructions": "## Your Task\n\nUse `paste` to merge `names.txt` and `ages.txt` side-by-side.\n\n**Steps:**\n1. Read the task: `cat task.txt`\n2. View first file: `cat names.txt` - shows names\n3. View second file: `cat ages.txt` - shows ages\n4. Run `paste names.txt ages.txt` - merges them with TAB\n5. Output shows: Alice<TAB>25, Bob<TAB>30, etc.\n6. Find the completion code in the age column\n7. Read completion file: `cat completion.txt`\n8. Copy the code\n9. Type `exit` and paste the code\n\n**Learn:** `paste` merges files side-by-side - perfect for creating tables!",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from merged output",
+          "validator": "exact",
+          "expected": "PASTE-BASIC-SUCCESS"
+        }
+      ]
+    },
+    {
+      "id": "paste-d",
+      "command": "paste",
+      "code": "paste -d",
+      "title": "Merge with Custom Delimiter",
+      "tags": ["intermediate", "text", "merging"],
+      "level": "intermediate",
+      "module": "text-operations",
+      "about": {
+        "what": "The `paste -d` flag specifies a **custom delimiter** instead of the default TAB. This is essential for creating CSV files or using other separators.\n\n```bash\npaste -d ',' file1 file2     # CSV (comma-separated)\npaste -d ':' file1 file2     # Colon-separated\npaste -d '|' file1 file2     # Pipe-separated\n```\n\n**Creating CSV files:**\nThe most common use is creating CSV files from separate column files:\n```bash\npaste -d ',' ids.txt names.txt prices.txt > products.csv\n```\n\n**Delimiter must be a single character**, just like `cut -d`. Common delimiters:\n- `,` (comma) - CSV files\n- `:` (colon) - PATH-like formats\n- `|` (pipe) - Database exports\n- `;` (semicolon) - European CSV format\n- ` ` (space) - Space-separated values",
+        "history": "The `-d` (delimiter) flag was part of the original `paste` implementation, mirroring the `-d` flag in `cut` for consistency.\n\nWhen CSV format became dominant in the 1980s-1990s (driven by spreadsheet software like Excel and Lotus 1-2-3), `paste -d ','` became the standard way to create CSV files from separate data sources in Unix.\n\n**Before paste -d:**\nCreating CSVs required complex scripting:\n```bash\n# Old way (tedious)\nwhile read name; read age; do\n  echo \"$name,$age\"\ndone < names.txt < ages.txt\n```\n\n**With paste -d:**\n```bash\npaste -d ',' names.txt ages.txt\n```\n\nThe simplicity made it the standard approach.\n\n**Design Note:**\nLike `cut -d`, paste only supports single-character delimiters. For multi-character delimiters, users need `awk` or scripting:\n```bash\n# Multi-char delimiter (not supported directly)\nawk '{print $1 \" | \" $2}' file1 file2  # Use awk instead\n```\n\nBut single-character delimiters cover 99% of real-world needs.\n\n**Integration with cut:**\nPaste and cut with matching delimiters enable powerful transformations:\n```bash\n# Split CSV, process, recombine\ncut -d ',' -f 1 data.csv > col1\ncut -d ',' -f 2 data.csv > col2\n# ... process col1, col2 ...\npaste -d ',' col1 col2 > new-data.csv\n```",
+        "example": "```bash\n# Create CSV from separate files\npaste -d ',' ids.txt names.txt prices.txt\n# Output: 1,Alice,100\n\n# Create colon-separated data\npaste -d ':' users.txt shells.txt\n# Output: alice:/bin/bash\n\n# Create pipe-delimited data\npaste -d '|' col1.txt col2.txt col3.txt\n\n# Space-separated (use quotes)\npaste -d ' ' first-names.txt last-names.txt\n\n# Save CSV to file\npaste -d ',' data1.txt data2.txt data3.txt > output.csv\n\n# Combine multiple files into CSV\npaste -d ',' id.txt name.txt email.txt status.txt > users.csv\n\n# Create CSV with headers\necho \"id,name,price\" > products.csv\npaste -d ',' ids.txt names.txt prices.txt >> products.csv\n\n# Use different delimiters\npaste -d ';' data1.txt data2.txt  # European CSV\npaste -d $'\\t' file1 file2        # Explicit tab\n```",
+        "commonUses": [
+          "**CSV creation** - Build comma-separated files from columns",
+          "**Data export** - Format data for specific delimiters",
+          "**File format conversion** - Convert between TSV, CSV, etc.",
+          "**Data merging** - Combine files with appropriate separators",
+          "**Report generation** - Create formatted output files"
+        ]
+      },
+      "hints": [
+        "Use -d to specify delimiter (single character)",
+        "Syntax: paste -d ',' file1 file2",
+        "Most common: -d ',' for CSV files"
+      ],
+      "sandbox": {
+        "startDir": "workspace",
+        "dirs": ["workspace"],
+        "files": {
+          "workspace/task.txt": "Task: Create a CSV file by merging three files with commas.\n\nYou have ids.txt, products.txt, and prices.txt.\nUse paste -d ',' to merge them into CSV format.\n\nOnce you create the CSV, check completion.txt.",
+          "workspace/ids.txt": "1\n2\n3",
+          "workspace/products.txt": "Laptop\nMouse\nKeyboard",
+          "workspace/prices.txt": "999\n29\nPASTE-DELIMITER-PRO",
+          "workspace/completion.txt": "Perfect! You can now create CSV files with paste.\n\n===============================================\nCOMPLETION CODE: PASTE-DELIMITER-PRO\n===============================================\n\nThe -d flag specifies the delimiter for merging.\n\nCommon delimiters:\n  -d ','   # CSV (comma-separated)\n  -d ':'   # Colon-separated\n  -d '|'   # Pipe-separated\n  -d ';'   # Semicolon-separated (European CSV)\n  -d ' '   # Space-separated\n\nCreate CSV from separate files:\n  paste -d ',' col1.txt col2.txt col3.txt\n\nSave to file:\n  paste -d ',' data1.txt data2.txt > output.csv\n\nWith headers:\n  echo \"id,name,price\" > products.csv\n  paste -d ',' ids.txt names.txt prices.txt >> products.csv\n\nThis is the standard Unix way to build CSV files!"
+        }
+      },
+      "instructions": "## Your Task\n\nCreate a CSV file by merging `ids.txt`, `products.txt`, and `prices.txt` with comma delimiters.\n\n**Steps:**\n1. Read the task: `cat task.txt`\n2. View the files: `cat ids.txt`, `cat products.txt`, `cat prices.txt`\n3. Try default (TAB): `paste ids.txt products.txt prices.txt`\n4. Use comma delimiter: `paste -d ',' ids.txt products.txt prices.txt`\n5. Output shows proper CSV: 1,Laptop,999\n6. Find the completion code in the prices column\n7. Read completion file: `cat completion.txt`\n8. Copy the code\n9. Type `exit` and paste the code\n\n**Learn:** Use `-d ','` to create CSV files with paste!",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from CSV output",
+          "validator": "exact",
+          "expected": "PASTE-DELIMITER-PRO"
+        }
+      ]
+    },
+    {
+      "id": "paste-s",
+      "command": "paste",
+      "code": "paste -s",
+      "title": "Serial Paste - Merge Lines into Single Line",
+      "tags": ["intermediate", "text", "transposing"],
+      "level": "intermediate",
+      "module": "text-operations",
+      "about": {
+        "what": "The `paste -s` flag enables **serial mode**, which merges all lines from a file into a **single line** separated by the delimiter.\n\n```bash\npaste -s filename\n```\n\n**Normal mode** (default):\n- Merges corresponding lines from multiple files side-by-side\n- Each output line comes from one line of each input file\n\n**Serial mode** (`-s`):\n- Merges ALL lines from each file into ONE line\n- Tabs (or custom delimiter) separate the values\n\n**Example:**\n```\nInput file:       paste -s output:\nApple             Apple<TAB>Banana<TAB>Cherry\nBanana\nCherry\n```\n\nThis is **data transposition** - converting rows to columns.\n\n**Common use:** Creating comma-separated lists:\n```bash\npaste -sd ',' items.txt\n# Output: item1,item2,item3\n```",
+        "history": "The `-s` (serial) flag was added to `paste` in the early Unix implementations, providing a simple way to transpose data - a common need in data processing.\n\nThe flag letter 's' stands for **'serial'** - processing each file serially (all lines at once) rather than in parallel (line by line with other files).\n\n**Why transpose data?**\n\nIn Unix text processing, data comes in two forms:\n- **Columnar:** One value per line (vertical)\n- **Row:** All values on one line (horizontal)\n\nDifferent tools and formats expect different orientations:\n- Some commands expect one item per line\n- Some expect comma-separated lists\n- Scripts may need to pass multiple values as single arguments\n\n**Before paste -s:**\nTransposing required complex scripting:\n```bash\n# Old way (complicated)\ntr '\\n' ',' < file.txt | sed 's/,$/\\n/'\n```\n\n**With paste -s:**\n```bash\npaste -s file.txt           # TAB-separated\npaste -sd ',' file.txt      # Comma-separated\n```\n\n**Real-world applications:**\n\n1. **Creating lists for scripts:**\n```bash\nARGS=$(paste -sd ' ' options.txt)\ncommand $ARGS\n```\n\n2. **Building SQL IN clauses:**\n```bash\npaste -sd ',' ids.txt\n# Output: 1,2,3,4,5\n# Use in: SELECT * FROM users WHERE id IN (1,2,3,4,5)\n```\n\n3. **Email recipient lists:**\n```bash\npaste -sd ',' emails.txt\n# Output: alice@example.com,bob@example.com,charlie@example.com\n```\n\nThe serial mode turned `paste` from a file-merging tool into a data transformation tool.",
+        "example": "```bash\n# Merge all lines into one (TAB-separated)\npaste -s words.txt\n# Input:  Apple\\nBanana\\nCherry\n# Output: Apple<TAB>Banana<TAB>Cherry\n\n# Create comma-separated list\npaste -sd ',' items.txt\n# Output: item1,item2,item3\n\n# Create space-separated list\npaste -sd ' ' files.txt\n# Output: file1 file2 file3\n\n# Combine with cut for complex transforms\ncut -d ',' -f 2 data.csv | paste -sd ','\n# (Extract column, create list)\n\n# Build command arguments\nRM_FILES=$(paste -sd ' ' to-delete.txt)\nrm $RM_FILES\n\n# Create SQL IN clause\nIDS=$(paste -sd ',' user-ids.txt)\necho \"SELECT * FROM users WHERE id IN ($IDS)\"\n\n# Multiple files (each file becomes one line)\npaste -s file1.txt file2.txt\n# Line 1: All of file1 on one line\n# Line 2: All of file2 on one line\n\n# Transpose data for processing\npaste -sd '|' column-data.txt\n```",
+        "commonUses": [
+          "**List creation** - Build comma/space-separated lists from lines",
+          "**Data transposition** - Convert columnar data to row format",
+          "**Script building** - Create command arguments from file lines",
+          "**SQL generation** - Build IN clauses or value lists",
+          "**Format conversion** - Convert line-based to delimited format"
+        ]
+      },
+      "hints": [
+        "Use -s for serial mode (all lines on one line)",
+        "Combine with -d: paste -sd ',' filename",
+        "Transposes rows to columns"
+      ],
+      "sandbox": {
+        "startDir": "workspace",
+        "dirs": ["workspace"],
+        "files": {
+          "workspace/task.txt": "Task: Create a comma-separated list from words.txt using serial mode.\n\nThe file has one word per line. Use paste -sd ',' to merge\nall words into a single comma-separated line.\n\nOnce you create the list, check completion.txt.",
+          "workspace/words.txt": "Hello\nWorld\nFrom\nRootCamp\nPASTE-SERIAL-EXPERT",
+          "workspace/completion.txt": "Excellent! You've mastered serial paste mode.\n\n===============================================\nCOMPLETION CODE: PASTE-SERIAL-EXPERT\n===============================================\n\nThe -s flag enables serial mode (transpose).\n\nNormal mode:\n  Merges files side-by-side, line by line\n\nSerial mode (-s):\n  Merges ALL lines from each file into ONE line\n\nExamples:\n\n  # Create comma-separated list\n  paste -sd ',' items.txt\n\n  # Create space-separated list\n  paste -sd ' ' files.txt\n\n  # Create TAB-separated\n  paste -s data.txt\n\nReal-world uses:\n\n  # Build command args\n  paste -sd ' ' options.txt\n\n  # SQL IN clause\n  paste -sd ',' ids.txt\n  # Result: 1,2,3,4,5\n\n  # Email list\n  paste -sd ',' emails.txt\n\nThis transposes columnar → row data!"
+        }
+      },
+      "instructions": "## Your Task\n\nUse serial mode to create a comma-separated list from `words.txt`.\n\n**Steps:**\n1. Read the task: `cat task.txt`\n2. View the file: `cat words.txt` - one word per line\n3. Try normal paste: `paste words.txt` - no change (needs 2 files)\n4. Try serial mode: `paste -s words.txt` - all on one line (TAB-separated)\n5. Use comma delimiter: `paste -sd ',' words.txt`\n6. Output shows: Hello,World,From,RootCamp,PASTE-SERIAL-EXPERT\n7. Find the completion code in the list\n8. Read completion file: `cat completion.txt`\n9. Copy the code\n10. Type `exit` and paste the code\n\n**Learn:** Serial mode (`-s`) transposes rows to columns - perfect for creating lists!",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from serial output",
+          "validator": "exact",
+          "expected": "PASTE-SERIAL-EXPERT"
+        }
+      ]
+    },
+    {
+      "id": "paste-cut-pipeline",
+      "command": "paste",
+      "code": "paste + cut",
+      "title": "Complex Data Restructuring with Paste and Cut",
+      "tags": ["intermediate", "text", "transformation"],
+      "level": "intermediate",
+      "module": "text-operations",
+      "about": {
+        "what": "Combining `paste` and `cut` enables **powerful data restructuring** - building tables, reordering columns, and transforming data formats.\n\n**paste** builds tables (adds columns):\n```bash\npaste -d ',' file1 file2 file3\n```\n\n**cut** extracts columns:\n```bash\ncut -d ',' -f 1,3\n```\n\n**Together:** Build then extract = data transformation:\n```bash\npaste -d ',' file1 file2 file3 | cut -d ',' -f 2,1,3\n# Reorders columns: 2, 1, 3\n```\n\nThis pattern enables:\n- Column reordering\n- Data merging and filtering\n- Format conversion (TSV ↔ CSV)\n- ETL (Extract, Transform, Load) operations\n- Complex data pipeline",
+        "history": "The combination of `paste` and `cut` represents one of Unix's core insights: **simple tools compose into powerful solutions**.\n\n**The Philosophy:**\nRather than creating one complex \"data restructuring\" tool, Unix provided:\n- `cut` - extract columns\n- `paste` - build columns\n- `sort` - reorder rows\n- Pipes - connect them\n\nUsers could combine these in infinite ways.\n\n**Classic Use Cases:**\n\n**1. Column reordering:**\n```bash\n# Swap columns in CSV\ncut -d ',' -f 1 data.csv > col1\ncut -d ',' -f 2 data.csv > col2\npaste -d ',' col2 col1 > reordered.csv\n```\n\n**2. Data enrichment:**\n```bash\n# Add column from another source\npaste -d ',' original.csv additional-data.txt\n```\n\n**3. Format conversion:**\n```bash\n# TSV to CSV\ncat data.tsv | paste -d ','\n# Actually this doesn't work, but shows the thinking\n# Real approach:\nawk '{gsub(/\\t/,\",\"); print}' data.tsv\n```\n\n**Impact on Modern Tools:**\n\nThis compositional pattern influenced:\n- **SQL:** SELECT, FROM, JOIN - composable clauses\n- **Pandas:** Method chaining (.merge().filter().groupby())\n- **Unix pipelines:** The entire pipe-and-filter paradigm\n- **ETL tools:** Extract → Transform → Load thinking\n\nBefore modern data tools existed, paste+cut+sort+uniq pipelines processed:\n- Financial data\n- Scientific datasets  \n- System logs\n- Database exports\n\nThey were the original ETL (Extract, Transform, Load) tools.\n\n**Learning curve:**\nThese pipelines can get complex, but the power is worth it:\n```bash\n# Extract specific columns, merge with other data, reorder, dedupe\ncut -d ',' -f 1,3 data1.csv > temp1\ncut -d ',' -f 2 data2.csv > temp2\npaste -d ',' temp1 temp2 | cut -d ',' -f 3,1,2 | sort | uniq\n```\n\nModern tools make this easier, but understanding the pattern teaches fundamental data manipulation concepts.",
+        "example": "```bash\n# Reorder CSV columns (swap first two)\ncut -d ',' -f 1 data.csv > col1\ncut -d ',' -f 2 data.csv > col2\ncut -d ',' -f 3- data.csv > rest\npaste -d ',' col2 col1 rest\n\n# Merge files and extract specific columns\npaste -d ',' file1.csv file2.csv | cut -d ',' -f 1,4,5\n\n# Add column from separate file\npaste -d ',' original.csv new-column.txt\n\n# Build CSV, then filter columns\npaste -d ',' ids.txt names.txt ages.txt emails.txt | \\\n  cut -d ',' -f 1,2,4\n# (Keep id, name, email; drop age)\n\n# Extract, process, recombine\ncut -d ',' -f 2 data.csv | sort > sorted-col2\ncut -d ',' -f 1,3- data.csv > other-cols\npaste -d ',' sorted-col2 other-cols\n\n# Complex: merge, reorder, deduplicate\npaste -d ',' users.csv additional.txt | \\\n  cut -d ',' -f 3,1,2,4 | \\\n  sort | uniq\n\n# Real-world: Build report from multiple sources\npaste -d ',' \\\n  <(cut -d ',' -f 1 sales.csv) \\\n  <(cut -d ',' -f 2 sales.csv) \\\n  <(cut -d ',' -f 2 products.csv) \\\n  > report.csv\n```",
+        "commonUses": [
+          "**Data restructuring** - Reorder, merge, transform tabular data",
+          "**ETL operations** - Extract from sources, transform, load to destination",
+          "**Column operations** - Add, remove, reorder columns",
+          "**Data integration** - Combine data from multiple sources",
+          "**Format conversion** - Convert between different delimited formats"
+        ]
+      },
+      "hints": [
+        "paste builds tables, cut extracts columns",
+        "Pattern: paste files | cut -d ',' -f N,M",
+        "Enables column reordering and data transformation"
+      ],
+      "sandbox": {
+        "startDir": "workspace",
+        "dirs": ["workspace"],
+        "files": {
+          "workspace/task.txt": "Task: Merge three files into CSV, then extract specific columns.\n\nYou have first names, last names, and emails in separate files.\nMerge them with paste, then use cut to create a CSV with\nfull name (first + last) and email (skip middle column).\n\nOnce you've transformed the data, check completion.txt.",
+          "workspace/first-names.txt": "Alice\nBob\nCharlie",
+          "workspace/last-names.txt": "Smith\nJones\nPASTE-CUT-MASTER",
+          "workspace/emails.txt": "alice@example.com\nbob@example.com\ncharlie@example.com",
+          "workspace/completion.txt": "Excellent! You've mastered paste + cut pipelines.\n\n===============================================\nCOMPLETION CODE: PASTE-CUT-MASTER\n===============================================\n\nPaste and cut together enable data restructuring:\n\n  paste: Builds tables (merges columns)\n  cut:   Extracts columns\n  Together: Transform data\n\nExamples:\n\n  # Reorder columns\n  paste -d ',' file1 file2 file3 | cut -d ',' -f 3,1,2\n\n  # Merge and filter\n  paste -d ',' data1.csv data2.csv | cut -d ',' -f 1,3,5\n\n  # Build then extract\n  paste -d ',' col1 col2 col3 | cut -d ',' -f 1,3\n\nReal-world pattern (ETL):\n\n  # Extract from sources\n  cut -d ',' -f 2 source1.csv > temp1\n  cut -d ',' -f 3 source2.csv > temp2\n  \n  # Transform (merge + reorder)\n  paste -d ',' temp1 temp2 | cut -d ',' -f 2,1\n  \n  # Load (save result)\n  paste -d ',' temp1 temp2 | cut -d ',' -f 2,1 > output.csv\n\nThis is Unix's answer to complex data transformation!"
+        }
+      },
+      "instructions": "## Your Task\n\nMerge three files into CSV, then extract and reorder columns.\n\n**Steps:**\n1. Read the task: `cat task.txt`\n2. View the files: `cat first-names.txt`, `cat last-names.txt`, `cat emails.txt`\n3. Merge all three: `paste -d ',' first-names.txt last-names.txt emails.txt`\n4. Notice format: Alice,Smith,alice@example.com\n5. Extract columns 1,2,3: `paste -d ',' first-names.txt last-names.txt emails.txt | cut -d ',' -f 1,2,3`\n6. Try different order: `... | cut -d ',' -f 1,3` (name and email, skip last)\n7. Find the completion code in the last name column\n8. Read completion file: `cat completion.txt`\n9. Copy the code\n10. Type `exit` and paste the code\n\n**Learn:** Paste + cut = powerful data transformation pipelines!",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from merged data",
+          "validator": "exact",
+          "expected": "PASTE-CUT-MASTER"
+        }
+      ]
+    }
+  ]
+}

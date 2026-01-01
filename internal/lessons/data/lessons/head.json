@@ -1,0 +1,137 @@
+{
+  "version": "1.0",
+  "lessons": [
+    {
+      "id": "head",
+      "command": "head",
+      "code": "head",
+      "title": "View Beginning of Files",
+      "tags": ["basics", "text", "viewing"],
+      "level": "beginner",
+      "module": "text-operations",
+      "about": {
+        "what": "The `head` command displays the **first lines** of a file. By default, it shows the first **10 lines**.\n\n```bash\nhead filename\n```\n\nThis is perfect for:\n- Previewing file contents without opening the whole file\n- Checking file headers (CSV, log files)\n- Quickly seeing what a file contains\n- Sampling large files\n\nUnlike `cat` which shows the entire file, `head` gives you just a quick peek at the beginning.",
+        "history": "`head` was created for Unix in the late 1970s as a companion to `tail`. The name is literal - it shows the 'head' (beginning) of a file.\n\nBefore `head`, viewing the start of a file required:\n- Opening it in an editor (slow for large files)\n- Using `sed` or `awk` (complex syntax)\n- Using `more` and quitting after a few lines (awkward)\n\nThe 10-line default was chosen pragmatically:\n- Small enough to fit on most terminals (which had 24 lines)\n- Large enough to get a sense of the file content\n- Became a Unix convention (many tools use 10 as default)\n\nThe command is deceptively simple but extremely useful. System administrators use it constantly to peek at log files without overwhelming the terminal with thousands of lines.\n\nFun fact: `head` and `tail` are often used together to extract specific sections:\n```bash\nhead -20 file | tail -5    # Shows lines 16-20\n```\n\nDespite being over 40 years old, `head` remains unchanged and essential.",
+        "example": "```bash\n# View first 10 lines (default)\nhead application.log\n\n# View first 5 lines\nhead -5 data.csv\n\n# View first line only (useful for CSV headers)\nhead -1 data.csv\n\n# View first 20 lines\nhead -20 large-file.txt\n\n# Preview multiple files\nhead file1.txt file2.txt\n# Shows first 10 lines of each, with headers\n\n# Common pattern: check CSV structure\nhead -1 data.csv    # See column headers\nhead -5 data.csv    # See first few data rows\n\n# Quick file preview\nhead README.md      # See what the file is about\n```",
+        "commonUses": [
+          "**Log file preview** - Check the beginning of log files",
+          "**CSV headers** - View column names in data files",
+          "**File sampling** - Quickly see what a file contains",
+          "**Documentation preview** - Peek at README or doc files",
+          "**Large file inspection** - Preview huge files without loading them entirely"
+        ]
+      },
+      "hints": [
+        "Syntax: head filename",
+        "By default shows first 10 lines",
+        "Use -n to specify number of lines: head -5 filename"
+      ],
+      "sandbox": {
+        "startDir": "workspace",
+        "dirs": ["workspace"],
+        "files": {
+          "workspace/task.txt": "Task: Use head to view the beginning of 'data.log'\n\nThe completion code is in the first few lines.\n\nOnce you see it, check completion.txt for verification.",
+          "workspace/data.log": "===================================\nCOMPLETION CODE: HEAD-BASIC-SUCCESS\n===================================\n\nSystem Log - Application Startup\n\n[2024-12-31 08:00:01] INFO: Application starting...\n[2024-12-31 08:00:02] INFO: Loading configuration\n[2024-12-31 08:00:03] INFO: Database connection established\n[2024-12-31 08:00:04] INFO: Server listening on port 8080\n[2024-12-31 08:00:05] DEBUG: Processing queue initialized\n[2024-12-31 08:00:06] INFO: Background workers started\n[2024-12-31 08:00:07] INFO: Application ready\n[2024-12-31 08:01:15] INFO: Request received: GET /api/users\n[2024-12-31 08:01:16] DEBUG: Database query executed\n[2024-12-31 08:01:17] INFO: Response sent: 200 OK\n[2024-12-31 08:02:30] INFO: Request received: POST /api/data\n[2024-12-31 08:02:31] WARNING: High memory usage: 85%\n[2024-12-31 08:03:45] ERROR: Failed to connect to cache\n[2024-12-31 08:03:46] INFO: Retrying cache connection\n[2024-12-31 08:03:47] INFO: Cache connection restored",
+          "workspace/completion.txt": "Great! You've used head to preview a file.\n\n=========================================\nCOMPLETION CODE: HEAD-BASIC-SUCCESS\n=========================================\n\nThe head command is perfect for:\n- Previewing file contents\n- Checking CSV headers\n- Sampling large files\n- Quick log file inspection\n\nUse head -n to specify line count:\n  head -5 file.txt    (first 5 lines)\n  head -1 file.csv    (just the header)"
+        }
+      },
+      "instructions": "## Your Task\n\nUse `head` to view the beginning of the file `data.log`.\n\n**Steps:**\n1. Read the task: `cat task.txt`\n2. Run `head data.log` to see the first 10 lines\n3. Notice the completion code appears at the top\n4. Read completion file: `cat completion.txt`\n5. Copy the code\n6. Type `exit` and paste the code\n\n**Learn:** `head` shows the beginning of files - perfect for quick previews!",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from head output",
+          "validator": "exact",
+          "expected": "HEAD-BASIC-SUCCESS"
+        }
+      ]
+    },
+    {
+      "id": "head-n",
+      "command": "head",
+      "code": "head -n",
+      "title": "Specify Number of Lines",
+      "tags": ["intermediate", "text", "viewing"],
+      "level": "intermediate",
+      "module": "text-operations",
+      "about": {
+        "what": "The `head -n` flag lets you specify **exactly how many lines** to display from the beginning of a file.\n\n```bash\nhead -n 5 filename    # First 5 lines\nhead -5 filename      # Shorthand (same thing)\n```\n\n**Syntax variations** (all equivalent):\n```bash\nhead -n 3 file.txt\nhead -3 file.txt\n```\n\nThis control is essential for:\n- Viewing just the header row of CSV files (`head -1`)\n- Sampling specific amounts of data\n- Extracting exact sections of files\n- Working with structured data formats",
+        "history": "The `-n` flag (number of lines) was part of `head` from its creation. The ability to specify line count made `head` far more flexible than a fixed 10-line display.\n\nInterestingly, `head` accepts both `-n 5` and `-5` as shortcuts. This dual syntax comes from Unix tradition:\n- Original syntax: `-n number` (explicit)\n- Convenient shorthand: `-number` (faster to type)\n\nModern POSIX standards recommend `-n`, but the shorthand persists because:\n- It's faster to type\n- It's been used for 40+ years\n- Breaking it would break countless scripts\n\nThe ability to use `head -1` to get just the first line became particularly important with the rise of CSV files in the 1990s. Data analysts needed to check column headers quickly:\n```bash\nhead -1 data.csv    # Just the header\n```\n\nCombined with `tail`, you can extract any range:\n```bash\nhead -100 file | tail -10    # Lines 91-100\n```\n\nThis line-extraction pattern became a common idiom in Unix shell scripting.",
+        "example": "```bash\n# First 5 lines\nhead -n 5 data.txt\nhead -5 data.txt       # Shorthand\n\n# Just the first line (common for CSV headers)\nhead -1 users.csv\n# Output: id,name,email,created_at\n\n# First 20 lines\nhead -20 application.log\n\n# First 3 lines of multiple files\nhead -3 *.txt\n\n# Extract specific range (lines 10-15)\nhead -15 file.txt | tail -6\n\n# Real-world: sample a large dataset\nhead -100 massive-data.csv > sample.csv\n\n# Common pattern: check file structure\nhead -1 data.csv    # See columns\nwc -l data.csv      # Count total rows\n```",
+        "commonUses": [
+          "**CSV headers** - Extract column names with head -1",
+          "**Data sampling** - Get specific number of sample rows",
+          "**Log inspection** - View exact amount of recent entries",
+          "**File extraction** - Copy first N lines to another file",
+          "**Testing** - Create small sample files from large datasets"
+        ]
+      },
+      "hints": [
+        "Use -n to specify exact line count",
+        "Syntax: head -n 5 filename or head -5 filename",
+        "head -1 shows just the first line"
+      ],
+      "sandbox": {
+        "startDir": "workspace",
+        "dirs": ["workspace"],
+        "files": {
+          "workspace/task.txt": "Task: The file 'secrets.txt' contains multiple codes.\n\nUse head with -n flag to view ONLY the first 3 lines.\nThe completion code is on line 3.\n\nOnce you see it, check completion.txt for verification.",
+          "workspace/secrets.txt": "Line 1: This is a decoy code\nLine 2: Another fake code here\nLine 3: HEAD-LINE-COUNT-MASTER\nLine 4: You shouldn't see this with head -3\nLine 5: Or this\nLine 6: These are all below line 3\nLine 7: Keep scrolling\nLine 8: Still more lines\nLine 9: Almost there\nLine 10: Final line",
+          "workspace/completion.txt": "Perfect! You can control exactly how many lines head shows.\n\n===============================================\nCOMPLETION CODE: HEAD-LINE-COUNT-MASTER\n===============================================\n\nThe -n flag gives you precise control:\n\nhead -n 1 file.csv     # Just the header\nhead -n 5 file.log     # First 5 lines\nhead -n 100 data.txt   # First 100 lines\n\nShorthand also works:\n  head -1 file.csv\n  head -5 file.log\n\nThis is essential for working with structured data!"
+        }
+      },
+      "instructions": "## Your Task\n\nUse `head -n` to view exactly the **first 3 lines** of `secrets.txt`.\n\n**Steps:**\n1. Read the task: `cat task.txt`\n2. Run `head -n 3 secrets.txt` to see the first 3 lines only\n3. Notice line 3 contains the completion code\n4. Verify you don't see lines 4-10 (only first 3 should appear)\n5. Read completion file: `cat completion.txt`\n6. Copy the code\n7. Type `exit` and paste the code\n\n**Learn:** The `-n` flag controls exactly how many lines head displays!",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from line 3",
+          "validator": "exact",
+          "expected": "HEAD-LINE-COUNT-MASTER"
+        }
+      ]
+    },
+    {
+      "id": "head-combine",
+      "command": "head",
+      "code": "head (with pipes)",
+      "title": "Combine Head with Other Commands",
+      "tags": ["intermediate", "text", "pipes"],
+      "level": "intermediate",
+      "module": "text-operations",
+      "about": {
+        "what": "`head` becomes incredibly powerful when **combined with pipes** (`|`) to process command output or chain with other tools.\n\n```bash\ncommand | head -10    # Show first 10 lines of command output\n```\n\n**Common patterns:**\n\n**Preview command output:**\n```bash\nls -l | head -5       # First 5 directory entries\nps aux | head -10     # First 10 processes\n```\n\n**Extract specific sections:**\n```bash\nhead -20 file | tail -5    # Lines 16-20\n```\n\n**Sample large outputs:**\n```bash\nfind / -name '*.txt' 2>/dev/null | head -20\n# First 20 matches from file search\n```\n\nPipes let `head` work with any command, not just files!",
+        "history": "Pipes (`|`) are one of Unix's greatest innovations, created by Douglas McIlroy in 1973. The pipe operator lets you connect commands, passing output from one to input of another.\n\nBefore pipes, you had to:\n1. Run a command and save output to a file\n2. Run the next command on that file\n3. Delete the temporary file\n\nWith pipes:\n```bash\ncommand1 | command2 | command3\n```\n\nThis revolutionized computing. McIlroy described the Unix philosophy:\n- Write programs that do one thing well\n- Write programs to work together\n- Write programs to handle text streams\n\n`head` exemplifies this. It does one thing (show first lines) but becomes incredibly versatile through pipes:\n```bash\nls -l | head -5              # Preview directory\ncat huge-log.txt | head -20  # Sample log file\nps aux | head -10            # Top processes\n```\n\nThe combination of `head` and `tail` in pipes became a classic pattern:\n```bash\nhead -100 file | tail -50    # Lines 51-100\n```\n\nPipes turned simple commands into a powerful programming language. This pattern influenced PowerShell, Jupyter notebooks, and modern data pipelines.",
+        "example": "```bash\n# Preview directory listing\nls -l | head -5\n# Shows first 5 files\n\n# Preview running processes\nps aux | head -10\n# Shows header + first 9 processes\n\n# Extract middle section of file\nhead -50 data.txt | tail -20\n# Shows lines 31-50\n\n# Sample search results\ngrep 'error' application.log | head -10\n# First 10 error lines\n\n# Preview sorted data\nsort data.txt | head -5\n# First 5 lines alphabetically\n\n# Check most recent git commits\ngit log --oneline | head -5\n# Last 5 commits\n\n# Preview file list\nfind . -name '*.js' | head -20\n# First 20 JavaScript files\n\n# Sample large command output\ncat /usr/share/dict/words | head -10\n# First 10 words from dictionary\n```",
+        "commonUses": [
+          "**Command output preview** - Sample output from long-running commands",
+          "**Process inspection** - View top processes from ps output",
+          "**Search sampling** - Preview search results before processing all",
+          "**Section extraction** - Combine with tail to get middle sections",
+          "**Data pipeline** - First step in multi-command processing chains"
+        ]
+      },
+      "hints": [
+        "Use pipes (|) to send command output to head",
+        "Syntax: command | head -n",
+        "This works with any command that produces text output"
+      ],
+      "sandbox": {
+        "startDir": "workspace",
+        "dirs": ["workspace"],
+        "files": {
+          "workspace/task.txt": "Task: The file 'numbers.txt' contains many numbers.\n\nUse pipes to combine sort and head:\n1. Sort numbers.txt\n2. Pipe to head to show first 5 sorted numbers\n\nThe 5th smallest number is your completion code.\n\nOnce you see it, check completion.txt for verification.",
+          "workspace/numbers.txt": "42\n17\n89\n3\n56\n91\n28\n5\nHEAD-PIPE-EXPERT\n74\n33\n88\n12\n67\n45\n99\n21\n8\n54\n76",
+          "workspace/completion.txt": "Excellent! You've mastered using head with pipes.\n\n===============================================\nCOMPLETION CODE: HEAD-PIPE-EXPERT\n===============================================\n\nPipes make head incredibly versatile:\n\nls -l | head -5          # Preview directory\nps aux | head -10        # Top processes\ngrep 'error' log | head  # First 10 errors\n\nCombine with tail for ranges:\nhead -100 file | tail -20  # Lines 81-100\n\nThis is the Unix philosophy in action:\n  Simple tools combined through pipes!"
+        }
+      },
+      "instructions": "## Your Task\n\nCombine `sort` and `head` using a pipe to find the first 5 sorted values from `numbers.txt`.\n\n**Steps:**\n1. Read the task: `cat task.txt`\n2. View the file: `cat numbers.txt` - numbers are in random order\n3. Sort first: `sort numbers.txt` - see all numbers sorted\n4. Combine with head: `sort numbers.txt | head -5` - first 5 sorted\n5. The 5th line contains the completion code\n6. Read completion file: `cat completion.txt`\n7. Copy the code\n8. Type `exit` and paste the code\n\n**Learn:** Pipes (`|`) let you combine commands - head works on any text output!",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from sorted output",
+          "validator": "exact",
+          "expected": "HEAD-PIPE-EXPERT"
+        }
+      ]
+    }
+  ]
+}

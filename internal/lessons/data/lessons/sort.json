@@ -1,0 +1,137 @@
+{
+  "version": "1.0",
+  "lessons": [
+    {
+      "id": "sort",
+      "command": "sort",
+      "code": "sort",
+      "title": "Sort Lines Alphabetically",
+      "tags": ["basics", "text", "sorting"],
+      "level": "beginner",
+      "module": "text-operations",
+      "about": {
+        "what": "The `sort` command **sorts lines of text** alphabetically by default. It reads input line by line and outputs the lines in sorted order.\n\n```bash\nsort filename\n```\n\nBy default, `sort` performs **dictionary order** sorting (alphabetical). The original file remains unchanged - sorted output goes to the terminal unless redirected.\n\n`sort` is essential for:\n- Organizing data alphabetically\n- Preparing data for `uniq` (which requires sorted input)\n- Finding alphabetically first/last items\n- Creating ordered lists from unordered data",
+        "history": "`sort` has been a core Unix utility since the early 1970s, created as part of the original Unix toolset at Bell Labs.\n\nThe need for `sort` arose from data processing tasks. Before `sort`, programmers had to write custom sorting code for every program that needed sorted data. Having a dedicated sorting utility followed the Unix philosophy: create tools that do one thing well.\n\nInterestingly, `sort` was one of the first Unix commands to use **external sorting** algorithms - techniques that can sort files larger than available memory by using temporary files. This made it practical for sorting huge datasets on the limited computers of the 1970s.\n\nThe command became a fundamental building block in Unix pipelines, especially when combined with `uniq` for deduplication. This pattern became so common that `sort | uniq` is one of the most recognizable command combinations in Unix.\n\n**Fun fact:** Early versions of `sort` were surprisingly complex programs for their time, implementing sophisticated algorithms like merge sort. Modern implementations can sort gigabytes of data efficiently, handling multi-byte character sets and locale-specific sorting rules.\n\nThe simplicity of the interface (`sort filename`) hides remarkable engineering underneath - a testament to good Unix design.",
+        "example": "```bash\n# Sort a file alphabetically\nsort names.txt\n\n# Sort and save to a new file\nsort names.txt > names-sorted.txt\n\n# Sort from command output\nls | sort\n\n# Sort multiple files together\nsort file1.txt file2.txt\n\n# Reverse alphabetical order\nsort -r names.txt\n\n# Check if file is already sorted\nsort -c names.txt\n# Output: \"sort: names.txt:3: disorder: Alice\"\n# (shows first out-of-order line)\n\n# Common pipeline: remove duplicates\nsort data.txt | uniq\n\n# Sort and view first 10\nsort large-file.txt | head -10\n```",
+        "commonUses": [
+          "**Data organization** - Sort lists alphabetically for readability",
+          "**Prepare for uniq** - Sort before using uniq to remove duplicates",
+          "**Directory listings** - Sort ls output in custom ways",
+          "**Log analysis** - Sort log entries alphabetically by message",
+          "**Data deduplication** - Essential first step with sort | uniq pattern"
+        ]
+      },
+      "hints": [
+        "Syntax: sort filename",
+        "Original file is unchanged - output goes to terminal",
+        "Use > to save sorted output to a new file"
+      ],
+      "sandbox": {
+        "startDir": "workspace",
+        "dirs": ["workspace"],
+        "files": {
+          "workspace/task.txt": "Task: Sort the names in 'names.txt' alphabetically.\n\nThe names are currently in random order. Use sort to see them\nin alphabetical order.\n\nOnce sorted, check completion.txt for your code.",
+          "workspace/names.txt": "Zelda\nMario\nAlice\nBob\nDavid\nCharlie\nEve\nFrank\nGrace\nSORT-ALPHABETIC-SUCCESS\nHank\nIvy\nJack",
+          "workspace/completion.txt": "Excellent! You've sorted text alphabetically.\n\n=========================================\nCOMPLETION CODE: SORT-ALPHABETIC-SUCCESS\n=========================================\n\nThe sort command organizes lines in alphabetical order.\n\nKey points:\n- Default sorting is alphabetical (dictionary order)\n- Original file remains unchanged\n- Output goes to terminal (use > to save)\n- Case-sensitive by default (uppercase before lowercase)\n\nPrepare for uniq:\n  sort data.txt | uniq\n  (removes duplicate lines)\n\nSave sorted output:\n  sort names.txt > sorted-names.txt"
+        }
+      },
+      "instructions": "## Your Task\n\nUse `sort` to view the names in `names.txt` in alphabetical order.\n\n**Steps:**\n1. Read the task: `cat task.txt`\n2. View the unsorted file: `cat names.txt` - notice random order\n3. Run `sort names.txt` to see alphabetically sorted output\n4. Notice how the lines are reordered alphabetically\n5. The completion code will appear in alphabetical position\n6. Read completion file: `cat completion.txt`\n7. Copy the code\n8. Type `exit` and paste the code\n\n**Learn:** `sort` reorders lines alphabetically - perfect for organizing data!",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from sorted output",
+          "validator": "exact",
+          "expected": "SORT-ALPHABETIC-SUCCESS"
+        }
+      ]
+    },
+    {
+      "id": "sort-n",
+      "command": "sort",
+      "code": "sort -n",
+      "title": "Sort Numbers Numerically",
+      "tags": ["intermediate", "text", "sorting"],
+      "level": "intermediate",
+      "module": "text-operations",
+      "about": {
+        "what": "The `sort -n` flag enables **numeric sorting** instead of alphabetical sorting. This treats each line as a number rather than text.\n\n```bash\nsort -n numbers.txt\n```\n\n**The Critical Difference:**\n\n**Alphabetic sort** (default):\n- Compares character by character from left to right\n- \"10\" < \"2\" (because \"1\" < \"2\")\n- \"1000\" < \"5\" (because \"1\" < \"5\")\n\n**Numeric sort** (`-n`):\n- Treats entire line as a number\n- 2 < 10 (mathematically correct)\n- 5 < 1000 (mathematically correct)\n\nUse `-n` whenever sorting:\n- Numbers (IDs, ages, scores, counts)\n- File sizes\n- Timestamps (if numeric)\n- Any data that should sort mathematically",
+        "history": "The `-n` (numeric) flag was added to `sort` in the mid-1970s after users repeatedly encountered the \"10 comes before 2\" problem with default alphabetic sorting.\n\nThis problem was particularly frustrating with:\n- Line numbers in files\n- Process IDs from `ps` output\n- File sizes from `ls -s`\n- Any numeric data in text files\n\nBefore `-n`, users had to either:\n- Pad numbers with leading zeros (001, 002, ..., 010)\n- Write custom sort programs\n- Use complex `awk` or `sed` scripts\n\nThe addition of `-n` was a perfect example of Unix evolution - start with a simple tool, then add flags for common use cases. The numeric sort implementation was non-trivial, requiring the sort program to parse numbers (including decimals and negative numbers) and handle edge cases.\n\n**Modern complexity:** Today's `sort -n` handles:\n- Integers (positive and negative)\n- Decimals (3.14, -2.5)\n- Scientific notation (1.5e3)\n- Leading/trailing whitespace\n- Mixed numeric and non-numeric data\n\nThe `-n` flag transformed `sort` from a text tool into a general-purpose data organization utility.",
+        "example": "```bash\n# WRONG: Alphabetic sort on numbers\nsort numbers.txt\n# Output: 1, 10, 100, 2, 20, 3 (incorrect!)\n\n# RIGHT: Numeric sort\nsort -n numbers.txt\n# Output: 1, 2, 3, 10, 20, 100 (correct!)\n\n# Sort ages numerically\nsort -n ages.txt\n\n# Sort file sizes\nls -s | sort -n\n# Smallest files first\n\n# Sort process IDs\nps aux | tail -n +2 | sort -n -k 2\n# (skip header, sort by PID column)\n\n# Reverse numeric sort (largest first)\nsort -rn scores.txt\n\n# Real-world: top 10 largest files\ndu -a | sort -rn | head -10\n\n# Sort by specific field numerically\nsort -t ',' -k 3 -n data.csv\n# (field 3, comma-delimited)\n```",
+        "commonUses": [
+          "**Numeric data** - Sort ages, scores, IDs, counts correctly",
+          "**File sizes** - Sort du or ls output by size",
+          "**Log analysis** - Sort numeric fields in logs (response times, error codes)",
+          "**Data processing** - Sort CSV columns numerically",
+          "**System monitoring** - Sort process IDs, memory usage, CPU percentages"
+        ]
+      },
+      "hints": [
+        "Use -n flag for numeric sorting",
+        "Syntax: sort -n filename",
+        "Without -n, \"10\" sorts before \"2\" (alphabetic)"
+      ],
+      "sandbox": {
+        "startDir": "workspace",
+        "dirs": ["workspace"],
+        "files": {
+          "workspace/task.txt": "Task: Sort the numbers in 'scores.txt' numerically.\n\nThe file contains scores that need to be sorted from lowest to highest.\nTry both regular sort and sort -n to see the difference!\n\nOnce you understand numeric sorting, check completion.txt.",
+          "workspace/scores.txt": "100\n5\n42\n9\n1000\n3\n75\n12\n200\nSORT-NUMERIC-MASTER\n88",
+          "workspace/completion.txt": "Perfect! You understand numeric vs alphabetic sorting.\n\n=========================================\nCOMPLETION CODE: SORT-NUMERIC-MASTER\n=========================================\n\nThe -n flag is critical for sorting numbers correctly.\n\nWithout -n (alphabetic):\n  10, 100, 1000, 2, 20, 3\n  (Compares character-by-character: \"1\" < \"2\")\n\nWith -n (numeric):\n  2, 3, 10, 20, 100, 1000\n  (Treats entire value as a number)\n\nCommon combinations:\n  sort -n data.txt        # Ascending (smallest first)\n  sort -rn data.txt       # Descending (largest first)\n\nReal-world example:\n  du -a | sort -rn | head -10\n  (Find 10 largest files/directories)"
+        }
+      },
+      "instructions": "## Your Task\n\nCompare alphabetic and numeric sorting to understand why `-n` is essential for numbers.\n\n**Steps:**\n1. Read the task: `cat task.txt`\n2. View the file: `cat scores.txt` - numbers in random order\n3. Try alphabetic sort: `sort scores.txt`\n   - Notice: 100 comes before 5 (WRONG for numbers!)\n4. Try numeric sort: `sort -n scores.txt`\n   - Notice: Numbers in correct order (3, 5, 9, 12, 42...)\n5. Find the completion code in numeric sort output\n6. Read completion file: `cat completion.txt`\n7. Copy the code\n8. Type `exit` and paste the code\n\n**Learn:** The `-n` flag sorts numbers mathematically, not alphabetically!",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from numeric sort output",
+          "validator": "exact",
+          "expected": "SORT-NUMERIC-MASTER"
+        }
+      ]
+    },
+    {
+      "id": "sort-r",
+      "command": "sort",
+      "code": "sort -r",
+      "title": "Reverse Sort Order",
+      "tags": ["intermediate", "text", "sorting"],
+      "level": "intermediate",
+      "module": "text-operations",
+      "about": {
+        "what": "The `sort -r` flag **reverses the sort order**, showing results in descending order instead of ascending.\n\n```bash\nsort -r filename     # Reverse alphabetic (Z to A)\nsort -rn filename    # Reverse numeric (largest to smallest)\n```\n\n**Ascending (default):**\n- Alphabetic: A → Z\n- Numeric: smallest → largest\n- Dates: oldest → newest\n\n**Descending (`-r`):**\n- Alphabetic: Z → A\n- Numeric: largest → smallest\n- Dates: newest → oldest\n\n**Flag combinations:**\n- `-r` alone: reverse alphabetic\n- `-rn` or `-nr`: reverse numeric (same thing)\n- `-ru`: reverse and unique\n\nReverse sorting is essential for:\n- Finding top/maximum values (largest files, highest scores)\n- Recent-first ordering (latest dates, newest entries)\n- Descending rankings (leaderboards)",
+        "history": "The `-r` (reverse) flag was part of the original `sort` implementation. The ability to reverse sort order made `sort` far more versatile without adding complexity.\n\nThe flag letter 'r' stands for **'reverse'**, and it simply inverts the comparison function used during sorting. This elegant design meant:\n- No separate \"reverse sort\" algorithm needed\n- Works with any other flag combination\n- Minimal performance overhead\n\nThe reverse flag became especially important with:\n\n**1. System administration tasks:**\n```bash\ndu -a | sort -rn | head -10    # 10 largest files\nps aux | sort -rn -k 3 | head  # Top CPU users\n```\n\n**2. Log analysis:**\n```bash\nsort -r access.log    # Most recent entries first\n```\n\n**3. Leaderboards and rankings:**\n```bash\nsort -rn scores.txt   # Highest scores first\n```\n\n**Flag stacking:** Unix tradition allows combining single-letter flags: `-rn` is the same as `-r -n`. Users discovered that `-nr` also works (order doesn't matter), leading to personal preferences. Some prefer `-rn` (reverse numeric), others `-nr` (numeric reverse).\n\nThe simplicity of `-r` - just reverse the output - became a model for other Unix commands implementing reverse operations.",
+        "example": "```bash\n# Reverse alphabetic sort (Z to A)\nsort -r names.txt\n\n# Reverse numeric sort (largest first)\nsort -rn numbers.txt\nsort -nr numbers.txt    # Same thing\n\n# Find largest files\ndu -a /home | sort -rn | head -10\n# Top 10 largest files/directories\n\n# Most recent dates first\nsort -r dates.txt\n\n# Highest scores\nsort -rn scores.txt | head -5\n# Top 5 scores\n\n# Least common to most common\nsort data.txt | uniq -c | sort -n\n# Most common to least common\nsort data.txt | uniq -c | sort -rn\n\n# Reverse and remove duplicates\nsort -ru emails.txt\n# (-u = unique, -r = reverse)\n\n# Multiple flags combined\nsort -rn -k 2 data.txt\n# Reverse numeric sort of field 2\n```",
+        "commonUses": [
+          "**Top N queries** - Find largest/highest/most recent items",
+          "**Leaderboards** - Show highest scores or best performances",
+          "**System monitoring** - Identify top resource consumers",
+          "**Recent-first** - Show newest log entries or dates first",
+          "**Descending rankings** - Any time you want biggest/best/newest first"
+        ]
+      },
+      "hints": [
+        "Use -r flag to reverse sort order",
+        "Combine with -n for reverse numeric sort: sort -rn",
+        "Flag order doesn't matter: -rn and -nr are identical"
+      ],
+      "sandbox": {
+        "startDir": "workspace",
+        "dirs": ["workspace"],
+        "files": {
+          "workspace/task.txt": "Task: Sort dates in reverse order (newest first).\n\nThe file 'dates.txt' contains dates. Sort them to see the most\nrecent date first.\n\nOnce sorted in reverse, check completion.txt for your code.",
+          "workspace/dates.txt": "2024-03-15\n2024-01-10\n2024-12-31\n2024-06-22\n2024-09-05\n2024-02-14\n2024-11-20\n2024-07-04\n2024-05-18\n2024-08-30\n2024-04-25\n2024-10-12",
+          "workspace/completion.txt": "Excellent! You've mastered reverse sorting.\n\n=========================================\nCOMPLETION CODE: SORT-REVERSE-EXPERT\n=========================================\n\nThe -r flag reverses any sort order.\n\nExamples:\n  sort -r names.txt    # Z to A (reverse alphabetic)\n  sort -rn scores.txt  # Largest to smallest\n  sort -r dates.txt    # Newest to oldest\n\nFlag combinations work together:\n  -rn  = reverse numeric (same as -nr)\n  -ru  = reverse unique\n  -rk2 = reverse sort by field 2\n\nCommon patterns:\n  du -a | sort -rn | head -10\n    (Find 10 largest files)\n\n  sort data.txt | uniq -c | sort -rn\n    (Most common items first)\n\nThe dates.txt file sorted in reverse shows:\n  2024-12-31 (most recent) first\n\nNote: The completion code is in completion.txt, not in the dates."
+        }
+      },
+      "instructions": "## Your Task\n\nSort the dates in `dates.txt` in **reverse order** (newest first).\n\n**Steps:**\n1. Read the task: `cat task.txt`\n2. View the file: `cat dates.txt` - dates in random order\n3. Try normal sort: `sort dates.txt` - oldest first (ascending)\n4. Try reverse sort: `sort -r dates.txt` - newest first (descending)\n5. Notice 2024-12-31 appears first (most recent)\n6. Read completion file: `cat completion.txt`\n7. Copy the code\n8. Type `exit` and paste the code\n\n**Learn:** The `-r` flag reverses sort order - essential for finding top/recent items!",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from completion.txt",
+          "validator": "exact",
+          "expected": "SORT-REVERSE-EXPERT"
+        }
+      ]
+    }
+  ]
+}

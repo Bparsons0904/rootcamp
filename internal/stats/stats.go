@@ -28,7 +28,10 @@ type OverallProgress struct {
 	ByModule []ModuleStats
 }
 
-func CalculateProgress(lessons []types.Lesson, progressMap map[string]*types.UserProgress) OverallProgress {
+func CalculateProgress(
+	lessons []types.Lesson,
+	progressMap map[string]*types.UserProgress,
+) OverallProgress {
 	overall := ProgressStats{Total: len(lessons)}
 	levelMap := make(map[string]*ProgressStats)
 	moduleMap := make(map[string]*ProgressStats)
@@ -96,13 +99,10 @@ func calculatePercentage(completed, total int) float64 {
 
 func RenderProgressBar(percentage float64) string {
 	const barWidth = 60
-	filled := int(percentage / 100 * barWidth)
-	if filled > barWidth {
-		filled = barWidth
-	}
+	filled := min(int(percentage/100*barWidth), barWidth)
 
 	bar := ""
-	for i := 0; i < barWidth; i++ {
+	for i := range barWidth {
 		if i < filled {
 			bar += "█"
 		} else {

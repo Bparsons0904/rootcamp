@@ -1,0 +1,49 @@
+{
+  "version": "1.0",
+  "lessons": [
+    {
+      "id": "gzip",
+      "command": "gzip",
+      "code": "gzip",
+      "title": "Compress Files with Gzip",
+      "tags": ["compression", "archives", "intermediate"],
+      "level": "intermediate",
+      "module": "archives",
+      "about": {
+        "what": "The `gzip` command **compresses** files to make them smaller, saving disk space and reducing transfer times. It uses the DEFLATE compression algorithm to reduce file size while preserving all data.\n\nWhen you gzip a file:\n- The original file is replaced with a compressed version ending in `.gz`\n- File size typically reduces by 60-80% for text files\n- The file can be decompressed with `gunzip` or `gzip -d`\n\nGzip is most commonly used with tar archives to create `.tar.gz` files (also called \"tarballs\"), which are both archived and compressed. This is the standard format for distributing software on Linux/Unix systems.",
+        "history": "Gzip was created in 1992 by Jean-loup Gailly and Mark Adler as a free replacement for the Unix `compress` command, which had patent restrictions.\n\nThe name stands for **GNU zip**, though it's unrelated to the ZIP file format used on Windows. Gzip uses the DEFLATE algorithm (the same algorithm used in ZIP files), but has a different file format optimized for single-file compression.\n\nGzip quickly became the standard compression tool for Unix/Linux because:\n- It was free and open source (no patents)\n- It had better compression ratios than `compress`\n- It was faster than alternatives like `bzip2`\n- It was adopted by GNU and included in all Linux distributions\n\nToday, gzip is everywhere:\n- Web servers use gzip to compress HTTP responses\n- `.tar.gz` is the standard format for Linux software\n- Git uses gzip compression internally for objects\n- Log rotation tools compress old logs with gzip\n\nThe `.tar.gz` or `.tgz` extension has become synonymous with Unix/Linux software distribution.",
+        "example": "```bash\n# Compress a file (replaces original)\ngzip file.txt\n# Creates: file.txt.gz\n\n# Decompress a file\ngzip -d file.txt.gz\n# OR\ngunzip file.txt.gz\n# Restores: file.txt\n\n# Keep original file when compressing\ngzip -k file.txt\n# Creates: file.txt.gz (file.txt remains)\n\n# View compressed file contents without decompressing\nzcat file.txt.gz\n# OR\ngzip -dc file.txt.gz\n\n# Compress with maximum compression\ngzip -9 file.txt\n\n# Compress all files in directory\ngzip *.txt\n\n# Common: create compressed tar archive\ntar -czvf archive.tar.gz directory/\n# This combines tar (archive) + gzip (compress)\n```",
+        "commonUses": [
+          "**Log file compression** - Compress old log files to save space",
+          "**Tar archives** - Create .tar.gz files for software distribution",
+          "**Web optimization** - Compress HTTP responses to reduce bandwidth",
+          "**Backup compression** - Reduce backup file sizes",
+          "**File transfer** - Compress files before uploading/downloading"
+        ]
+      },
+      "hints": [
+        "Use 'gzip filename' to compress a file",
+        "The original file will be replaced with a .gz version",
+        "Use 'gunzip' or 'gzip -d' to decompress"
+      ],
+      "sandbox": {
+        "startDir": "logs",
+        "dirs": ["logs"],
+        "files": {
+          "logs/app.log": "2025-01-01 10:00:00 INFO Application started\n2025-01-01 10:01:15 INFO User login successful\n2025-01-01 10:02:30 INFO Processing request\n2025-01-01 10:03:45 INFO Database query executed\n2025-01-01 10:05:00 INFO Response sent to client\n2025-01-01 10:06:15 INFO Cache updated\n2025-01-01 10:07:30 INFO Background job completed\n2025-01-01 10:08:45 INFO User logout\n2025-01-01 10:10:00 INFO Application running smoothly",
+          "logs/access.log": "192.168.1.100 - - [01/Jan/2025:10:00:00] GET /index.html\n192.168.1.101 - - [01/Jan/2025:10:01:00] POST /api/login\n192.168.1.102 - - [01/Jan/2025:10:02:00] GET /dashboard\n192.168.1.103 - - [01/Jan/2025:10:03:00] GET /api/data",
+          "logs/secret.log": "2025-01-01 10:00:00 DEBUG Secret logging enabled\n2025-01-01 10:01:00 DEBUG Processing sensitive data\n2025-01-01 10:02:00 INFO Completion code generated\n\n========================================\nCOMPLETION CODE: GZIP-COMPRESS-MASTER\n========================================\n\nGzip compresses files using the DEFLATE algorithm.\n\nKey points:\n- Replaces original file with .gz version (unless using -k)\n- Typical compression: 60-80% for text files\n- Decompress with: gunzip or gzip -d\n- View without decompressing: zcat\n\nCommon usage:\n- gzip file.txt → creates file.txt.gz\n- gunzip file.txt.gz → restores file.txt\n- tar -czvf archive.tar.gz dir/ → create compressed archive\n\nGzip is the standard compression for Unix/Linux systems!"
+        }
+      },
+      "instructions": "## Your Task\n\nCompress a log file with gzip, then decompress it to find the completion code.\n\n**Steps:**\n1. List the files to see what's available: `ls -lh`\n2. Compress the secret.log file: `gzip secret.log`\n   - This creates `secret.log.gz` and removes the original\n3. Verify the compression: `ls -lh` (notice the .gz file is smaller)\n4. Decompress the file: `gunzip secret.log.gz`\n   - OR use: `gzip -d secret.log.gz`\n5. Read the decompressed file: `cat secret.log`\n6. Copy the completion code\n7. Type `exit` and paste the code\n\n**Learn:** Gzip reduces file size significantly, which is essential for storage and transfer efficiency.",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from secret.log",
+          "validator": "exact",
+          "expected": "GZIP-COMPRESS-MASTER"
+        }
+      ]
+    }
+  ]
+}

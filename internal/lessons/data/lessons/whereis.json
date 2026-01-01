@@ -1,0 +1,116 @@
+{
+  "version": "1.0",
+  "lessons": [
+    {
+      "id": "whereis",
+      "command": "whereis",
+      "code": "whereis",
+      "title": "Locate Binary, Source, and Manual Pages",
+      "tags": ["basics", "system", "commands"],
+      "level": "beginner",
+      "module": "file-operations",
+      "skipSandbox": true,
+      "about": {
+        "what": "The `whereis` command locates the **binary**, **source code**, and **manual pages** for commands. It searches standard system locations, not just your PATH.\n\n```bash\nwhereis ls\n# Output: ls: /usr/bin/ls /usr/share/man/man1/ls.1.gz\n```\n\n**Output format:**\n```\ncommand: /path/to/binary /path/to/man/page\n```\n\n**What it finds:**\n- **Binary:** The executable file\n- **Source:** Source code (if available)\n- **Manual:** Man page documentation\n\n**Difference from `which`:**\n- `which` searches only your $PATH (shows what runs)\n- `whereis` searches standard system locations (shows everything installed)\n\nPerfect for:\n- Finding documentation (man pages)\n- Locating both program and docs\n- Discovering standard installation locations",
+        "history": "`whereis` was created for BSD Unix in the late 1970s-early 1980s to help users find both programs AND their documentation.\n\n**The Documentation Problem:**\nEarly Unix systems scattered files across the filesystem:\n- Binaries in `/bin`, `/usr/bin`, `/usr/local/bin`\n- Man pages in `/usr/share/man`, `/usr/local/man`\n- Source in `/usr/src` (if available)\n\nUsers needed both the program and its documentation, but finding them separately was tedious:\n```bash\nwhich ls          # Find the binary\nman ls            # Read the manual (but where IS the man page?)\n```\n\n**whereis Solution:**\nOne command finds everything:\n```bash\nwhereis ls\n# ls: /usr/bin/ls /usr/share/man/man1/ls.1.gz\n```\n\nNow you see both the binary and documentation location!\n\n**Standard Locations:**\nwhereis searches predefined \"standard\" locations:\n- Binaries: `/bin`, `/usr/bin`, `/usr/local/bin`, `/sbin`, `/usr/sbin`\n- Man pages: `/usr/share/man`, `/usr/local/man`\n- Sources: `/usr/src`\n\nIt does NOT search your entire filesystem - only conventional Unix locations. This makes it fast.\n\n**Why it persists:**\nEven with modern documentation systems (web docs, --help flags), man pages remain the canonical Unix documentation. `whereis` is still the standard way to find them.\n\n**Fun fact:**\nOn modern systems, many source files aren't installed by default (to save space). You'll often see binaries and man pages but no source. Install \"source\" packages to get source code locations.",
+        "example": "```bash\n# Find ls binary and manual\nwhereis ls\n# ls: /usr/bin/ls /usr/share/man/man1/ls.1.gz\n\n# Find bash components\nwhereis bash\n# bash: /usr/bin/bash /usr/share/man/man1/bash.1.gz\n\n# Find grep\nwhereis grep\n# grep: /usr/bin/grep /usr/share/man/man1/grep.1.gz\n\n# Multiple commands\nwhereis ls cat grep\n\n# Commands with source\nwhereis gcc\n# (May show source if gcc-source package installed)\n\n# Compare with which\nwhich ls        # /usr/bin/ls\nwhereis ls      # ls: /usr/bin/ls /usr/share/man/man1/ls.1.gz\n# whereis shows MORE info!\n\n# Find documentation location\nwhereis python3\n# python3: /usr/bin/python3 /usr/share/man/man1/python3.1.gz\n# Now you know where the man page is!\n```",
+        "commonUses": [
+          "**Find documentation** - Locate man pages for commands",
+          "**Complete location info** - Get binary + docs + source",
+          "**System exploration** - Discover standard installation locations",
+          "**Documentation verification** - Check if man pages are installed",
+          "**Package verification** - Ensure complete installation"
+        ]
+      },
+      "hints": [
+        "Syntax: whereis command-name",
+        "Shows binary AND manual page locations",
+        "Searches standard locations, not just PATH"
+      ],
+      "sandbox": {},
+      "instructions": "## Your Task\n\nUse `whereis` to find binaries and documentation for system commands.\n\n**Steps:**\n\n1. **Find ls components:**\n   ```bash\n   whereis ls\n   ```\n   Output shows: `ls: /usr/bin/ls /usr/share/man/man1/ls.1.gz`\n   - Binary: /usr/bin/ls\n   - Man page: /usr/share/man/man1/ls.1.gz\n\n2. **Compare with which:**\n   ```bash\n   which ls\n   whereis ls\n   ```\n   - `which` shows only binary (what runs)\n   - `whereis` shows binary AND documentation\n\n3. **Find bash:**\n   ```bash\n   whereis bash\n   ```\n   Shows binary and man page\n\n4. **Find grep:**\n   ```bash\n   whereis grep\n   ```\n\n5. **Try multiple commands:**\n   ```bash\n   whereis ls cat grep\n   ```\n   Shows all at once!\n\n**Key differences:**\n- **which:** Searches your $PATH (what command runs?)\n- **whereis:** Searches standard locations (where's everything installed?)\n\n**Use which when:** \"Which Python will run?\"\n**Use whereis when:** \"Where's the ls man page?\"\n\n**Completion Code:** WHEREIS-BASIC-SUCCESS\n\n**Learn:** `whereis` finds binaries, sources, and man pages - more comprehensive than `which`!",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from instructions",
+          "validator": "exact",
+          "expected": "WHEREIS-BASIC-SUCCESS"
+        }
+      ]
+    },
+    {
+      "id": "whereis-flags",
+      "command": "whereis",
+      "code": "whereis -b/-m/-s",
+      "title": "Search Specific Component Types",
+      "tags": ["intermediate", "system", "commands"],
+      "level": "intermediate",
+      "module": "file-operations",
+      "skipSandbox": true,
+      "about": {
+        "what": "The `whereis` flags filter output to show only specific component types:\n\n```bash\nwhereis -b bash   # Binary only\nwhereis -m bash   # Manual only\nwhereis -s bash   # Source only\n```\n\n**Flags:**\n- `-b` **binary** - Show only executable location\n- `-m` **manual** - Show only man page location\n- `-s` **source** - Show only source code location (often empty)\n\n**Why filter?**\n\n**For scripting:**\n```bash\nBINARY=$(whereis -b ls | cut -d ' ' -f 2)\n# Gets just the path: /usr/bin/ls\n```\n\n**For man pages:**\n```bash\nwhereis -m bash\n# bash: /usr/share/man/man1/bash.1.gz\n```\n\n**For source (if installed):**\n```bash\nwhereis -s gcc\n# gcc: /usr/src/gcc-11.2.0\n# (Only if source package installed)\n```\n\nFiltering makes output more parseable for scripts and shows only what you need.",
+        "history": "The filtering flags (`-b`, `-m`, `-s`) were added to `whereis` to make it more useful for scripting and automation.\n\n**The Problem:**\nOriginal `whereis` showed everything:\n```bash\nwhereis bash\n# bash: /usr/bin/bash /usr/share/man/man1/bash.1.gz\n```\n\nBut scripts often needed just the binary path:\n```bash\nBASH_PATH=$(whereis bash | ???)  # How to extract just the binary?\n```\n\nComplex parsing was required:\n```bash\nBASH_PATH=$(whereis bash | cut -d ' ' -f 2)  # Fragile!\n```\n\n**With flags:**\n```bash\nBASH_PATH=$(whereis -b bash | cut -d ' ' -f 2)  # More reliable\n```\n\n**Flag meanings:**\n- **-b (binary):** Most commonly used - where's the executable?\n- **-m (manual):** Where's the documentation?\n- **-s (source):** Where's the source code? (rarely available on modern systems)\n\n**Modern usage:**\n\nThe `-b` flag became particularly useful for finding binaries outside PATH:\n```bash\n# which won't find it if it's not in PATH\nwhich some-admin-tool  # (nothing)\n\n# whereis -b finds it in standard locations\nwhereis -b some-admin-tool\n# some-admin-tool: /usr/sbin/some-admin-tool\n```\n\nThe `-m` flag helps verify documentation installation:\n```bash\nwhereis -m python3\n# python3: /usr/share/man/man1/python3.1.gz\n# (Good - man page is installed!)\n```\n\n**Source flag reality:**\nThe `-s` flag is rarely useful on modern systems because:\n- Most systems don't install source by default (saves space)\n- Source is usually in Git repos, not `/usr/src`\n- Only development packages include source\n\nBut it remains for historical compatibility.",
+        "example": "```bash\n# Binary only\nwhereis -b ls\n# ls: /usr/bin/ls\n\n# Manual only\nwhereis -m grep\n# grep: /usr/share/man/man1/grep.1.gz\n\n# Source only (usually empty)\nwhereis -s bash\n# bash: (often no output)\n\n# Multiple flags (combine)\nwhereis -b -m ls\n# ls: /usr/bin/ls /usr/share/man/man1/ls.1.gz\n# (Same as no flags)\n\n# Extract binary path for script\nBIN=$(whereis -b python3 | awk '{print $2}')\necho $BIN\n# /usr/bin/python3\n\n# Check if man page exists\nif whereis -m git | grep -q man; then\n  echo \"Git documentation installed\"\nfi\n\n# Find all binaries\nwhereis -b ls cat grep awk sed\n\n# Verify source package installed\nwhereis -s gcc\n# gcc: /usr/src/gcc (if source package present)\n```",
+        "commonUses": [
+          "**Script automation** - Extract specific paths for scripts",
+          "**Binary location** - Get executable path without man pages",
+          "**Documentation check** - Verify man pages are installed",
+          "**Source verification** - Check if source packages installed",
+          "**Clean output** - Get only the information needed"
+        ]
+      },
+      "hints": [
+        "Use -b for binary only, -m for manual only, -s for source only",
+        "Flags make output cleaner and easier to parse",
+        "Combine flags: whereis -b -m command"
+      ],
+      "sandbox": {},
+      "instructions": "## Your Task\n\nUse `whereis` flags to filter component types.\n\n**Steps:**\n\n1. **Binary only:**\n   ```bash\n   whereis -b bash\n   ```\n   Output: `bash: /usr/bin/bash` (no man page)\n\n2. **Manual only:**\n   ```bash\n   whereis -m bash\n   ```\n   Output: `bash: /usr/share/man/man1/bash.1.gz` (no binary)\n\n3. **Source only:**\n   ```bash\n   whereis -s bash\n   ```\n   Output: `bash:` (probably empty - source not usually installed)\n\n4. **Compare full output:**\n   ```bash\n   whereis bash\n   whereis -b bash\n   whereis -m bash\n   ```\n   See how flags filter the output!\n\n5. **Use in script (example):**\n   ```bash\n   BASH_PATH=$(whereis -b bash | awk '{print $2}')\n   echo \"Bash is at: $BASH_PATH\"\n   ```\n   Extracts just the binary path!\n\n**Practical uses:**\n\n**Check if man page exists:**\n```bash\nwhereis -m python3\n```\n\n**Get binary path for script:**\n```bash\nGIT=$(whereis -b git | awk '{print $2}')\n```\n\n**Verify source installed (rare):**\n```bash\nwhereis -s gcc\n```\n\n**Completion Code:** WHEREIS-FLAGS-PRO\n\n**Learn:** Flags filter whereis output - useful for scripting and focused searches!",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from instructions",
+          "validator": "exact",
+          "expected": "WHEREIS-FLAGS-PRO"
+        }
+      ]
+    },
+    {
+      "id": "which-vs-whereis",
+      "command": "whereis",
+      "code": "which vs whereis",
+      "title": "Understanding the Difference: which vs whereis",
+      "tags": ["intermediate", "system", "commands"],
+      "level": "intermediate",
+      "module": "file-operations",
+      "skipSandbox": true,
+      "about": {
+        "what": "Understanding when to use `which` vs `whereis` is essential for effective command-line work.\n\n**which:**\n- Searches your **$PATH**\n- Shows **what will execute**\n- Shows **first match only** (unless `-a`)\n- Returns executable path or nothing\n\n**whereis:**\n- Searches **standard system locations**\n- Shows **binary + documentation + source**\n- Not affected by your PATH\n- More comprehensive information\n\n**Use which when:**\n- \"Which Python will run?\"\n- \"Is this command in my PATH?\"\n- \"Which version takes priority?\"\n\n**Use whereis when:**\n- \"Where's the man page?\"\n- \"Where's everything installed?\"\n- \"Is documentation available?\"\n\n**Example scenario:**\n```bash\nwhich python\n# /usr/local/bin/python (in your PATH)\n\nwhereis python\n# python: /usr/bin/python /usr/local/bin/python /usr/share/man/man1/python.1.gz\n# (Shows system version AND local version AND docs)\n```",
+        "history": "The distinction between `which` and `whereis` reflects two different problems Unix users needed to solve:\n\n**which (1970s):**\nProblem: \"Multiple versions installed. Which one actually runs?\"\nSolution: Search PATH and show what executes\n\n**whereis (late 1970s):**\nProblem: \"Where's ALL the stuff related to this command?\"\nSolution: Search standard locations and show everything\n\n**Evolution of usage:**\n\n**1970s-1980s:**\nBoth commands commonly used. Systems were simpler.\n\n**1990s-2000s:**\n- More complex PATH setups (user directories, local installs)\n- `which` became more important for version management\n- `whereis` used primarily for finding man pages\n\n**2010s-present:**\n- Virtual environments, version managers (pyenv, nvm, rbenv)\n- `which` critical for environment debugging\n- `whereis` less common (man pages often accessed via `man` directly)\n- Many developers use `type` (shell builtin) instead of `which`\n\n**Modern alternatives:**\n\n**For `which`:**\n```bash\ntype python      # Shell builtin, more reliable\ncommand -v python  # POSIX standard\n```\n\n**For `whereis`:**\n```bash\nman python       # Direct man page access (don't need location)\nman -w python    # Show man page path\n```\n\n**But both persist:**\n- Muscle memory from decades of use\n- Clear, simple interfaces\n- Available on all Unix-like systems\n- Still taught in every Unix course\n\nUnderstanding both remains essential Unix knowledge.",
+        "example": "```bash\n# Compare outputs\nwhich bash\n# /bin/bash\n\nwhereis bash\n# bash: /bin/bash /usr/share/man/man1/bash.1.gz\n\n# which searches PATH\necho $PATH\n# /usr/local/bin:/usr/bin:/bin\nwhich ls\n# /usr/bin/ls (first in PATH)\n\n# whereis searches standard locations (ignores PATH)\nexport PATH=/tmp:$PATH  # Add /tmp to front of PATH\nwhich ls   # Still /usr/bin/ls (or /tmp/ls if you put one there)\nwhereis ls # Still shows /usr/bin/ls /usr/share/man/man1/ls.1.gz\n\n# Finding documentation\nwhich python3\n# /usr/bin/python3 (just the binary)\n\nwhereis python3\n# python3: /usr/bin/python3 /usr/share/man/man1/python3.1.gz\n# (binary AND man page!)\n\n# Version confusion scenario\nwhich python\n# /usr/local/bin/python (local install)\n\nwhereis python\n# python: /usr/bin/python /usr/local/bin/python ...\n# (shows BOTH system and local versions)\n\n# Both have their place\nwhich git     # What runs when I type 'git'?\nwhereis git   # Where's everything git-related?\n```",
+        "commonUses": [
+          "**PATH debugging** - Use `which` to see what runs",
+          "**Documentation finding** - Use `whereis` to locate man pages",
+          "**Comprehensive info** - Use `whereis` for complete picture",
+          "**Version detection** - Use `which` for active version",
+          "**Installation verification** - Use `whereis` to verify packages"
+        ]
+      },
+      "hints": [
+        "which = what will execute (searches PATH)",
+        "whereis = where's everything (searches standard locations)",
+        "Different tools for different questions"
+      ],
+      "sandbox": {},
+      "instructions": "## Your Task\n\nUnderstand when to use `which` vs `whereis` by comparing their outputs.\n\n**Steps:**\n\n1. **Compare with bash:**\n   ```bash\n   which bash\n   whereis bash\n   ```\n   Notice:\n   - `which` shows just binary\n   - `whereis` shows binary + man page\n\n2. **Compare with ls:**\n   ```bash\n   which ls\n   whereis ls\n   ```\n   Same pattern!\n\n3. **Try with python:**\n   ```bash\n   which python3\n   whereis python3\n   ```\n   `whereis` shows more locations\n\n4. **Understanding the difference:**\n   \n   **Use which when asking:**\n   - \"What command will run?\"\n   - \"Is this in my PATH?\"\n   - \"Which version takes priority?\"\n   \n   **Use whereis when asking:**\n   - \"Where's the documentation?\"\n   - \"What's installed system-wide?\"\n   - \"Where are ALL the versions?\"\n\n**Quick reference:**\n\n```bash\n# Question: Which Python runs?\nwhich python3  # Answer: /usr/bin/python3\n\n# Question: Where's the Python man page?\nwhereis -m python3  # Answer: /usr/share/man/man1/python3.1.gz\n\n# Question: What bash will execute?\nwhich bash  # Answer: /bin/bash\n\n# Question: Where's all bash stuff?\nwhereis bash  # Answer: /bin/bash + man page + maybe source\n```\n\n**Both are useful!**\n- `which`: Daily version management\n- `whereis`: Finding documentation and comprehensive info\n\n**Completion Code:** WHICH-WHEREIS-EXPERT\n\n**Learn:** which and whereis answer different questions - both are essential Unix tools!",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from instructions",
+          "validator": "exact",
+          "expected": "WHICH-WHEREIS-EXPERT"
+        }
+      ]
+    }
+  ]
+}

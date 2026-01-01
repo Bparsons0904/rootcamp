@@ -1,0 +1,49 @@
+{
+  "version": "1.0",
+  "lessons": [
+    {
+      "id": "top",
+      "command": "top",
+      "code": "top",
+      "title": "Interactive Process Monitor",
+      "tags": ["processes", "monitoring", "system", "intermediate"],
+      "level": "intermediate",
+      "module": "processes",
+      "about": {
+        "what": "The `top` command is an **interactive, real-time process monitor** that shows you what's happening on your system right now. Unlike `ps` which gives a snapshot, `top` continuously updates to show:\n\n- **CPU usage** - Which processes are using the most processor time\n- **Memory usage** - RAM consumption by each process\n- **System overview** - Total CPU, memory, load average, uptime\n- **Process list** - All running processes sorted by resource usage\n- **Live updates** - Screen refreshes every few seconds\n\nThink of `top` as a real-time dashboard for your system. You'll use it to:\n- Identify which program is slowing down your computer\n- Monitor system health and resource usage\n- Find memory leaks or CPU-intensive processes\n- Check system load during development or deployment\n\nYou can interact with `top` using keyboard commands to sort, filter, and even kill processes without leaving the interface.",
+        "history": "The `top` command was created in 1984 by William LeFebvre at Northwestern University. At the time, system administrators needed to repeatedly run `ps` to monitor systems, which was inefficient and frustrating.\n\nLeFebvre created `top` as a better solution - a program that would:\n- Automatically refresh the process list\n- Sort by CPU usage (the most important metric)\n- Show system statistics at a glance\n- Run in a single terminal window\n\nThe name \"top\" refers to showing the **top** processes by resource usage. It quickly became indispensable for Unix administrators.\n\nThe original `top` was written in C and designed to be portable across Unix variants. As it spread to different systems (SunOS, HP-UX, Linux), each platform added its own variations and features.\n\n**Modern alternatives:**\n- `htop` - Enhanced version with colors, mouse support, tree view\n- `btop` - Beautiful process monitor with graphs and modern UI\n- `glances` - Cross-platform monitoring with web interface\n- `bottom` (btm) - Modern, customizable process viewer in Rust\n\nDespite these alternatives, classic `top` remains pre-installed on every Unix/Linux system and is the go-to tool for quick system checks. System administrators worldwide instinctively type `top` as their first debugging step when a system is slow.\n\nFun fact: Pressing 'q' to quit `top` is one of the most-typed keystrokes in Linux history!",
+        "example": "```bash\n# Start top\ntop\n\n# Interactive commands while top is running:\n# q - Quit\n# k - Kill a process (prompts for PID)\n# M - Sort by memory usage\n# P - Sort by CPU usage (default)\n# T - Sort by running time\n# u - Filter by username\n# 1 - Toggle individual CPU cores\n# h - Help\n# Space - Refresh immediately\n\n# Start top with specific options\ntop -u username    # Show only specific user's processes\ntop -p 1234        # Monitor specific PID\ntop -n 10          # Run for 10 iterations then exit\ntop -b             # Batch mode (non-interactive, for logging)\ntop -d 5           # Update every 5 seconds (default is 3)\n\n# Batch mode for logging\ntop -b -n 1 > system-snapshot.txt\n\n# Monitor specific process\ntop -p $(pgrep firefox)\n```",
+        "commonUses": [
+          "**Performance troubleshooting** - Find processes causing high CPU or memory usage",
+          "**System monitoring** - Check overall system health and resource usage",
+          "**Finding memory leaks** - Identify processes with growing memory consumption",
+          "**Server administration** - Monitor production servers for issues",
+          "**Development debugging** - Watch resource usage of applications during testing"
+        ]
+      },
+      "hints": [
+        "Read the tutorial file to learn about top",
+        "The usage guide explains interactive commands",
+        "The completion code is in the completion.txt file"
+      ],
+      "sandbox": {
+        "startDir": "monitoring",
+        "dirs": ["monitoring"],
+        "files": {
+          "monitoring/tutorial.txt": "Understanding TOP Output:\n\nWhen you run 'top', you see several sections:\n\n=== HEADER (System Overview) ===\ntop - 10:30:45 up 5 days, 2:15, 3 users, load average: 0.52, 0.48, 0.45\n\n- Current time: 10:30:45\n- Uptime: 5 days, 2 hours, 15 minutes\n- Users: 3 logged in users\n- Load average: 1min, 5min, 15min (lower is better)\n\nTasks: 245 total, 2 running, 243 sleeping, 0 stopped, 0 zombie\n\n- Process states\n\n%Cpu(s): 5.2 us, 2.1 sy, 0.0 ni, 92.5 id, 0.2 wa\n\n- us: User CPU time\n- sy: System CPU time\n- ni: Nice (low priority) CPU time\n- id: Idle (92.5% idle = 7.5% busy)\n- wa: I/O wait\n\nMiB Mem: 15891.2 total, 1234.5 free, 8456.3 used, 6200.4 buff/cache\nMiB Swap: 8192.0 total, 8192.0 free, 0.0 used\n\n- Memory and swap usage\n\n=== PROCESS LIST ===\nPID  USER   PR  NI  VIRT   RES   SHR  S  %CPU  %MEM  TIME+     COMMAND\n1234 user   20  0   2.5g   500m  100m R  45.2  3.1   5:32.45  firefox\n5678 user   20  0   1.2g   250m  50m  S  12.3  1.6   2:15.33  code\n\n- PID: Process ID\n- %CPU: CPU usage percentage\n- %MEM: Memory usage percentage\n- TIME+: Total CPU time used\n- COMMAND: Process name",
+          "monitoring/usage-guide.txt": "TOP Interactive Commands:\n\nWhile top is running, you can press these keys:\n\n=== Navigation & Display ===\nq     - Quit top\nh     - Help screen\nSpace - Refresh immediately\n1     - Toggle CPU core display (show individual cores)\n\n=== Sorting ===\nM     - Sort by memory usage (highest first)\nP     - Sort by CPU usage (default)\nT     - Sort by running time\nN     - Sort by process ID\n\n=== Filtering ===\nu     - Show only specific user's processes\nk     - Kill a process (prompts for PID and signal)\n\n=== Display Options ===\nV     - Forest/tree view (show process hierarchy)\nc     - Toggle command line vs program name\ni     - Toggle idle processes\n\n=== Common Workflows ===\n\n1. Find CPU hog:\n   - Run top\n   - Press 'P' to sort by CPU\n   - Top process is using most CPU\n\n2. Find memory hog:\n   - Run top\n   - Press 'M' to sort by memory\n   - Top process is using most RAM\n\n3. Kill a process from top:\n   - Press 'k'\n   - Enter PID\n   - Enter signal (15 for SIGTERM, 9 for SIGKILL)\n\n4. Monitor specific user:\n   - Press 'u'\n   - Enter username\n   - Shows only that user's processes",
+          "monitoring/completion.txt": "Excellent! You've learned about the top command.\n\n================================\nCODE: TOP-MONITOR-COMPLETE\n================================\n\nKey TOP Concepts:\n\n1. Real-time monitoring:\n   - Updates every few seconds\n   - Shows live CPU and memory usage\n   - Interactive interface\n\n2. System overview:\n   - Uptime and load average\n   - Total CPU usage\n   - Memory and swap usage\n   - Number of processes\n\n3. Process sorting:\n   - P: Sort by CPU (default)\n   - M: Sort by memory\n   - T: Sort by time running\n\n4. Quick actions:\n   - k: Kill a process\n   - q: Quit top\n   - h: Help\n   - Space: Refresh now\n\n5. Modern alternatives:\n   - htop: Enhanced with colors and mouse\n   - btop: Beautiful with graphs\n   - glances: Advanced cross-platform\n\nWhen to use top:\n- System is slow - find the culprit\n- High CPU usage - identify the process\n- Memory issues - find memory leaks\n- Quick system health check\n- Server monitoring\n\nNote: On many systems, 'htop' provides a better\nexperience with colors, mouse support, and easier\nnavigation. Try it if available!"
+        }
+      },
+      "instructions": "## Your Task\n\nLearn about the `top` command for real-time system monitoring.\n\n**Steps:**\n1. Read the tutorial: `cat tutorial.txt`\n   - Learn how to interpret top's output\n2. Read the usage guide: `cat usage-guide.txt`\n   - Understand interactive commands\n3. Read the completion file: `cat completion.txt`\n4. Copy the completion code\n5. Type `exit` and paste the code\n\n**Try it yourself** (after this lesson):\n- Run `top` on your system\n- Press 'M' to sort by memory\n- Press 'P' to sort by CPU\n- Press 'q' to quit\n\n**Note:** Top is interactive and updates in real-time. This lesson teaches you how to use it. Try running `top` in your own terminal after completing this lesson!\n\nModern alternatives: Try `htop`, `btop`, or `bottom` for enhanced interfaces.",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from completion.txt",
+          "validator": "exact",
+          "expected": "TOP-MONITOR-COMPLETE"
+        }
+      ]
+    }
+  ]
+}

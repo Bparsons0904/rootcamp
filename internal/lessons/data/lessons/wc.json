@@ -1,0 +1,144 @@
+{
+  "version": "1.0",
+  "lessons": [
+    {
+      "id": "wc",
+      "command": "wc",
+      "code": "wc",
+      "title": "Count Lines, Words, and Characters",
+      "tags": ["basics", "text", "analysis"],
+      "level": "beginner",
+      "module": "text-operations",
+      "about": {
+        "what": "The `wc` command **counts lines, words, and characters** in files. The name stands for **'word count'**.\n\n```bash\nwc filename\n```\n\n**Output format:**\n```bash\nwc example.txt\n#  10  50  300 example.txt\n#  ^   ^   ^   ^\n#  |   |   |   filename\n#  |   |   character count\n#  |   word count\n#  line count\n```\n\n`wc` is essential for:\n- Counting lines in log files or datasets\n- Measuring file size in words/characters\n- Verifying data completeness\n- Analyzing text statistics\n- Quick file content assessment",
+        "history": "`wc` has been part of Unix since Version 1 in 1971, making it one of the original Unix utilities. It was created to solve a common problem: how many lines/words are in this file?\n\nBefore `wc`, counting required:\n- Opening files in editors and manually counting\n- Writing custom programs\n- Using complex `grep` or `sed` commands\n\nThe tool's name 'word count' reflects its most common use case, though it counts much more than words.\n\n**Why three numbers?**\nThe designers included:\n- **Lines** - Most important for code and structured data\n- **Words** - Useful for text documents and prose\n- **Characters (bytes)** - Important for file size and data transmission\n\nThe order (lines, words, chars) was chosen because line count is usually most relevant in Unix contexts - counting records in data files, log entries, code lines, etc.\n\n**Interesting facts:**\n- `wc` is extremely fast - optimized for counting without loading entire files\n- Used in coding challenges (\"shortest wc implementation\")\n- Inspired similar tools in other languages\n- Still unchanged after 50+ years\n\nThe tool became culturally significant:\n- \"Line count\" became a (flawed) metric for code size\n- NaNoWriMo (writing challenge) participants use `wc` to track word counts\n- Used in academic research to analyze text corpus sizes",
+        "example": "```bash\n# Count lines, words, and characters\nwc example.txt\n# Output: 10 50 300 example.txt\n#         ^  ^  ^\n#         lines words chars\n\n# Count multiple files\nwc file1.txt file2.txt\n# Shows counts for each, plus totals\n\n# Count from command output\nls | wc\n# Counts directory entries\n\n# Quick file assessment\nwc README.md\n# See how long the README is\n\n# Verify data file size\nwc data.csv\n# Check number of records (lines)\n\n# Common pattern: count results\ngrep 'error' log.txt | wc\n# How many error lines?\n```",
+        "commonUses": [
+          "**Line counting** - Count records in data files or log entries",
+          "**File size assessment** - Quickly gauge file size and content",
+          "**Data verification** - Ensure expected number of records",
+          "**Result counting** - Count grep or find results",
+          "**Text analysis** - Measure document length in words"
+        ]
+      },
+      "hints": [
+        "Syntax: wc filename",
+        "Output shows: lines words characters filename",
+        "The first number is the line count"
+      ],
+      "sandbox": {
+        "startDir": "workspace",
+        "dirs": ["workspace"],
+        "files": {
+          "workspace/task.txt": "Task: Use wc to count lines, words, and characters in 'document.txt'\n\nThe output will show three numbers: lines, words, and characters.\nNote how many LINES the file contains.\n\nOnce you see the counts, check completion.txt for your code.",
+          "workspace/document.txt": "Root Camp teaches terminal commands through interactive lessons.\nEach lesson includes history, examples, and hands-on practice.\nYou learn by doing in a safe sandbox environment.\nNo risk of breaking your actual system.\nJust pure learning and skill building.\n\nCOMPLETION CODE: WC-BASIC-SUCCESS\n\nMaster the terminal, one command at a time!",
+          "workspace/completion.txt": "Great! You've used wc to count file contents.\n\n=========================================\nCOMPLETION CODE: WC-BASIC-SUCCESS\n=========================================\n\nThe wc command shows three numbers:\n  lines  words  characters  filename\n\nThis is useful for:\n- Counting log entries (lines)\n- Measuring document size (words)\n- Checking file sizes (characters)\n- Verifying data completeness\n\nQuick tip: The first number is line count!"
+        }
+      },
+      "instructions": "## Your Task\n\nUse `wc` to count the lines, words, and characters in `document.txt`.\n\n**Steps:**\n1. Read the task: `cat task.txt`\n2. Run `wc document.txt` to see the counts\n3. Observe the output format: lines words characters filename\n4. Note that document.txt has 8 lines\n5. Find the completion code in the file: `cat document.txt`\n6. Read completion file: `cat completion.txt`\n7. Copy the code\n8. Type `exit` and paste the code\n\n**Learn:** `wc` counts lines, words, and characters - essential for analyzing file contents!",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from document.txt",
+          "validator": "exact",
+          "expected": "WC-BASIC-SUCCESS"
+        }
+      ]
+    },
+    {
+      "id": "wc-l",
+      "command": "wc",
+      "code": "wc -l",
+      "title": "Count Lines Only",
+      "tags": ["intermediate", "text", "analysis"],
+      "level": "intermediate",
+      "module": "text-operations",
+      "about": {
+        "what": "The `wc -l` flag shows **only the line count**, omitting words and characters.\n\n```bash\nwc -l filename\n# Output: 42 filename\n```\n\nThis is the **most commonly used** `wc` flag because:\n- Line count is usually what you want\n- Cleaner output (single number)\n- Faster (doesn't count words/characters)\n- Perfect for counting records, log entries, or search results\n\n**Other useful flags:**\n- `wc -w` - words only\n- `wc -c` - characters (bytes) only\n- `wc -m` - characters (multibyte aware) only\n\nBut `-l` is by far the most common.",
+        "history": "The `-l` (lines) flag was part of the original `wc` implementation. The flag letters correspond to the count types:\n- `-l` = **l**ines\n- `-w` = **w**ords  \n- `-c` = **c**haracters (bytes)\n\nOver time, `-l` became the dominant use case. In Unix systems, **line-oriented processing** is fundamental:\n- Files are sequences of lines\n- Logs are lines of entries\n- CSV/data files have lines of records\n- Code is measured in lines\n\nThis made counting lines the most practical operation:\n```bash\nwc -l access.log        # How many requests?\nwc -l users.csv         # How many users?\ngrep 'error' log | wc -l # How many errors?\n```\n\nThe `-l` flag enables a crucial pattern: **counting results**:\n```bash\nfind . -name '*.js' | wc -l    # How many JavaScript files?\nps aux | wc -l                 # How many processes?\ngrep 'TODO' *.py | wc -l       # How many TODOs?\n```\n\nThis became so common that some developers rarely use `wc` without `-l`.\n\nInterestingly, \"lines of code\" (LOC) became a controversial metric in software engineering. While `wc -l` accurately counts lines, using it to measure programmer productivity or code quality is widely criticized. Nevertheless, LOC remains reported in many projects, all thanks to `wc -l`.",
+        "example": "```bash\n# Count lines only\nwc -l file.txt\n# Output: 42 file.txt\n\n# Count log entries\nwc -l application.log\n# Output: 1523 application.log\n\n# Count CSV records\nwc -l users.csv\n# Output: 501 users.csv (500 users + 1 header)\n\n# Count search results\ngrep 'error' logfile.txt | wc -l\n# Output: 23 (23 lines with 'error')\n\n# Count files\nfind . -name '*.txt' | wc -l\n# Output: 15 (15 text files found)\n\n# Count running processes\nps aux | wc -l\n# Output: 127 (includes header)\n\n# Quick data verification\nwc -l expected-data.csv\n# Check if you have the expected 10,000 records\n\n# Compare file sizes\nwc -l old-version.txt new-version.txt\n# See which is longer\n```",
+        "commonUses": [
+          "**Result counting** - Count grep, find, or other command results",
+          "**Data verification** - Ensure files have expected number of records",
+          "**Log analysis** - Count entries in log files",
+          "**Code metrics** - Count lines of code (though LOC is a flawed metric)",
+          "**Quick assessment** - Rapidly check file size in lines"
+        ]
+      },
+      "hints": [
+        "Use -l flag to count lines only",
+        "Syntax: wc -l filename",
+        "Output shows just: number filename"
+      ],
+      "sandbox": {
+        "startDir": "workspace",
+        "dirs": ["workspace"],
+        "files": {
+          "workspace/task.txt": "Task: Use wc -l to count ONLY the lines in 'data.txt'\n\nThe output should show just the line count, not words or characters.\n\nThen use grep to find lines containing 'SUCCESS' and count them.\nHow many SUCCESS entries are there?\n\nOnce you know the count, check completion.txt for your code.",
+          "workspace/data.txt": "Record 1: PROCESSING\nRecord 2: SUCCESS\nRecord 3: PROCESSING\nRecord 4: FAILED\nRecord 5: SUCCESS\nRecord 6: PROCESSING\nRecord 7: SUCCESS\nRecord 8: FAILED\nRecord 9: SUCCESS\nRecord 10: PROCESSING\nRecord 11: SUCCESS\nRecord 12: PROCESSING\nRecord 13: FAILED\nRecord 14: SUCCESS\nRecord 15: PROCESSING",
+          "workspace/completion.txt": "Perfect! You've mastered line counting with wc -l.\n\n===============================================\nCOMPLETION CODE: WC-LINE-COUNT-MASTER\n===============================================\n\nwc -l is the most commonly used wc flag:\n\nwc -l file.txt          # Count lines\ngrep 'error' log | wc -l  # Count matches\nfind . -name '*.js' | wc -l # Count files\n\nOther useful flags:\n  wc -w    # words only\n  wc -c    # characters only\n\nBut -l (lines) is by far the most practical!\n\nThe data.txt file has 6 SUCCESS entries."
+        }
+      },
+      "instructions": "## Your Task\n\nUse `wc -l` to count lines, then combine it with `grep` to count specific matches.\n\n**Steps:**\n1. Read the task: `cat task.txt`\n2. Count total lines: `wc -l data.txt` - should show 15\n3. View the file: `cat data.txt` - notice various statuses\n4. Find SUCCESS lines: `grep 'SUCCESS' data.txt`\n5. Count SUCCESS lines: `grep 'SUCCESS' data.txt | wc -l`\n6. Note there are 6 SUCCESS entries\n7. Read completion file: `cat completion.txt`\n8. Copy the code\n9. Type `exit` and paste the code\n\n**Learn:** `wc -l` counts just lines - perfect for counting results from other commands!",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from completion.txt",
+          "validator": "exact",
+          "expected": "WC-LINE-COUNT-MASTER"
+        }
+      ]
+    },
+    {
+      "id": "wc-pipes",
+      "command": "wc",
+      "code": "wc (with pipes)",
+      "title": "Count Command Output with Pipes",
+      "tags": ["intermediate", "text", "pipes"],
+      "level": "intermediate",
+      "module": "text-operations",
+      "about": {
+        "what": "`wc` becomes incredibly powerful when **combined with pipes** to count the output of other commands.\n\n```bash\ncommand | wc -l    # Count lines of output\n```\n\n**Common patterns:**\n\n**Count search results:**\n```bash\ngrep 'error' log.txt | wc -l\n# How many error lines?\n```\n\n**Count files:**\n```bash\nfind . -name '*.js' | wc -l\n# How many JavaScript files?\n```\n\n**Count processes:**\n```bash\nps aux | grep nginx | wc -l\n# How many nginx processes?\n```\n\nThis pattern - piping to `wc -l` - is one of the most common command combinations in Unix.",
+        "history": "The combination of pipes and `wc` exemplifies the Unix philosophy at its best. Neither tool needs to know about the other - they just work together through text streams.\n\nBefore pipes (pre-1973), you had to:\n1. Run a command and save output to a file\n2. Run `wc` on that file\n3. Delete the temporary file\n\nWith pipes:\n```bash\ncommand | wc -l\n```\n\nThis pattern became so fundamental that it appears in countless tutorials and Stack Overflow answers. Some of the most common uses:\n\n**Counting search results:**\n```bash\ngrep 'pattern' files | wc -l\n```\n\n**Monitoring system resources:**\n```bash\nps aux | wc -l              # Total processes\nls -la | wc -l              # Files in directory\ndf -h | wc -l               # Mounted filesystems\n```\n\n**Data pipeline verification:**\n```bash\ncat input.txt | some-processing | wc -l\n# Did we process all records?\n```\n\nThe `| wc -l` pattern became so common it's almost a Unix idiom. When someone asks \"how many X?\", the Unix answer is often \"pipe it to wc -l.\"\n\nModern tools sometimes build counting in (`grep -c`), but piping to `wc` remains the universal, general-purpose solution.",
+        "example": "```bash\n# Count search results\ngrep 'TODO' *.js | wc -l\n# Output: 23 (23 TODO comments)\n\n# Count files\nfind . -type f | wc -l\n# Output: 156 (156 files in directory tree)\n\n# Count specific file types\nls *.txt | wc -l\n# Output: 12 (12 text files)\n\n# Count processes\nps aux | grep python | wc -l\n# How many Python processes running?\n\n# Count users\ncut -d: -f1 /etc/passwd | wc -l\n# How many user accounts?\n\n# Count unique values\nsort data.txt | uniq | wc -l\n# How many unique entries?\n\n# Verify data processing\ncat input.csv | grep -v '^#' | wc -l\n# Count non-comment lines\n\n# Count directory contents\nls -la | wc -l\n# Total items (including . and ..)\n\n# Git statistics\ngit log --oneline | wc -l\n# Total commits\n```",
+        "commonUses": [
+          "**Result counting** - Count output from any command",
+          "**Search result totals** - Count grep matches without showing them",
+          "**File statistics** - Count files found by find or ls",
+          "**Process monitoring** - Count running processes",
+          "**Data verification** - Ensure pipelines process expected record counts"
+        ]
+      },
+      "hints": [
+        "Use pipes (|) to send command output to wc",
+        "Syntax: command | wc -l",
+        "This counts the lines of output from any command"
+      ],
+      "sandbox": {
+        "startDir": "workspace",
+        "dirs": ["workspace", "workspace/docs", "workspace/src"],
+        "files": {
+          "workspace/task.txt": "Task: Use pipes with wc to count specific items.\n\nFind out:\n1. How many files contain the word 'important'?\n2. Use grep -l to list files, then pipe to wc -l to count them\n\nThe count is your first clue.\nThen check completion.txt for the code.",
+          "workspace/README.md": "# Project Documentation\n\nThis is important documentation for the project.",
+          "workspace/notes.txt": "Meeting notes - nothing important here.",
+          "workspace/config.txt": "Configuration file with important settings.",
+          "workspace/data.txt": "Data file - routine information.",
+          "workspace/docs/guide.md": "Important user guide for the application.",
+          "workspace/docs/api.md": "API documentation - important reference.",
+          "workspace/src/main.js": "Main application code.",
+          "workspace/src/utils.js": "Utility functions - important helpers.",
+          "workspace/completion.txt": "Excellent! You've mastered using wc with pipes.\n\n===============================================\nCOMPLETION CODE: WC-PIPE-EXPERT\n===============================================\n\nPiping to wc is a fundamental Unix pattern:\n\ngrep 'error' log | wc -l     # Count errors\nfind . -name '*.js' | wc -l  # Count files\nps aux | grep nginx | wc -l  # Count processes\nls *.txt | wc -l             # Count text files\n\nThe pattern: command | wc -l\n  Takes any output and counts the lines\n\nThis is the Unix philosophy in action:\n  Small tools combined through pipes!\n\nYour workspace has 6 files with 'important' in them."
+        }
+      },
+      "instructions": "## Your Task\n\nCombine `grep` and `wc` using pipes to count files containing a specific word.\n\n**Steps:**\n1. Read the task: `cat task.txt`\n2. Search recursively for 'important': `grep -r 'important' .`\n3. List files with matches: `grep -rl 'important' .`\n4. Count those files: `grep -rl 'important' . | wc -l`\n5. Note the count is 6 files\n6. Read completion file: `cat completion.txt`\n7. Copy the code\n8. Type `exit` and paste the code\n\n**Learn:** Piping to `wc -l` counts output from any command - an essential Unix pattern!",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from completion.txt",
+          "validator": "exact",
+          "expected": "WC-PIPE-EXPERT"
+        }
+      ]
+    }
+  ]
+}

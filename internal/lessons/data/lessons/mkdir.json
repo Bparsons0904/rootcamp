@@ -1,0 +1,134 @@
+{
+  "version": "1.0",
+  "lessons": [
+    {
+      "id": "mkdir",
+      "command": "mkdir",
+      "code": "mkdir",
+      "title": "Create Directories",
+      "tags": ["basics", "filesystem", "directories"],
+      "level": "beginner",
+      "module": "file-operations",
+      "about": {
+        "what": "The `mkdir` command **creates new directories** (folders). The name stands for **'make directory'**. It's one of the fundamental commands for organizing your filesystem.\n\nEvery project, every organization system, every file structure starts with creating directories. Without `mkdir`, you'd have no way to organize files into logical groups.",
+        "history": "`mkdir` has been part of Unix since the very early days in the 1970s. In the original Unix filesystem, creating directories was actually a complex operation that required special system calls.\n\nEarly Unix systems had strict limitations on directory depth and naming. The original Unix filesystem (Version 1) only supported 14-character filenames, and deeply nested directories could cause performance issues on the small computers of the era.\n\nThe command has remained remarkably consistent over 50+ years. The same `mkdir projects` command that worked in 1975 still works identically today.\n\nInterestingly, the Windows command `md` (make directory) was inspired by Unix's `mkdir`, though DOS adopted the shorter name to save typing on slow terminals.",
+        "example": "```bash\n# Create a single directory\nmkdir projects\n\n# Create multiple directories at once\nmkdir docs images videos\n\n# Create nested structure with -p flag\nmkdir -p projects/myapp/src/components\n\n# Common workflow: create and navigate\nmkdir my-project\ncd my-project\n\n# Organize a project structure\nmkdir -p src tests docs assets\n```",
+        "commonUses": [
+          "**Project setup** - Create directory structure for new projects",
+          "**File organization** - Make folders to categorize files by type or topic",
+          "**Build systems** - Create output directories for compiled code",
+          "**Data management** - Organize data files by date, category, or source",
+          "**Backup workflows** - Create timestamped backup directories"
+        ]
+      },
+      "hints": [
+        "Use 'mkdir' followed by the directory name you want to create",
+        "After creating it, use 'ls' to verify the directory exists",
+        "Then use 'cat' to view the file inside it"
+      ],
+      "sandbox": {
+        "startDir": "workspace",
+        "dirs": ["workspace"],
+        "files": {
+          "workspace/task.txt": "Task: Create a directory called 'myproject' using the mkdir command.\n\nOnce created, check the completion.txt file for your code.",
+          "workspace/completion.txt": "Congratulations! You've created your first directory.\n\n======================================\nCOMPLETION CODE: MKDIR-BASIC-COMPLETE\n======================================\n\nThe mkdir command is fundamental for organizing files into directories.\nYou'll use it constantly when setting up projects and managing files."
+        }
+      },
+      "instructions": "## Your Task\n\nCreate a new directory called `myproject` in the workspace.\n\n**Steps:**\n1. Read the task: `cat task.txt`\n2. Run `mkdir myproject` to create the directory\n3. Verify it exists with `ls` - you should see 'myproject' in the list\n4. Read the completion file: `cat completion.txt`\n5. Copy the completion code\n6. Type `exit` and paste the code\n\n**Learn:** `mkdir` creates new directories for organizing your files.",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from inside the created directory",
+          "validator": "exact",
+          "expected": "MKDIR-BASIC-COMPLETE"
+        }
+      ]
+    },
+    {
+      "id": "mkdir-p",
+      "command": "mkdir",
+      "code": "mkdir -p",
+      "title": "Create Nested Directories",
+      "tags": ["intermediate", "filesystem", "directories"],
+      "level": "intermediate",
+      "module": "file-operations",
+      "about": {
+        "what": "The `mkdir -p` flag creates **nested directories** in a single command, automatically creating any missing parent directories along the path.\n\nWithout `-p`, you'd need to create each level one at a time:\n```bash\nmkdir project\ncd project\nmkdir src\ncd src\nmkdir components\n```\n\nWith `-p`, it's just:\n```bash\nmkdir -p project/src/components\n```\n\nThe `-p` flag (short for 'parents') is essential for quickly setting up complex directory structures.",
+        "history": "The `-p` flag was added to `mkdir` in the late 1970s when developers realized that creating nested directory structures was a common task that required too many commands.\n\nEarly Unix systems forced you to create each directory level individually, which was tedious for deep hierarchies. The Berkeley Software Distribution (BSD) introduced the `-p` flag to solve this, and it quickly became standard across all Unix variants.\n\nThe flag name 'p' comes from 'parents' - it creates parent directories as needed. It also has the useful property of **not erroring** if the directory already exists, making it idempotent (safe to run multiple times).\n\nToday, `mkdir -p` is one of the most common flag combinations, appearing in countless build scripts, installation scripts, and automation tools.",
+        "example": "```bash\n# Create deep nested structure in one command\nmkdir -p project/src/components/ui\n\n# Set up a typical project structure\nmkdir -p myapp/{src,tests,docs,assets}\n\n# Create date-organized directories\nmkdir -p backups/2024/{jan,feb,mar,apr}\n\n# Idempotent - safe to run multiple times\nmkdir -p ~/projects/myapp\nmkdir -p ~/projects/myapp  # Doesn't error\n\n# Common in build scripts\nmkdir -p build/output/dist\n```",
+        "commonUses": [
+          "**Quick project setup** - Create entire directory structures in one command",
+          "**Build systems** - Ensure output directories exist before compilation",
+          "**Installation scripts** - Create config directories that might not exist",
+          "**Automated workflows** - Safe directory creation that won't fail if directory exists",
+          "**Data pipelines** - Create organized output directories for processed data"
+        ]
+      },
+      "hints": [
+        "Use the -p flag: mkdir -p path/to/nested/directory",
+        "This creates all parent directories automatically",
+        "Navigate to the deepest directory to find your code"
+      ],
+      "sandbox": {
+        "startDir": "workspace",
+        "dirs": ["workspace"],
+        "files": {
+          "workspace/task.txt": "Task: Create a nested directory structure:\n  project/src/components\n\nUse the -p flag to create all parent directories at once.\n\nOnce created, check completion.txt for your code.",
+          "workspace/completion.txt": "Excellent! You've mastered nested directory creation.\n\n==========================================\nCOMPLETION CODE: MKDIR-PARENTS-MASTER\n==========================================\n\nThe -p flag is one of the most useful mkdir options.\nIt creates all parent directories and doesn't error if they already exist.\nThis makes it perfect for scripts and automation."
+        }
+      },
+      "instructions": "## Your Task\n\nCreate a nested directory structure in a single command: `project/src/components`\n\n**Steps:**\n1. Read the task: `cat task.txt`\n2. Run `mkdir -p project/src/components` to create all directories at once\n3. Verify with `ls project/` - you should see 'src'\n4. Verify the full path: `ls project/src/` - you should see 'components'\n5. Read completion file: `cat completion.txt`\n6. Copy the code\n7. Type `exit` and paste the code\n\n**Learn:** The `-p` flag creates parent directories automatically, saving you from creating each level separately.",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The code from the nested directory",
+          "validator": "exact",
+          "expected": "MKDIR-PARENTS-MASTER"
+        }
+      ]
+    },
+    {
+      "id": "mkdir-multiple",
+      "command": "mkdir",
+      "code": "mkdir (multiple)",
+      "title": "Create Multiple Directories",
+      "tags": ["intermediate", "filesystem", "directories"],
+      "level": "intermediate",
+      "module": "file-operations",
+      "about": {
+        "what": "`mkdir` can create **multiple directories** at once by listing them as separate arguments:\n\n```bash\nmkdir docs images videos\n```\n\nThis creates three directories in a single command, which is much faster than running `mkdir` three times.\n\nYou can combine this with the `-p` flag to create complex structures:\n```bash\nmkdir -p project/{src,tests,docs}\n```\n\nThis uses **brace expansion** (a shell feature) to create `project/src`, `project/tests`, and `project/docs` simultaneously.",
+        "history": "Multi-argument support in `mkdir` has been present since early Unix. The Unix philosophy emphasized creating tools that could process multiple inputs, and `mkdir` followed this pattern.\n\nThe real power came with **brace expansion**, introduced in the C shell (csh) in the late 1970s and later adopted by Bash and other modern shells. Brace expansion lets you generate multiple arguments from a compact pattern.\n\nBefore brace expansion, scripts would use loops:\n```bash\nfor dir in src tests docs; do\n  mkdir $dir\ndone\n```\n\nWith brace expansion:\n```bash\nmkdir {src,tests,docs}\n```\n\nThis pattern is now fundamental to shell scripting and interactive command-line work.",
+        "example": "```bash\n# Create multiple directories\nmkdir projects downloads documents\n\n# Use brace expansion for related directories\nmkdir {frontend,backend,database}\n\n# Combine with -p for nested structures\nmkdir -p myapp/{src,tests,docs,assets}\n\n# Create year/month structure\nmkdir -p logs/2024/{jan,feb,mar,apr,may,jun}\n\n# Organize by category\nmkdir photos/{family,vacation,work,pets}\n\n# Common project setup\nmkdir -p website/{css,js,images,fonts}\n```",
+        "commonUses": [
+          "**Project initialization** - Set up all needed directories at once",
+          "**Data organization** - Create category folders simultaneously",
+          "**Log management** - Create time-based directory structures",
+          "**Media organization** - Set up folders for different content types",
+          "**Development workflow** - Create src/test/doc structures instantly"
+        ]
+      },
+      "hints": [
+        "List multiple directory names separated by spaces",
+        "Use 'ls' to see all the directories you created",
+        "Check each directory for files containing parts of the code"
+      ],
+      "sandbox": {
+        "startDir": "workspace",
+        "dirs": ["workspace"],
+        "files": {
+          "workspace/task.txt": "Task: Create three directories at once:\n  - docs\n  - src\n  - tests\n\nCreate all three in a single mkdir command.\n\nOnce created, check completion.txt for your code.",
+          "workspace/completion.txt": "Perfect! You've learned to create multiple directories efficiently.\n\n============================================\nCOMPLETION CODE: MKDIR-MULTI-DIR-EXPERT\n============================================\n\nCreating multiple directories at once is a huge time-saver.\nYou can list as many directories as you want, separated by spaces.\n\nCombine this with -p and brace expansion for powerful project setup:\n  mkdir -p project/{src,tests,docs}"
+        }
+      },
+      "instructions": "## Your Task\n\nCreate three directories at once: `docs`, `src`, and `tests`\n\n**Steps:**\n1. Read the task: `cat task.txt`\n2. Run `mkdir docs src tests` to create all three directories\n3. Run `ls` to verify all three directories exist\n4. Read completion file: `cat completion.txt`\n5. Copy the code\n6. Type `exit` and paste the code\n\n**Learn:** Creating multiple directories at once is faster than running mkdir multiple times.",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "Combined code from all three directories",
+          "validator": "exact",
+          "expected": "MKDIR-MULTI-DIR-EXPERT"
+        }
+      ]
+    }
+  ]
+}

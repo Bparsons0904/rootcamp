@@ -1,0 +1,134 @@
+{
+  "version": "1.0",
+  "lessons": [
+    {
+      "id": "echo",
+      "command": "echo",
+      "code": "echo",
+      "title": "Print Text to Terminal",
+      "tags": ["basics", "text", "output"],
+      "level": "beginner",
+      "module": "text-operations",
+      "about": {
+        "what": "The `echo` command **prints text to the terminal**. It's one of the simplest yet most fundamental commands in Unix.\n\n```bash\necho Hello World\n# Output: Hello World\n```\n\n`echo` is essential for:\n- Displaying messages and information\n- Viewing variable values\n- Creating simple output in scripts\n- Debugging scripts by printing values\n- Redirecting text into files\n\nThough simple, `echo` is one of the most frequently used commands in shell scripting and daily terminal work.",
+        "history": "`echo` has been part of Unix since the very beginning in the early 1970s. It was created as a simple way to produce output, especially in shell scripts.\n\nInterestingly, there are **two versions** of `echo`:\n1. **Shell built-in** - Most shells have their own `echo` implementation\n2. **/bin/echo** - A standalone program\n\nThe shell built-in is usually what runs when you type `echo`, making it extremely fast.\n\nThe command's name comes from the idea of 'echoing back' what you type, similar to an acoustic echo. In early computing, being able to simply display text was revolutionary - before `echo`, getting output required complex system calls.\n\nDespite being one of the simplest commands, `echo` has subtle differences between implementations (especially regarding backslash escapes), leading to endless debates among Unix developers. The POSIX standard eventually defined expected behavior, but variations still exist.",
+        "example": "```bash\n# Simple text output\necho Hello\n# Output: Hello\n\n# Multiple words (no quotes needed for simple text)\necho Hello World\n# Output: Hello World\n\n# With quotes (preserves exact spacing)\necho \"Hello    World\"\n# Output: Hello    World\n\n# Print a blank line\necho\n\n# Print special characters\necho \"Path: /home/user/documents\"\n\n# Display variable value (more common in scripts)\nUSER=\"Alice\"\necho \"Hello, $USER\"\n# Output: Hello, Alice\n\n# Multiple lines of text\necho \"Line 1\"\necho \"Line 2\"\necho \"Line 3\"\n```",
+        "commonUses": [
+          "**Script output** - Display messages and information in shell scripts",
+          "**Debugging** - Print variable values to understand what's happening",
+          "**User prompts** - Show messages to users running scripts",
+          "**File creation** - Redirect output to create simple text files",
+          "**Status messages** - Indicate progress or completion of tasks"
+        ]
+      },
+      "hints": [
+        "Syntax: echo your message here",
+        "The message will be printed to the terminal",
+        "After echoing the message, read the completion file"
+      ],
+      "sandbox": {
+        "startDir": "workspace",
+        "dirs": ["workspace"],
+        "files": {
+          "workspace/task.txt": "Task: Use the echo command to display the message: 'Hello Root Camp'\n\nOnce you see the message, check completion.txt for your code.",
+          "workspace/completion.txt": "Great! You've used your first echo command.\n\n=========================================\nCOMPLETION CODE: ECHO-BASIC-SUCCESS\n=========================================\n\nThe echo command is fundamental for terminal output.\nYou'll use it constantly in scripts and daily work.\n\nIt's one of the simplest yet most essential commands!"
+        }
+      },
+      "instructions": "## Your Task\n\nUse `echo` to display the message: **Hello Root Camp**\n\n**Steps:**\n1. Read the task: `cat task.txt`\n2. Run `echo Hello Root Camp` to display the message\n3. Observe the output in your terminal\n4. Read completion file: `cat completion.txt`\n5. Copy the code\n6. Type `exit` and paste the code\n\n**Learn:** `echo` prints text to the terminal - simple but essential!",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from completion.txt",
+          "validator": "exact",
+          "expected": "ECHO-BASIC-SUCCESS"
+        }
+      ]
+    },
+    {
+      "id": "echo-quotes",
+      "command": "echo",
+      "code": "echo (quotes)",
+      "title": "Using Quotes with Echo",
+      "tags": ["intermediate", "text", "quotes"],
+      "level": "intermediate",
+      "module": "text-operations",
+      "about": {
+        "what": "Quotes with `echo` control how text is processed and displayed. Understanding quotes is crucial for working with the shell.\n\n**Single quotes (`'...'`)**: Everything is literal - no variable expansion\n```bash\necho 'Total: $100'\n# Output: Total: $100\n```\n\n**Double quotes (`\"...\"`)**: Variables expand, special characters work\n```bash\nPRICE=100\necho \"Total: $$PRICE\"\n# Output: Total: $100\n```\n\n**No quotes**: Simple text works, but spacing and special characters can cause issues\n```bash\necho Hello    World\n# Output: Hello World (extra spaces removed)\n```\n\nKey principle: Use double quotes by default, single quotes when you need literal text.",
+        "history": "Quote handling in Unix shells dates back to the original Bourne shell (1977). The distinction between single and double quotes became a core shell feature.\n\nThe rules seem arbitrary at first, but they solve real problems:\n- **Single quotes**: Protect special characters from interpretation (useful for paths, URLs)\n- **Double quotes**: Allow variable substitution while protecting spaces\n- **No quotes**: Works for simple cases, dangerous for complex ones\n\nA famous pitfall: file names with spaces. Without quotes, `echo` sees them as separate arguments:\n```bash\nFILE=\"my document.txt\"\necho $FILE        # Output: my document.txt (broken into two words)\necho \"$FILE\"      # Output: my document.txt (correct)\n```\n\nThis led to the best practice: **always quote variables**. Modern shell scripting guides emphasize this heavily.\n\nThe 'quoting hell' problem - nested quotes in scripts - has spawned countless Stack Overflow questions and alternative quote syntaxes in modern shells.",
+        "example": "```bash\n# Single quotes - literal text\necho 'Price: $50'\n# Output: Price: $50\n\n# Double quotes - preserves spacing\necho \"Multiple    spaces    preserved\"\n# Output: Multiple    spaces    preserved\n\n# No quotes - spacing collapsed\necho Multiple    spaces    collapsed\n# Output: Multiple spaces collapsed\n\n# Quotes with special characters\necho \"Path: ~/documents/*.txt\"\n# Output: Path: ~/documents/*.txt (literal)\n\n# Variable expansion in double quotes\nNAME=\"Alice\"\necho \"Hello, $NAME!\"\n# Output: Hello, Alice!\n\n# No expansion in single quotes\necho 'Hello, $NAME!'\n# Output: Hello, $NAME!\n\n# When to use which\necho \"Normal text with $VARIABLES\"   # Use double quotes\necho 'Literal $text with $pecial'    # Use single quotes\n```",
+        "commonUses": [
+          "**Preserve spacing** - Keep multiple spaces or special formatting",
+          "**Variable expansion** - Include variable values in output",
+          "**Literal text** - Display special characters like $ without expansion",
+          "**File paths** - Safely handle paths with spaces or special characters",
+          "**Script messages** - Combine static text with dynamic values"
+        ]
+      },
+      "hints": [
+        "Use double quotes to preserve spacing",
+        "Everything inside quotes is treated as a single argument",
+        "Compare output with and without quotes"
+      ],
+      "sandbox": {
+        "startDir": "workspace",
+        "dirs": ["workspace"],
+        "files": {
+          "workspace/task.txt": "Task: Use echo with quotes to preserve the spacing in this message:\n\n  'Welcome   to   Root   Camp'\n\nThe extra spaces between words should be preserved in the output.\n\nOnce you see the correctly spaced output, check completion.txt.",
+          "workspace/completion.txt": "Perfect! You understand how quotes work with echo.\n\n===============================================\nCOMPLETION CODE: ECHO-QUOTES-MASTER\n===============================================\n\nQuotes are fundamental to shell scripting:\n- Single quotes ('...'): Everything literal, no expansion\n- Double quotes (\"...\"): Preserve spacing, allow variables\n- No quotes: Spacing collapsed, can cause issues\n\nBest practice: Always use quotes with variables and paths!"
+        }
+      },
+      "instructions": "## Your Task\n\nUse `echo` with quotes to display this message with spacing preserved:\n\n**Welcome   to   Root   Camp**\n\n(Notice the extra spaces between words - they should appear in the output)\n\n**Steps:**\n1. Read the task: `cat task.txt`\n2. Try without quotes: `echo Welcome   to   Root   Camp`\n3. Observe the spacing is collapsed\n4. Try with double quotes: `echo \"Welcome   to   Root   Camp\"`\n5. Observe the spacing is preserved!\n6. Read completion file: `cat completion.txt`\n7. Copy the code\n8. Type `exit` and paste the code\n\n**Learn:** Quotes preserve spacing and protect special characters.",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from completion.txt",
+          "validator": "exact",
+          "expected": "ECHO-QUOTES-MASTER"
+        }
+      ]
+    },
+    {
+      "id": "echo-redirect",
+      "command": "echo",
+      "code": "echo > (redirect)",
+      "title": "Redirect Echo Output to Files",
+      "tags": ["intermediate", "text", "redirection"],
+      "level": "intermediate",
+      "module": "text-operations",
+      "about": {
+        "what": "`echo` combined with **output redirection** (`>`) lets you create and write to files directly from the command line.\n\n```bash\necho \"Hello\" > file.txt    # Creates/overwrites file\necho \"World\" >> file.txt   # Appends to file\n```\n\n**Single `>` (overwrite)**: Replaces file contents completely\n```bash\necho \"New content\" > file.txt\n```\n\n**Double `>>` (append)**: Adds to the end of the file\n```bash\necho \"Additional line\" >> file.txt\n```\n\nThis is perfect for:\n- Creating quick configuration files\n- Adding entries to logs\n- Building simple data files\n- Generating placeholder content",
+        "history": "Output redirection is one of Unix's most revolutionary features, invented by Ken Thompson in the early 1970s. The `>` operator redirects command output from the terminal to a file.\n\nBefore redirection, saving program output required complex code in every program. Unix's innovation: **separate output from processing**. Any program can have its output redirected without knowing about files.\n\nThe syntax choices were pragmatic:\n- `>` looks like an arrow pointing to the destination\n- `>>` (double arrow) means 'add more' (append)\n- `<` (reverse arrow) reads from a file as input\n\nThis simple syntax enabled **pipes and filters** - the Unix philosophy of combining small tools. Programs could focus on processing; the shell handled input/output.\n\nA common mistake: using `>` when you meant `>>`:\n```bash\necho \"Important data\" > log.txt\necho \"More data\" > log.txt     # OOPS! Overwrote the first line\n```\n\nThis has destroyed countless files. The lesson: **use `>>` when in doubt**.\n\nModern shells added safeguards like `noclobber` (prevents accidental overwrites), but the basic `>` and `>>` operators remain unchanged since 1971.",
+        "example": "```bash\n# Create a file with echo\necho \"Hello World\" > greeting.txt\n\n# View the file\ncat greeting.txt\n# Output: Hello World\n\n# Overwrite the file (replaces content)\necho \"New greeting\" > greeting.txt\ncat greeting.txt\n# Output: New greeting\n\n# Append to the file (adds to end)\necho \"Additional line\" >> greeting.txt\ncat greeting.txt\n# Output:\n# New greeting\n# Additional line\n\n# Create multi-line files\necho \"Line 1\" > notes.txt\necho \"Line 2\" >> notes.txt\necho \"Line 3\" >> notes.txt\n\n# Quick config file creation\necho \"port=8080\" > config.txt\necho \"host=localhost\" >> config.txt\n\n# Empty a file (or create empty file)\necho \"\" > empty.txt\n# Or even simpler:\n> empty.txt\n```",
+        "commonUses": [
+          "**Quick file creation** - Create simple text files without opening an editor",
+          "**Configuration files** - Generate basic config files on the fly",
+          "**Log entries** - Add timestamped entries to log files",
+          "**Placeholder content** - Create files with initial content for testing",
+          "**Scripting** - Generate files programmatically in shell scripts"
+        ]
+      },
+      "hints": [
+        "Use > to create or overwrite a file",
+        "Use >> to append to an existing file",
+        "Verify with cat after redirecting"
+      ],
+      "sandbox": {
+        "startDir": "workspace",
+        "dirs": ["workspace"],
+        "files": {
+          "workspace/task.txt": "Task: Use echo with redirection to create a file called 'message.txt'\ncontaining the text: 'Root Camp is awesome'\n\nThen append a second line: 'Learning terminal commands'\n\nOnce created, check completion.txt for your code.",
+          "workspace/completion.txt": "Excellent! You've mastered output redirection.\n\n===============================================\nCOMPLETION CODE: ECHO-REDIRECT-EXPERT\n===============================================\n\nOutput redirection is a fundamental Unix feature:\n- > creates/overwrites files\n- >> appends to files\n\nThis works with ANY command, not just echo!\n\nCommon pattern in scripts:\n  echo \"Starting process...\" >> app.log\n  ./myapp >> app.log 2>&1\n  echo \"Process completed\" >> app.log"
+        }
+      },
+      "instructions": "## Your Task\n\nUse `echo` with redirection to create and modify a file:\n\n1. Create `message.txt` with the text: **Root Camp is awesome**\n2. Append a second line: **Learning terminal commands**\n\n**Steps:**\n1. Read the task: `cat task.txt`\n2. Run `echo \"Root Camp is awesome\" > message.txt` to create the file\n3. Verify: `cat message.txt` - should see one line\n4. Run `echo \"Learning terminal commands\" >> message.txt` to append\n5. Verify: `cat message.txt` - should see both lines\n6. Read completion file: `cat completion.txt`\n7. Copy the code\n8. Type `exit` and paste the code\n\n**Learn:** `>` creates/overwrites, `>>` appends - powerful for file creation!",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from completion.txt",
+          "validator": "exact",
+          "expected": "ECHO-REDIRECT-EXPERT"
+        }
+      ]
+    }
+  ]
+}

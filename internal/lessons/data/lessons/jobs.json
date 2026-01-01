@@ -1,0 +1,49 @@
+{
+  "version": "1.0",
+  "lessons": [
+    {
+      "id": "jobs",
+      "command": "jobs",
+      "code": "jobs",
+      "title": "List Background Jobs",
+      "tags": ["processes", "job-control", "intermediate"],
+      "level": "intermediate",
+      "module": "processes",
+      "about": {
+        "what": "The `jobs` command shows you **background jobs** running in your current shell session. In the terminal, you can run commands in two ways:\n\n- **Foreground** - The command takes over your terminal until it finishes\n- **Background** - The command runs behind the scenes while you continue using the terminal\n\nThe `jobs` command lists all jobs (both running and stopped) that belong to your current shell, showing:\n- **Job number** - Used with `fg` and `bg` commands (like [1], [2])\n- **Status** - Running, Stopped, or Done\n- **Command** - What program is running\n\nThis is essential for:\n- Running long tasks without blocking your terminal\n- Managing multiple programs simultaneously\n- Switching between different running programs\n- Checking the status of background processes",
+        "history": "Job control was added to the C shell (csh) at UC Berkeley in 1978, and later adopted by the Bourne shell and bash. Before job control, if you started a long-running command, your terminal was locked until it finished. You couldn't do anything else in that terminal.\n\nThe Berkeley team invented job control to solve this problem:\n- **Background jobs** - Run commands with `&` at the end\n- **Suspend/resume** - Press Ctrl+Z to pause, then `bg` to background or `fg` to foreground\n- **Job management** - Switch between multiple running tasks\n\nThis was revolutionary for productivity. System administrators could:\n- Start a backup in the background\n- Continue working on other tasks\n- Check job status with `jobs`\n- Bring jobs to foreground when needed\n\nThe job control system uses **job numbers** (like [1], [2]) instead of PIDs because they're easier to remember and type. Each shell session has its own job numbers, starting from 1.\n\nInteresting technical detail: Job control requires the shell to manage process groups and handle signals (SIGTSTP, SIGCONT, SIGCHLD). When you press Ctrl+Z, the shell sends SIGTSTP to the foreground process group, which the kernel pauses. The shell tracks this as a \"stopped\" job.\n\nToday, with terminal multiplexers like `tmux` and `screen`, job control is less critical, but it remains a fundamental Unix skill.",
+        "example": "```bash\n# Start a command in the background\nsleep 100 &\n# The & sends it to background immediately\n\n# Start a command, then background it\nsleep 100\n# Press Ctrl+Z to suspend it\n# Then run:\nbg\n# Now it's running in the background\n\n# List all jobs\njobs\n# Output:\n# [1]  Running   sleep 100 &\n# [2]- Running   python server.py &\n# [3]+ Stopped   vim file.txt\n\n# Jobs with status\njobs -l    # Show PIDs as well\njobs -r    # Show only running jobs\njobs -s    # Show only stopped jobs\n\n# Understanding job notation:\n# [1]+  The + means this is the current job (default for fg/bg)\n# [2]-  The - means this is the previous job\n# [3]   No marker means it's just another job\n\n# Typical workflow:\n# 1. Start editing a file\nvim config.txt\n# 2. Oh, need to check something! Press Ctrl+Z\n# [1]+ Stopped   vim config.txt\n# 3. Do some work\nls -la\ncat README.md\n# 4. Check what you have running\njobs\n# [1]+ Stopped   vim config.txt\n# 5. Return to vim\nfg\n# vim resumes\n```",
+        "commonUses": [
+          "**Managing long tasks** - Run backups, builds, or downloads in background",
+          "**Development workflow** - Background a dev server while editing code",
+          "**Multitasking** - Switch between text editor, compiler, and tests",
+          "**Checking status** - See what's running before starting more tasks",
+          "**Resource management** - Track background processes to avoid overload"
+        ]
+      },
+      "hints": [
+        "Read the tutorial to understand job control",
+        "Learn about background vs foreground jobs",
+        "The completion code is in the summary file"
+      ],
+      "sandbox": {
+        "startDir": "job-control",
+        "dirs": ["job-control"],
+        "files": {
+          "job-control/tutorial.txt": "Understanding Job Control:\n\nWhen you run a command in the terminal, it can be:\n\n1. FOREGROUND (default)\n   - Command takes over your terminal\n   - You see its output\n   - You can't run other commands until it finishes\n   - Example: vim file.txt\n\n2. BACKGROUND\n   - Command runs behind the scenes\n   - You can continue using the terminal\n   - Started with & at the end, or by backgrounding a suspended job\n   - Example: python server.py &\n\n=== Starting Background Jobs ===\n\n# Method 1: Start directly in background\n$ sleep 100 &\n[1] 12345\n# [1] is the job number\n# 12345 is the process ID (PID)\n\n# Method 2: Suspend and background\n$ sleep 100\n# Press Ctrl+Z\n[1]+ Stopped   sleep 100\n$ bg\n[1]+ sleep 100 &\n# Now running in background\n\n=== Checking Jobs ===\n\n$ jobs\n[1]  Running   sleep 100 &\n[2]- Running   python server.py &\n[3]+ Stopped   vim file.txt\n\nSymbols:\n+ = Current job (most recent)\n- = Previous job\nNo symbol = Older job\n\n=== Job Numbers vs PIDs ===\n\nJob numbers are per-shell and easier:\n- Use with fg, bg, kill %jobnumber\n- Start from [1] in each shell\n- Example: fg %1\n\nPIDs are system-wide:\n- Use with kill, ps\n- Unique across entire system\n- Example: kill 12345",
+          "job-control/examples.txt": "Practical Examples:\n\n=== Example 1: Development Server ===\n# Start a dev server in background\n$ python -m http.server 8000 &\n[1] 23456\n# Continue working\n$ vim index.html\n# When done, bring server to foreground to see logs\n$ fg %1\n\n=== Example 2: Long-Running Build ===\n# Start a long compile\n$ make all\n# Oops, this will take forever!\n# Press Ctrl+Z to suspend\n[1]+ Stopped   make all\n# Send it to background\n$ bg\n[1]+ make all &\n# Continue other work\n$ jobs\n[1]+ Running   make all &\n\n=== Example 3: Multiple Editors ===\n# Editing multiple files\n$ vim config.py\n# Press Ctrl+Z\n[1]+ Stopped   vim config.py\n$ vim README.md\n# Press Ctrl+Z\n[2]+ Stopped   vim README.md\n$ jobs\n[1]- Stopped   vim config.py\n[2]+ Stopped   vim README.md\n# Return to most recent\n$ fg\n# Returns to README.md\n# Return to specific job\n$ fg %1\n# Returns to config.py\n\n=== Example 4: Killing Background Jobs ===\n$ jobs\n[1]  Running   sleep 1000 &\n[2]  Running   sleep 2000 &\n# Kill specific job\n$ kill %1\n[1]  Terminated   sleep 1000\n$ jobs\n[2]  Running   sleep 2000 &",
+          "job-control/summary.txt": "Great! You understand job control now.\n\n================================\nCODE: JOBS-CONTROL-MASTER\n================================\n\nJob Control Summary:\n\nCOMMANDS:\n- jobs       → List all background/stopped jobs\n- fg         → Bring job to foreground\n- bg         → Resume stopped job in background\n- command &  → Start command in background\n- Ctrl+Z     → Suspend current foreground job\n\nJOB STATUS:\n- Running    → Currently executing\n- Stopped    → Suspended (paused)\n- Done       → Finished successfully\n- Terminated → Killed\n\nJOB NOTATION:\n- [1]        → Job number\n- [1]+       → Current job (most recent)\n- [2]-       → Previous job\n- %1         → Reference to job 1 (for fg/bg/kill)\n\nCOMMON WORKFLOW:\n1. Start a long task: command &\n2. Check what's running: jobs\n3. Bring to foreground: fg %1\n4. Suspend with Ctrl+Z\n5. Resume in background: bg %1\n\nWHY IT MATTERS:\n- Run multiple tasks simultaneously\n- Don't block your terminal\n- Switch between programs easily\n- Essential for shell productivity\n\nMODERN ALTERNATIVES:\n- tmux: Terminal multiplexer\n- screen: Terminal multiplexer\n- Multiple terminal tabs/windows\n\nBut job control is faster for quick multitasking!"
+        }
+      },
+      "instructions": "## Your Task\n\nLearn about job control and the `jobs` command.\n\n**Steps:**\n1. Read the tutorial: `cat tutorial.txt`\n   - Understand foreground vs background jobs\n   - Learn job numbers and symbols\n2. Read the examples: `cat examples.txt`\n   - See practical use cases\n3. Read the summary: `cat summary.txt`\n4. Copy the completion code\n5. Type `exit` and paste the code\n\n**Try it yourself** (after this lesson):\n```bash\n# Start a background job\nsleep 60 &\n\n# List jobs\njobs\n\n# Start another and suspend it\nsleep 120\n# Press Ctrl+Z\n\n# List jobs again\njobs\n\n# Bring to foreground\nfg\n```\n\n**Note:** Job control is essential for shell productivity. Practice these commands to build muscle memory!",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from summary.txt",
+          "validator": "exact",
+          "expected": "JOBS-CONTROL-MASTER"
+        }
+      ]
+    }
+  ]
+}

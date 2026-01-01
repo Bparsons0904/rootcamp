@@ -1,0 +1,205 @@
+{
+  "version": "1.0",
+  "lessons": [
+    {
+      "id": "find",
+      "command": "find",
+      "code": "find",
+      "title": "Search for Files and Directories",
+      "tags": ["basics", "search", "files"],
+      "level": "beginner",
+      "module": "file-operations",
+      "about": {
+        "what": "The `find` command **recursively searches** for files and directories in a directory hierarchy. It's one of the most powerful file search tools in Unix.\n\n```bash\nfind directory -name pattern\n```\n\n**Basic usage:**\n```bash\nfind .               # List all files/dirs in current directory tree\nfind . -name \"*.txt\" # Find all .txt files\nfind /home -name config.json  # Find specific file\n```\n\n**How it works:**\n- Starts at specified directory\n- Recursively descends into subdirectories\n- Tests each file/directory against criteria\n- Prints matching paths\n\n**Key concepts:**\n- **Recursive:** Searches all subdirectories\n- **Live search:** Always current (not database-based)\n- **Flexible:** Search by name, type, size, date, permissions\n- **Powerful:** Can execute commands on results",
+        "history": "`find` is one of the original Unix commands, created in the early 1970s at Bell Labs. It's remained fundamentally unchanged for over 50 years - a testament to its elegant design.\n\n**The Problem It Solved:**\n\nEarly Unix systems had hierarchical filesystems with files scattered across many directories. Users needed to locate files without manually checking every directory.\n\nBefore `find`, searching required:\n- Manual directory traversal\n- Custom shell scripts\n- Remembering where everything was stored\n\n**The find Solution:**\n\nKen Thompson and Dennis Ritchie (Unix creators) designed `find` with a unique approach:\n- **Recursive by default:** Automatically searches subdirectories\n- **Test-based:** Each file is tested against criteria\n- **Composable:** Multiple tests can be combined\n- **Action-based:** Can execute commands on matches\n\nThis design was revolutionary and influenced countless later tools.\n\n**Evolution:**\n\n**1970s - Original find:**\n- Basic name searching\n- Type filtering (file vs directory)\n- Simple tests\n\n**1980s - Extended find:**\n- Size, date, permission tests\n- `-exec` for running commands\n- Logical operators (AND, OR, NOT)\n\n**1990s-2000s - GNU find:**\n- Regular expression support\n- Performance optimizations\n- Additional tests and actions\n\n**Modern alternatives:**\n- `fd` - Modern, user-friendly alternative\n- `locate` - Database-backed (faster but less flexible)\n- `ripgrep` - Content search (faster grep)\n\nBut `find` remains the standard - available on every Unix system, incredibly powerful, and unchanged enough that knowledge from 1975 still applies today.\n\n**Cultural Impact:**\n\nThe `find ... -exec` pattern became legendary:\n```bash\nfind . -name \"*.tmp\" -exec rm {} \\;\n```\n\nThis one-liner (find temp files and delete them) demonstrated Unix's compositional power and appears in countless scripts and Stack Overflow answers.",
+        "example": "```bash\n# List all files recursively\nfind .\n\n# Find by name (exact)\nfind . -name file.txt\n\n# Find by pattern\nfind . -name \"*.txt\"\nfind . -name \"*.py\"\n\n# Find in specific directory\nfind /home/user -name \"config*\"\n\n# Case-insensitive name search\nfind . -iname \"readme*\"\n# Finds: README, Readme, readme\n\n# Find directories only\nfind . -type d\n\n# Find files only\nfind . -type f\n\n# Find and count\nfind . -name \"*.jpg\" | wc -l\n\n# Find recent files\nfind . -name \"*.log\" -mtime -1\n# (Modified in last 24 hours)\n\n# Find large files\nfind . -size +100M\n# (Larger than 100 megabytes)\n```",
+        "commonUses": [
+          "**File location** - Find files by name or pattern",
+          "**Cleanup tasks** - Find and delete temporary/old files",
+          "**Backup preparation** - Find files to backup",
+          "**Code search** - Find source files by extension",
+          "**System administration** - Locate config files, logs, large files"
+        ]
+      },
+      "hints": [
+        "Syntax: find directory -name pattern",
+        "Searches recursively through all subdirectories",
+        "Use quotes around patterns: find . -name \"*.txt\""
+      ],
+      "sandbox": {
+        "startDir": "workspace",
+        "dirs": [
+          "workspace",
+          "workspace/documents",
+          "workspace/documents/reports",
+          "workspace/documents/notes",
+          "workspace/photos",
+          "workspace/photos/vacation"
+        ],
+        "files": {
+          "workspace/task.txt": "Task: Use find to locate completion.txt in the directory tree.\n\nThe completion file is hidden somewhere in the nested directories.\nUse find to search for it!\n\nOnce you find it, read it for your code.",
+          "workspace/documents/report.txt": "This is a report document.",
+          "workspace/documents/notes/meeting-notes.txt": "Meeting notes from last week.",
+          "workspace/documents/reports/annual-report.txt": "Annual report for 2024.",
+          "workspace/photos/vacation/beach.jpg": "A photo from the beach (text placeholder).",
+          "workspace/documents/notes/completion.txt": "Excellent! You've found the file using find.\n\n=========================================\nCOMPLETION CODE: FIND-BASIC-SUCCESS\n=========================================\n\nThe find command recursively searches directory trees.\n\nBasic syntax:\n  find directory -name pattern\n\nExamples:\n  find . -name file.txt       # Exact name\n  find . -name \"*.txt\"        # Pattern\n  find /home -name \"*.py\"     # Specific dir\n\nKey points:\n- Recursive: Searches all subdirectories\n- Live: Always current (not database)\n- Powerful: Many search criteria\n\nUnlike locate (database search), find searches\nthe actual filesystem in real-time!"
+        }
+      },
+      "instructions": "## Your Task\n\nUse `find` to locate the hidden `completion.txt` file in the directory tree.\n\n**Steps:**\n1. Read the task: `cat task.txt`\n2. View directory structure: `ls -R workspace/`\n3. Try basic find: `find workspace` - shows all files\n4. Find completion.txt: `find workspace -name completion.txt`\n5. Output shows: workspace/documents/notes/completion.txt\n6. Read the file: `cat workspace/documents/notes/completion.txt`\n7. Copy the code\n8. Type `exit` and paste the code\n\n**Learn:** `find` recursively searches directory trees - perfect for locating files!",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from completion.txt",
+          "validator": "exact",
+          "expected": "FIND-BASIC-SUCCESS"
+        }
+      ]
+    },
+    {
+      "id": "find-type",
+      "command": "find",
+      "code": "find -type",
+      "title": "Filter by File Type",
+      "tags": ["intermediate", "search", "files"],
+      "level": "intermediate",
+      "module": "file-operations",
+      "about": {
+        "what": "The `find -type` flag filters results by **file type** - files, directories, symbolic links, etc.\n\n```bash\nfind . -type f    # Files only\nfind . -type d    # Directories only\nfind . -type l    # Symbolic links only\n```\n\n**Common type values:**\n- **f** - regular file\n- **d** - directory\n- **l** - symbolic link\n- **b** - block device\n- **c** - character device\n- **p** - named pipe (FIFO)\n- **s** - socket\n\n**Why filter by type?**\n\n**List all directories:**\n```bash\nfind . -type d\n```\n\n**Count files (not directories):**\n```bash\nfind . -type f | wc -l\n```\n\n**Find broken symlinks:**\n```bash\nfind . -type l ! -exec test -e {} \\; -print\n```\n\nFiltering by type makes find results more useful and prevents actions on wrong types (like trying to read a directory as a file).",
+        "history": "The `-type` test was part of the original `find` implementation, reflecting Unix's \"everything is a file\" philosophy while recognizing that different file types need different handling.\n\n**Unix File Types:**\n\nIn Unix, \"everything is a file,\" but there are different **types** of files:\n\n**Regular files (f):** Normal data files\n**Directories (d):** Special files containing directory entries\n**Symbolic links (l):** Pointers to other files\n**Special files:** Devices, pipes, sockets\n\nThe `-type` flag lets you filter by these types.\n\n**Common use cases evolved:**\n\n**1970s-1980s: Basic filtering**\n```bash\nfind / -type f -name core\n# Find core dump files (not directories named 'core')\n```\n\n**1990s: Counting and analysis**\n```bash\nfind . -type f | wc -l  # How many files?\nfind . -type d | wc -l  # How many directories?\n```\n\n**2000s-present: Complex operations**\n```bash\nfind . -type f -name \"*.jpg\" -exec convert {} -resize 800x600 {} \\;\n# Resize all JPEG files (not directories!)\n```\n\n**Symlink handling:**\nThe `-type l` test became crucial as symbolic links became common:\n```bash\nfind . -type l -ls\n# List all symlinks and see where they point\n```\n\n**Performance consideration:**\nFiltering by type early in the find expression is more efficient:\n```bash\n# Efficient (type test is fast)\nfind . -type f -name \"*.txt\"\n\n# Less efficient (unnecessary stats on directories)\nfind . -name \"*.txt\" -type f\n```\n\nModern find implementations optimize this automatically, but the principle remains.",
+        "example": "```bash\n# Find all files (not directories)\nfind . -type f\n\n# Find all directories\nfind . -type d\n\n# Find all symbolic links\nfind . -type l\n\n# Count each type\nfind . -type f | wc -l  # Number of files\nfind . -type d | wc -l  # Number of directories\n\n# Find only .txt files (not directories ending in .txt)\nfind . -type f -name \"*.txt\"\n\n# Find directories named 'test'\nfind . -type d -name test\n\n# List directory tree (directories only)\nfind . -type d | sort\n\n# Find empty directories\nfind . -type d -empty\n\n# Find empty files\nfind . -type f -empty\n\n# Combine with other tests\nfind . -type f -name \"*.log\" -size +10M\n# Large log files only\n```",
+        "commonUses": [
+          "**File-only operations** - Ensure you're operating on files, not directories",
+          "**Directory listing** - List all directories in tree",
+          "**Symlink management** - Find and manage symbolic links",
+          "**Cleanup tasks** - Delete files but preserve directory structure",
+          "**Statistics** - Count files vs directories"
+        ]
+      },
+      "hints": [
+        "Use -type f for files, -type d for directories",
+        "Syntax: find . -type f -name pattern",
+        "Filters results to specific file types"
+      ],
+      "sandbox": {
+        "startDir": "workspace",
+        "dirs": [
+          "workspace",
+          "workspace/files",
+          "workspace/dirs",
+          "workspace/dirs/subdir1",
+          "workspace/dirs/subdir2"
+        ],
+        "files": {
+          "workspace/task.txt": "Task: Use find -type to filter by file type.\n\nFind all regular files (not directories) in the workspace.\nThen find all directories.\n\nThe completion code is in a regular file somewhere.",
+          "workspace/files/doc1.txt": "Document 1",
+          "workspace/files/doc2.txt": "Document 2",
+          "workspace/files/FIND-TYPE-PRO": "Completion code file",
+          "workspace/dirs/subdir1/data.txt": "Some data",
+          "workspace/dirs/subdir2/info.txt": "Some info"
+        },
+        "symlinks": {
+          "workspace/link-to-doc": "files/doc1.txt"
+        }
+      },
+      "instructions": "## Your Task\n\nUse `find -type` to filter results by file type.\n\n**Steps:**\n1. Read the task: `cat task.txt`\n2. Find everything: `find workspace`\n3. Find files only: `find workspace -type f`\n4. Find directories only: `find workspace -type d`\n5. Find symlinks only: `find workspace -type l`\n6. Notice the completion code filename in files-only output\n7. Read it: `cat workspace/files/FIND-TYPE-PRO`\n8. Copy the code\n9. Type `exit` and paste the code\n\n**Learn:** `-type` filters by file type - essential for precise searches!",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code (filename)",
+          "validator": "exact",
+          "expected": "FIND-TYPE-PRO"
+        }
+      ]
+    },
+    {
+      "id": "find-conditions",
+      "command": "find",
+      "code": "find (conditions)",
+      "title": "Find with Size, Time, and Permission Filters",
+      "tags": ["intermediate", "search", "files"],
+      "level": "intermediate",
+      "module": "file-operations",
+      "about": {
+        "what": "The `find` command supports **complex search criteria** beyond just names - size, modification time, permissions, and more.\n\n**Size filters:**\n```bash\nfind . -size +10M    # Larger than 10 megabytes\nfind . -size -1k     # Smaller than 1 kilobyte\nfind . -size 100c    # Exactly 100 bytes\n```\n\n**Time filters:**\n```bash\nfind . -mtime -7     # Modified in last 7 days\nfind . -mtime +30    # Modified more than 30 days ago\nfind . -newer file   # Newer than 'file'\n```\n\n**Permission filters:**\n```bash\nfind . -perm 755     # Exactly 755 permissions\nfind . -perm -u+x    # User executable\n```\n\n**Combining criteria:**\n```bash\nfind . -type f -name \"*.log\" -size +10M -mtime +30\n# Large old log files\n```\n\nThese filters enable powerful file management, cleanup, and analysis tasks.",
+        "history": "The addition of size, time, and permission tests transformed `find` from a simple name-search tool into a comprehensive file management system.\n\n**Size Tests (1970s):**\n\nDisk space was precious (hard drives were 5-50MB!). System administrators needed to find large files:\n```bash\nfind / -size +1000  # Find files > 500KB (in blocks)\n```\n\nThis helped identify space hogs before systems ran out of disk.\n\n**Time Tests (1970s):**\n\nBackup systems needed to find recently modified files:\n```bash\nfind . -mtime -1  # Modified in last 24 hours\n```\n\nThis enabled incremental backups - only backup changed files.\n\n**Permission Tests (1980s):**\n\nSecurity audits required finding files with dangerous permissions:\n```bash\nfind / -perm -002  # World-writable files (security risk!)\n```\n\n**Unit evolution:**\n\nOriginal `find` used **blocks** (512 bytes) for size:\n```bash\nfind . -size +1000  # > 500KB\n```\n\nModern `find` added human-readable units:\n```bash\nfind . -size +10M   # > 10 megabytes (much clearer!)\nfind . -size +1G    # > 1 gigabyte\n```\n\n**Common patterns emerged:**\n\n**Find and delete old logs:**\n```bash\nfind /var/log -name \"*.log\" -mtime +90 -delete\n```\n\n**Find large files:**\n```bash\nfind ~ -type f -size +100M\n```\n\n**Find setuid files (security audit):**\n```bash\nfind / -type f -perm -4000\n```\n\n**Find recent changes:**\n```bash\nfind . -mtime -1\n```\n\nThese patterns became standard system administration practices, appearing in cron jobs and maintenance scripts worldwide.",
+        "example": "```bash\n# Size filters\nfind . -size +10M        # Larger than 10MB\nfind . -size -1k         # Smaller than 1KB\nfind . -size +1G         # Larger than 1GB\n\n# Time filters (-mtime = modification time in days)\nfind . -mtime -7         # Modified in last week\nfind . -mtime +30        # Modified over 30 days ago\nfind . -mtime 0          # Modified today\n\n# Access time\nfind . -atime -1         # Accessed in last day\n\n# Change time (metadata)\nfind . -ctime -1         # Status changed in last day\n\n# Newer than reference file\nfind . -newer reference.txt\n\n# Permission filters\nfind . -perm 755         # Exactly rwxr-xr-x\nfind . -perm -u+x        # User executable\nfind . -perm /u+w        # User writable\n\n# Combining criteria\nfind . -type f -size +10M -mtime +30\n# Regular files, > 10MB, modified > 30 days ago\n\nfind . -name \"*.log\" -size +100M -mtime +7\n# Large old log files\n\nfind . -type f -perm -u+x -name \"*.sh\"\n# Executable shell scripts\n```",
+        "commonUses": [
+          "**Disk cleanup** - Find large or old files to delete",
+          "**Backup preparation** - Find recently modified files",
+          "**Security audits** - Find files with dangerous permissions",
+          "**Log management** - Find and archive old logs",
+          "**Development** - Find recently changed source files"
+        ]
+      },
+      "hints": [
+        "Use -size for file size (use +10M for \"larger than 10MB\")",
+        "Use -mtime for modification time (days)",
+        "Combine multiple criteria with AND logic"
+      ],
+      "sandbox": {
+        "startDir": "workspace",
+        "dirs": ["workspace", "workspace/logs"],
+        "files": {
+          "workspace/task.txt": "Task: Find files larger than 50 bytes in the workspace.\n\nUse find with -size filter to locate larger files.\nThe completion code is in a file that's over 50 bytes.",
+          "workspace/small.txt": "Small file (under 50 bytes)",
+          "workspace/logs/app.log": "Application log with some content here to make it larger than fifty bytes total",
+          "workspace/logs/completion.txt": "Perfect! You've used size filters with find.\n\n===============================================\nCOMPLETION CODE: FIND-CONDITIONS-EXPERT\n===============================================\n\nFind supports powerful filtering:\n\nSize:\n  find . -size +10M      # Larger than 10MB\n  find . -size -1k       # Smaller than 1KB\n\nTime (days):\n  find . -mtime -7       # Modified last week\n  find . -mtime +30      # Modified > 30 days ago\n\nPermissions:\n  find . -perm -u+x      # User executable\n\nCombine criteria:\n  find . -type f -name \"*.log\" -size +10M -mtime +30\n  (Large old log files)\n\nCommon patterns:\n  find ~ -size +100M              # Find large files\n  find /var/log -mtime +90 -delete  # Delete old logs\n  find . -mtime -1                # Recent changes"
+        }
+      },
+      "instructions": "## Your Task\n\nUse `find` with size filter to find files larger than 50 bytes.\n\n**Steps:**\n1. Read the task: `cat task.txt`\n2. List all files: `find workspace -type f`\n3. Add size filter: `find workspace -type f -size +50c`\n   (c = bytes, +50c = larger than 50 bytes)\n4. Notice which files are larger\n5. Find the completion file and read it\n6. Copy the code\n7. Type `exit` and paste the code\n\n**Understanding size units:**\n- `c` = bytes\n- `k` = kilobytes  \n- `M` = megabytes\n- `G` = gigabytes\n\n**Examples:**\n- `-size +10M` = larger than 10 megabytes\n- `-size -1k` = smaller than 1 kilobyte\n- `-size +100c` = larger than 100 bytes\n\n**Learn:** Find supports complex filters for size, time, and permissions!",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from large file",
+          "validator": "exact",
+          "expected": "FIND-CONDITIONS-EXPERT"
+        }
+      ]
+    },
+    {
+      "id": "find-exec",
+      "command": "find",
+      "code": "find -exec",
+      "title": "Execute Commands on Found Files",
+      "tags": ["intermediate", "search", "files", "automation"],
+      "level": "intermediate",
+      "module": "file-operations",
+      "about": {
+        "what": "The `find -exec` flag **executes commands** on each file found, enabling powerful batch operations.\n\n```bash\nfind . -name \"*.txt\" -exec cat {} \\;\n```\n\n**Syntax breakdown:**\n- `-exec command` - The command to run\n- `{}` - Placeholder for the found filename\n- `\\;` - Marks the end of the command\n\n**How it works:**\nFor each file found, `find` replaces `{}` with the filename and executes the command.\n\n**Example:**\n```bash\nfind . -name \"*.log\" -exec rm {} \\;\n# Deletes all .log files\n```\n\n**Variations:**\n```bash\nfind . -name \"*.txt\" -exec cat {} \\;     # Run once per file\nfind . -name \"*.txt\" -exec cat {} +      # Run once with all files\n```\n\nThis is one of find's most powerful features - it transforms find from a search tool into an automation system.",
+        "history": "The `-exec` action is one of the most famous and powerful features of `find`, added in the late 1970s. It transformed `find` from a simple search tool into a complete file processing system.\n\n**The Problem:**\n\nBefore `-exec`, users had to:\n1. Find files with `find`\n2. Manually process each one\n3. Or write complex shell loops:\n\n```bash\nfor file in $(find . -name \"*.tmp\"); do\n  rm \"$file\"\ndone\n```\n\n**The -exec Solution:**\n```bash\nfind . -name \"*.tmp\" -exec rm {} \\;\n```\n\nOne line, no loops!\n\n**The Syntax Controversy:**\n\nThe `-exec` syntax is famously cryptic:\n- `{}` as placeholder\n- `\\;` as terminator (backslash needed to escape semicolon from shell)\n\nWhy this syntax?\n1. `{}` was chosen as unlikely to appear in actual commands\n2. `\\;` marks the end unambiguously\n3. Design from 1970s when terseness was valued\n\nMany consider it ugly, but it's remained unchanged for 50 years because:\n- Changing it would break millions of scripts\n- The pattern is now universally known\n- It works reliably\n\n**Safety Concerns:**\n\nThe `-exec rm` pattern is powerful but **dangerous**:\n```bash\nfind / -name \"*.tmp\" -exec rm {} \\;\n# Could delete critical files if pattern is wrong!\n```\n\nThis led to safety features:\n\n**Interactive confirmation:**\n```bash\nfind . -name \"*.tmp\" -ok rm {} \\;\n# Prompts before each deletion\n```\n\n**Better alternative (modern find):**\n```bash\nfind . -name \"*.tmp\" -delete\n# Safer, faster, clearer\n```\n\n**The `+` terminator:**\n\nOriginal `-exec ... \\;` runs the command once per file (slow for many files).\n\nLater versions added `+`:\n```bash\nfind . -name \"*.txt\" -exec cat {} +\n```\n\nThis batches files together (like xargs), much faster for many files.\n\n**Cultural Impact:**\n\nThe `find ... -exec` pattern became legendary in Unix culture:\n- Appears in countless Stack Overflow answers\n- Standard system administration tool\n- Example of Unix power and complexity\n- Subject of debates about Unix philosophy\n\nDespite modern alternatives (xargs, fd, bash loops), `find -exec` remains the classic solution.",
+        "example": "```bash\n# Display contents of all .txt files\nfind . -name \"*.txt\" -exec cat {} \\;\n\n# Delete all .tmp files\nfind . -name \"*.tmp\" -exec rm {} \\;\n\n# List details of all .log files\nfind . -name \"*.log\" -exec ls -lh {} \\;\n\n# Copy all .jpg files to directory\nfind . -name \"*.jpg\" -exec cp {} /destination/ \\;\n\n# Change permissions\nfind . -name \"*.sh\" -exec chmod +x {} \\;\n\n# Search within found files\nfind . -name \"*.txt\" -exec grep -l \"error\" {} \\;\n# (Find .txt files containing \"error\")\n\n# Batch mode (faster for many files)\nfind . -name \"*.txt\" -exec cat {} +\n# Runs cat once with all files as arguments\n\n# Interactive confirmation\nfind . -name \"*.tmp\" -ok rm {} \\;\n# Prompts: remove ./file.tmp? y/n\n\n# Modern alternative for deletion\nfind . -name \"*.tmp\" -delete\n# Safer and clearer\n\n# Complex: rename all .jpeg to .jpg\nfind . -name \"*.jpeg\" -exec sh -c 'mv \"$1\" \"${1%.jpeg}.jpg\"' _ {} \\;\n```",
+        "commonUses": [
+          "**Batch deletion** - Delete files matching criteria",
+          "**Batch operations** - Process many files at once",
+          "**Permission changes** - chmod/chown on found files",
+          "**File processing** - Convert, resize, compress found files",
+          "**Automation** - Scheduled maintenance tasks"
+        ]
+      },
+      "hints": [
+        "Syntax: find . -name pattern -exec command {} \\;",
+        "{} is placeholder for filename",
+        "\\; marks end of command (semicolon escaped)"
+      ],
+      "sandbox": {
+        "startDir": "workspace",
+        "dirs": ["workspace", "workspace/logs"],
+        "files": {
+          "workspace/task.txt": "Task: Use find -exec to display contents of all .log files.\n\nFind all .log files and use -exec to cat each one.\nThe completion code is hidden in one of the log files.",
+          "workspace/logs/app.log": "Application started\nRunning processes\nFIND-EXEC-MASTER",
+          "workspace/logs/error.log": "No errors found\nSystem operational",
+          "workspace/logs/access.log": "User logged in\nUser logged out"
+        }
+      },
+      "instructions": "## Your Task\n\nUse `find -exec` to display contents of all .log files.\n\n**Steps:**\n1. Read the task: `cat task.txt`\n2. Find .log files: `find workspace -name \"*.log\"`\n3. Use exec to cat them: `find workspace -name \"*.log\" -exec cat {} \\;`\n4. Notice the output shows contents of all log files\n5. Find the completion code in the output\n6. Type `exit` and paste the code\n\n**Understanding the syntax:**\n```bash\nfind workspace -name \"*.log\" -exec cat {} \\;\n      ^            ^          ^     ^   ^  ^\n      |            |          |     |   |  |\n    where      pattern    action  cmd {} end\n```\n\n- `find workspace` = where to search\n- `-name \"*.log\"` = what to find\n- `-exec cat` = command to run\n- `{}` = replaced with each filename\n- `\\;` = end of exec command\n\n**Other examples:**\n```bash\n# Delete files\nfind . -name \"*.tmp\" -exec rm {} \\;\n\n# List details\nfind . -name \"*.txt\" -exec ls -l {} \\;\n\n# Search within files\nfind . -name \"*.log\" -exec grep \"error\" {} \\;\n```\n\n**Learn:** `-exec` runs commands on found files - incredibly powerful for automation!",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from log files",
+          "validator": "exact",
+          "expected": "FIND-EXEC-MASTER"
+        }
+      ]
+    }
+  ]
+}

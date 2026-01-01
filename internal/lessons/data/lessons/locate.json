@@ -1,0 +1,116 @@
+{
+  "version": "1.0",
+  "lessons": [
+    {
+      "id": "locate",
+      "command": "locate",
+      "code": "locate",
+      "title": "Quickly Find Files by Name",
+      "tags": ["basics", "search", "files"],
+      "level": "beginner",
+      "module": "file-operations",
+      "skipSandbox": true,
+      "about": {
+        "what": "The `locate` command **quickly finds files by name** using a pre-built database. It's much faster than `find` because it searches an index, not the actual filesystem.\n\n```bash\nlocate filename\n```\n\n**How it works:**\n1. System maintains a database of all files (updated daily)\n2. `locate` searches this database (extremely fast)\n3. Returns all matching file paths\n\n**Key characteristics:**\n- **Blazing fast** - searches database, not disk\n- **System-wide** - searches entire filesystem\n- **Database-based** - updated periodically (usually nightly)\n- **May be stale** - won't find very recent files\n\nPerfect for:\n- Quick filename searches\n- Finding files when you know the name\n- Searching across the entire system\n- When speed matters more than freshness",
+        "history": "`locate` was created in the 1980s to solve a fundamental problem: finding files on large Unix systems was painfully slow.\n\nBefore `locate`, users used `find`:\n```bash\nfind / -name \"myfile.txt\" 2>/dev/null\n```\n\nThis worked, but on large systems it could take **minutes** to search the entire filesystem. System administrators needed a faster solution.\n\n**The Database Solution:**\n\nThe breakthrough was simple: **pre-index everything**.\n\n1. Run `updatedb` nightly via cron\n2. Build database of all filenames\n3. Searches become instant lookups\n\nThe trade-off:\n- **Speed:** Database search is instant\n- **Freshness:** Files created after last update won't be found\n\n**Implementation evolution:**\n\n**1980s - Original `locate`:**\n- Simple database of filenames\n- World-readable (security concern!)\n- Anyone could see all files on system\n\n**1990s - `slocate` (Secure locate):**\n- Respects file permissions\n- Users only see files they have permission to access\n- Became standard on Linux\n\n**2000s - `mlocate` (Merging locate):**\n- Faster database updates (only updates changes)\n- Better performance\n- Now standard on most Linux distributions\n\n**Modern usage:**\n\nToday, `locate` is installed by default on most Linux systems but NOT on macOS (which uses Spotlight instead). The database is updated daily by cron, usually at night.\n\n**Fun fact:**\nThe `locate` database is typically at `/var/lib/mlocate/mlocate.db` and can be several megabytes even for personal systems (millions of files indexed).",
+        "example": "```bash\n# Find files containing 'bash' in name\nlocate bash\n# Output: hundreds of matches instantly\n\n# Find specific file\nlocate .bashrc\n# /home/user/.bashrc\n# /etc/skel/.bashrc\n\n# Find all Python files\nlocate .py | head -10\n# Shows first 10 matches\n\n# Count how many matches\nlocate .txt | wc -l\n# Output: 15234 (that many .txt files!)\n\n# Find recently used pattern\nlocate README.md\n# Shows all README.md files on system\n\n# Limit output\nlocate -l 20 python\n# Show only first 20 matches\n\n# Check if file exists anywhere\nlocate myfile.txt\n# (Instant - faster than find!)\n\n# Case-insensitive by default on some systems\nlocate readme\n# May find README, ReadMe, readme, etc.\n```",
+        "commonUses": [
+          "**Quick file location** - Find files instantly by name",
+          "**System-wide search** - Search entire filesystem in seconds",
+          "**File existence check** - Verify file exists anywhere",
+          "**Pattern exploration** - Find all files matching pattern",
+          "**Development** - Locate libraries, config files, documentation"
+        ]
+      },
+      "hints": [
+        "Syntax: locate pattern",
+        "Searches database (updated daily)",
+        "Much faster than find, but may be stale"
+      ],
+      "sandbox": {},
+      "instructions": "## Your Task\n\nUse `locate` to quickly find files on your system.\n\n**Steps:**\n\n1. **Find bash files:**\n   ```bash\n   locate bash | head -10\n   ```\n   Shows first 10 files with 'bash' in the name (instant!)\n\n2. **Find your bashrc:**\n   ```bash\n   locate .bashrc\n   ```\n   Shows all .bashrc files on system\n\n3. **Find README files:**\n   ```bash\n   locate README | head -10\n   ```\n   Finds README files across the system\n\n4. **Count Python files:**\n   ```bash\n   locate .py | wc -l\n   ```\n   Counts all Python files (instant count!)\n\n**Understanding the speed:**\n\nTry comparing `locate` vs `find`:\n```bash\n# Instant\ntime locate bash | head -1\n\n# Slow (don't run this to completion!)\n# time find / -name \"*bash*\" 2>/dev/null | head -1\n```\n\n`locate` is **hundreds of times faster** because it searches a database, not the filesystem.\n\n**Note about freshness:**\nIf you create a file right now:\n```bash\ntouch /tmp/newfile.txt\nlocate newfile.txt\n```\n\nIt won't be found! The database hasn't been updated yet.\n(Updates happen nightly via cron)\n\nTo manually update: `sudo updatedb` (run as admin)\n\n**Completion Code:** LOCATE-BASIC-SUCCESS\n\n**Learn:** `locate` is incredibly fast for finding files because it searches a database, not the filesystem!",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from instructions",
+          "validator": "exact",
+          "expected": "LOCATE-BASIC-SUCCESS"
+        }
+      ]
+    },
+    {
+      "id": "locate-i",
+      "command": "locate",
+      "code": "locate -i",
+      "title": "Case-Insensitive File Search",
+      "tags": ["intermediate", "search", "files"],
+      "level": "intermediate",
+      "module": "file-operations",
+      "skipSandbox": true,
+      "about": {
+        "what": "The `locate -i` flag performs **case-insensitive searches**, matching files regardless of capitalization.\n\n```bash\nlocate -i readme\n# Finds: README, ReadMe, readme, README.md, Readme.txt\n```\n\n**Without `-i` (case-sensitive):**\n```bash\nlocate readme\n# Only finds: readme, readme.txt (lowercase only)\n```\n\n**With `-i` (case-insensitive):**\n```bash\nlocate -i readme\n# Finds: README, ReadMe, readme, README.MD, etc.\n```\n\nThis is essential when:\n- You're unsure of exact capitalization\n- Files have inconsistent naming (README vs Readme)\n- Searching across multiple systems with different conventions\n- You want comprehensive results\n\nJust like `grep -i`, the `-i` flag makes searches more flexible and forgiving.",
+        "history": "The `-i` (ignore case) flag was added to `locate` following the pattern established by `grep -i` and other Unix text processing tools.\n\n**The Capitalization Problem:**\n\nFile naming conventions vary wildly:\n- **Unix tradition:** lowercase (readme.txt)\n- **Windows convention:** Mixed case (ReadMe.txt)\n- **Modern convention:** UPPERCASE for important files (README.md)\n- **Legacy systems:** All caps (README.TXT)\n\nUsers searching for \"readme\" would miss:\n- README (all caps)\n- ReadMe (mixed)\n- Readme (capital first)\n\nThis was frustrating, especially when:\n- Moving files between systems\n- Working with code from different sources\n- Dealing with legacy files\n\n**Before `-i`:**\nUsers had to try multiple searches:\n```bash\nlocate readme\nlocate README\nlocate Readme\nlocate ReadMe\n```\n\nTedious!\n\n**With `-i`:**\n```bash\nlocate -i readme\n```\n\nOne search finds everything.\n\n**Performance note:**\nCase-insensitive searches are slightly slower than case-sensitive because the database must compare each entry with both upper and lowercase versions of the pattern. But on modern systems, it's still essentially instant.\n\n**Modern file systems:**\nSome modern filesystems (like macOS's APFS) are case-insensitive by default, which makes this less of an issue. But Linux and most Unix systems remain case-sensitive, so `-i` remains essential.",
+        "example": "```bash\n# Case-sensitive (default)\nlocate readme\n# Finds: readme.txt, myreadme, readme.md\n# Misses: README, ReadMe, README.MD\n\n# Case-insensitive\nlocate -i readme\n# Finds: readme, README, ReadMe, Readme, README.MD, etc.\n\n# Find all README files (any case)\nlocate -i readme.md\n# Finds: README.md, Readme.md, readme.MD, etc.\n\n# Find config files (various conventions)\nlocate -i config.txt\n# Finds: config.txt, Config.txt, CONFIG.TXT\n\n# Find Python files (case variations)\nlocate -i python\n# Finds: python, Python, PYTHON, python3, Python3.9, etc.\n\n# Combine with limit\nlocate -i -l 10 readme\n# First 10 matches, any case\n\n# Combine with count\nlocate -i readme | wc -l\n# Count all README variants\n\n# Real-world: find documentation\nlocate -i install.txt\nlocate -i license\nlocate -i changelog\n```",
+        "commonUses": [
+          "**Flexible searching** - Find files regardless of capitalization",
+          "**Cross-platform work** - Handle different naming conventions",
+          "**Documentation finding** - Locate README, LICENSE, INSTALL files",
+          "**Comprehensive results** - Don't miss files due to case",
+          "**Defensive searching** - When unsure of exact capitalization"
+        ]
+      },
+      "hints": [
+        "Use -i for case-insensitive search",
+        "Syntax: locate -i pattern",
+        "Finds README, readme, ReadMe, etc."
+      ],
+      "sandbox": {},
+      "instructions": "## Your Task\n\nCompare case-sensitive and case-insensitive searches with `locate`.\n\n**Steps:**\n\n1. **Case-sensitive search:**\n   ```bash\n   locate readme | head -5\n   ```\n   Notice: Only lowercase 'readme' matches\n\n2. **Case-insensitive search:**\n   ```bash\n   locate -i readme | head -5\n   ```\n   Notice: README, ReadMe, readme all match!\n\n3. **Try with Python:**\n   ```bash\n   locate python | head -5\n   locate -i python | head -5\n   ```\n   Second command finds more (Python, PYTHON, etc.)\n\n4. **Find all README files (any case):**\n   ```bash\n   locate -i readme.md\n   ```\n   Finds README.md, Readme.md, readme.MD, etc.\n\n**Real-world example:**\n\nLooking for configuration files:\n```bash\n# Might miss Config.txt, CONFIG.TXT\nlocate config.txt\n\n# Finds all variants\nlocate -i config.txt\n```\n\n**When to use -i:**\n- Searching for README, LICENSE, CHANGELOG files\n- Working with files from different platforms\n- When you're unsure of exact capitalization\n- When you want comprehensive results\n\n**Completion Code:** LOCATE-CASE-PRO\n\n**Learn:** Use `-i` for case-insensitive searches - finds files regardless of capitalization!",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from instructions",
+          "validator": "exact",
+          "expected": "LOCATE-CASE-PRO"
+        }
+      ]
+    },
+    {
+      "id": "locate-vs-find",
+      "command": "locate",
+      "code": "locate vs find",
+      "title": "Understanding locate vs find Trade-offs",
+      "tags": ["intermediate", "search", "files"],
+      "level": "intermediate",
+      "module": "file-operations",
+      "skipSandbox": true,
+      "about": {
+        "what": "Understanding when to use `locate` vs `find` is crucial for efficient file searching.\n\n**locate:**\n- **Speed:** Instant (searches database)\n- **Freshness:** Potentially stale (updated daily)\n- **Scope:** Entire filesystem\n- **Flexibility:** Name-based only\n- **Database:** Requires updatedb\n\n**find:**\n- **Speed:** Slow (searches actual filesystem)\n- **Freshness:** Always current (live search)\n- **Scope:** Specified directory tree\n- **Flexibility:** Name, size, time, permissions, type, etc.\n- **Database:** No database needed\n\n**Use locate when:**\n- You know the filename\n- Speed is critical\n- Searching entire system\n- File was created over a day ago\n\n**Use find when:**\n- You need current results\n- Searching by size, date, permissions\n- Searching specific directory\n- File was just created\n- Need complex queries",
+        "history": "The `locate` vs `find` debate has existed since `locate` was created in the 1980s. Each tool solves different problems, and understanding the trade-offs is classic Unix knowledge.\n\n**The Speed vs Freshness Trade-off:**\n\n**find (1970s):**\n- Original Unix file search tool\n- Searches filesystem directly\n- Complete, flexible, but slow\n\n**locate (1980s):**\n- Created because find was too slow\n- Database approach: pre-index everything\n- Fast but potentially stale\n\n**Historical context:**\n\nIn the 1980s, hard drives were small but **slow**:\n- 10-50MB capacity\n- 50-100ms seek times (vs 5-10ms today)\n- Searching took **minutes**\n\n`locate` was revolutionary - instant searches!\n\n**The freshness problem:**\n\nThe database update schedule became crucial:\n- **Daily updates (typical):** Files created today won't be found\n- **Manual updates:** Require root access\n- **Automatic updates:** Can bog down system\n\nThis led to the classic scenario:\n```bash\n# Just created a file\ntouch important-file.txt\n\n# locate can't find it\nlocate important-file.txt\n# (no output)\n\n# find can\nfind . -name important-file.txt\n# ./important-file.txt\n```\n\n**Modern perspective:**\n\nWith modern SSDs:\n- `find` is much faster than it used to be\n- But `locate` is still **dramatically** faster for system-wide searches\n- The speed difference matters less for small searches\n\n**Best practices evolved:**\n\n1. **System-wide, name-based:** Use `locate`\n   ```bash\n   locate libpython3.so\n   ```\n\n2. **Specific directory, complex criteria:** Use `find`\n   ```bash\n   find ~/project -name \"*.py\" -mtime -7\n   ```\n\n3. **Recent files:** Use `find`\n   ```bash\n   find . -name \"*.txt\" -mtime -1\n   ```\n\n4. **Quick existence check (old files):** Use `locate`\n   ```bash\n   locate some-config.conf\n   ```\n\nBoth tools remain essential in the Unix toolkit.",
+        "example": "```bash\n# SPEED COMPARISON\n\n# locate: Instant\ntime locate python | head -1\n# real 0m0.002s\n\n# find: Much slower (searching entire system)\ntime find / -name \"*python*\" 2>/dev/null | head -1\n# real 0m15.432s (or longer!)\n\n# FRESHNESS COMPARISON\n\n# Create new file\ntouch /tmp/testfile-$(date +%s).txt\n\n# find sees it immediately\nfind /tmp -name \"testfile-*.txt\"\n# ./testfile-1234567890.txt\n\n# locate doesn't (until updatedb runs)\nlocate testfile-1234567890.txt\n# (no output)\n\n# FLEXIBILITY COMPARISON\n\n# locate: Name only\nlocate config.txt\n\n# find: Name, size, date, type, permissions\nfind ~ -name \"config.txt\" -size +1M -mtime -30\n# (Files named config.txt, larger than 1MB, modified in last 30 days)\n\n# WHEN TO USE EACH\n\n# locate: Quick system-wide name search\nlocate README.md\nlocate libssl.so\n\n# find: Recent files\nfind ~/Downloads -mtime -1\nfind . -name \"*.log\" -mtime -7\n\n# find: Complex criteria\nfind ~/photos -name \"*.jpg\" -size +10M\nfind /var/log -name \"*.log\" -mtime +30 -delete\n\n# find: Specific directory (faster than locate for small trees)\nfind ./project -name \"*.py\"\n```",
+        "commonUses": [
+          "**Use locate:** Fast system-wide filename searches",
+          "**Use find:** Recent files or complex search criteria",
+          "**Use locate:** Checking if something exists anywhere",
+          "**Use find:** Searching specific directories with filters",
+          "**Know both:** Different tools for different situations"
+        ]
+      },
+      "hints": [
+        "locate = fast but potentially stale",
+        "find = slow but always current",
+        "Use locate for speed, find for freshness/flexibility"
+      ],
+      "sandbox": {},
+      "instructions": "## Your Task\n\nUnderstand when to use `locate` vs `find`.\n\n**Compare Speed:**\n\n1. **locate (instant):**\n   ```bash\n   time locate bash | head -1\n   ```\n   Should take milliseconds\n\n2. **find (slow - DON'T actually run this to completion):**\n   ```bash\n   # DON'T RUN: time find / -name \"*bash*\" 2>/dev/null\n   ```\n   Would take many seconds/minutes\n\n**Compare Freshness:**\n\n1. **Create a new file:**\n   ```bash\n   touch /tmp/test-locate-find-$(date +%s).txt\n   ```\n\n2. **find sees it immediately:**\n   ```bash\n   find /tmp -name \"test-locate-find-*.txt\"\n   ```\n   Shows your file!\n\n3. **locate doesn't (database not updated):**\n   ```bash\n   locate test-locate-find\n   ```\n   No results (database doesn't know about it yet)\n\n**When to use each:**\n\n**Use locate when:**\n- ✅ Searching entire system\n- ✅ Know the filename\n- ✅ Speed is critical\n- ✅ File is old (not just created)\n\n**Use find when:**\n- ✅ Need current results\n- ✅ Searching by size/date/permissions\n- ✅ File just created\n- ✅ Complex search criteria\n- ✅ Searching specific directory\n\n**Examples:**\n```bash\n# Good use of locate\nlocate README.md         # Find all READMEs (fast)\nlocate libpython         # Find library (fast)\n\n# Good use of find\nfind . -name \"*.py\"      # Search project (specific dir)\nfind ~/Downloads -mtime -1  # Recent downloads\nfind /var/log -size +100M   # Large log files\n```\n\n**Completion Code:** LOCATE-FIND-EXPERT\n\n**Learn:** locate and find serve different purposes - locate for speed, find for freshness and flexibility!",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from instructions",
+          "validator": "exact",
+          "expected": "LOCATE-FIND-EXPERT"
+        }
+      ]
+    }
+  ]
+}

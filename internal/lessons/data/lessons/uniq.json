@@ -1,0 +1,137 @@
+{
+  "version": "1.0",
+  "lessons": [
+    {
+      "id": "uniq",
+      "command": "uniq",
+      "code": "uniq",
+      "title": "Remove Adjacent Duplicate Lines",
+      "tags": ["basics", "text", "deduplication"],
+      "level": "beginner",
+      "module": "text-operations",
+      "about": {
+        "what": "The `uniq` command **removes adjacent duplicate lines** from input. It compares each line with the previous line and only outputs it if it's different.\n\n```bash\nuniq filename\n```\n\n**CRITICAL LIMITATION:** `uniq` only removes **adjacent** duplicates. If the same line appears multiple times but not consecutively, it will appear multiple times in the output.\n\n**Example:**\n```\nInput:          Output from uniq:\napple           apple\napple           banana\nbanana          apple  (appears again!)\napple\n```\n\nFor true deduplication, you must **sort first**:\n```bash\nsort filename | uniq   # Removes ALL duplicates\n```\n\nThis is one of the most important patterns in Unix data processing.",
+        "history": "`uniq` was created in the early Unix days (1970s) as a companion to `sort`. The name is short for 'unique' - finding unique lines in text.\n\nThe \"adjacent only\" behavior seems odd at first, but it was a deliberate design choice:\n\n**Why only adjacent duplicates?**\n1. **Performance:** Can process files in a single pass without loading everything into memory\n2. **Streaming:** Works with unlimited-size inputs via pipes\n3. **Unix philosophy:** Do one simple thing well - let `sort` handle ordering\n\nThe creators assumed users would sort data first, making `sort | uniq` the intended pattern. This combination became one of the most iconic Unix pipelines, appearing in countless scripts and tutorials.\n\n**Historical context:** In the 1970s, computers had tiny amounts of RAM (kilobytes!). A tool that tried to remember ALL seen lines wouldn't work on large files. The adjacent-only approach meant `uniq` needed to remember just one line at a time - brilliant under memory constraints.\n\nOver 50 years later, this design remains unchanged. While modern computers have millions of times more memory, the `sort | uniq` pattern persists because:\n- It's simple and composable\n- It works on infinite streams\n- It teaches the Unix pipe-and-filter philosophy\n\nInteresting: Modern tools like `awk` and scripting languages can deduplicate without sorting, but `sort | uniq` remains the standard Unix way.",
+        "example": "```bash\n# Remove adjacent duplicates\nuniq data.txt\n\n# Common mistake: uniq without sort\necho -e \"apple\\nbanana\\napple\" | uniq\n# Output: apple, banana, apple (NOT deduplicated!)\n\n# Correct pattern: sort first\necho -e \"apple\\nbanana\\napple\" | sort | uniq\n# Output: apple, banana (fully deduplicated)\n\n# Real-world: unique users from log\ncut -d ' ' -f 1 access.log | sort | uniq\n\n# Unique values with counts\nsort data.txt | uniq -c\n\n# Only show duplicates\nsort data.txt | uniq -d\n\n# Only show unique (non-duplicate) lines\nsort data.txt | uniq -u\n\n# Case-insensitive deduplication\nsort data.txt | uniq -i\n```",
+        "commonUses": [
+          "**Data deduplication** - Remove duplicate lines (with sort first)",
+          "**Unique value extraction** - Find unique entries in logs or data files",
+          "**List cleanup** - Remove repeated items from lists",
+          "**Frequency analysis** - Count occurrences with -c flag",
+          "**Find duplicates** - Identify which lines appear more than once"
+        ]
+      },
+      "hints": [
+        "Syntax: uniq filename",
+        "Only removes ADJACENT duplicates",
+        "For all duplicates, use: sort filename | uniq"
+      ],
+      "sandbox": {
+        "startDir": "workspace",
+        "dirs": ["workspace"],
+        "files": {
+          "workspace/task.txt": "Task: Understand how uniq removes only adjacent duplicates.\n\nThe file 'colors.txt' has duplicate lines - some adjacent, some not.\nUse uniq to see which duplicates are removed.\n\nOnce you understand the behavior, check completion.txt.",
+          "workspace/colors.txt": "red\nred\nred\nblue\nblue\ngreen\nred\nyellow\nyellow\nUNIQ-BASIC-SUCCESS\nUNIQ-BASIC-SUCCESS\ngreen\nblue",
+          "workspace/completion.txt": "Great! You understand how uniq works with adjacent duplicates.\n\n=========================================\nCOMPLETION CODE: UNIQ-BASIC-SUCCESS\n=========================================\n\nKey insight: uniq ONLY removes ADJACENT duplicates.\n\nExample with colors.txt:\n  Input:  red, red, red, blue, blue, green, red, ...\n  Output: red, blue, green, red, ...\n  (First 3 reds → 1 red, but red appears again later!)\n\nFor TRUE deduplication, SORT FIRST:\n  sort colors.txt | uniq\n  (This removes ALL duplicates, not just adjacent)\n\nWhy this design?\n- Memory efficient (one-line buffer)\n- Works on infinite streams\n- Fast single-pass processing\n\nThe pattern 'sort | uniq' is one of the most\ncommon Unix command combinations!"
+        }
+      },
+      "instructions": "## Your Task\n\nUse `uniq` to see how it removes adjacent duplicates.\n\n**Steps:**\n1. Read the task: `cat task.txt`\n2. View the file: `cat colors.txt` - notice duplicate lines\n3. Run `uniq colors.txt` - see which duplicates are removed\n4. Notice: The first 3 \"red\" lines become 1, but \"red\" appears again later\n5. Notice: The 2 adjacent completion codes become 1\n6. Understand: uniq only removes ADJACENT duplicates\n7. Read completion file: `cat completion.txt`\n8. Copy the code\n9. Type `exit` and paste the code\n\n**Learn:** `uniq` only removes adjacent duplicates - sort first for true deduplication!",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from uniq output",
+          "validator": "exact",
+          "expected": "UNIQ-BASIC-SUCCESS"
+        }
+      ]
+    },
+    {
+      "id": "sort-uniq",
+      "command": "uniq",
+      "code": "sort | uniq",
+      "title": "Remove All Duplicates with Sort + Uniq",
+      "tags": ["intermediate", "text", "deduplication", "pipes"],
+      "level": "intermediate",
+      "module": "text-operations",
+      "about": {
+        "what": "The `sort | uniq` pipeline is THE standard Unix pattern for **complete deduplication** - removing ALL duplicate lines, not just adjacent ones.\n\n```bash\nsort filename | uniq\n```\n\n**How it works:**\n1. `sort` reorders lines so identical lines are adjacent\n2. `uniq` removes the now-adjacent duplicates\n3. Result: Only unique lines remain\n\n**Why both commands?**\n- `sort` alone: Removes duplicates BUT keeps all copies sorted together\n- `uniq` alone: Only removes adjacent duplicates (misses scattered duplicates)\n- `sort | uniq`: Complete deduplication - each unique line appears once\n\nThis pipeline is fundamental to Unix data processing and appears in countless scripts, tutorials, and real-world workflows.",
+        "history": "The `sort | uniq` pipeline became one of the most iconic examples of Unix's pipe-and-filter architecture, demonstrating the power of combining simple tools.\n\n**The Philosophy:**\nDennis Ritchie and Ken Thompson designed Unix around the principle: \"Write programs that do one thing well and work together.\" The `sort | uniq` pattern perfectly embodies this:\n- `sort` does ONE thing: order lines\n- `uniq` does ONE thing: remove adjacent duplicates  \n- Together: Complete deduplication\n\nNeither command needed special \"deduplication mode\" - the composition handled it naturally.\n\n**Cultural Impact:**\nThis pipeline became a teaching example for:\n- Unix philosophy courses\n- Shell scripting tutorials\n- Computer science curricula\n- System administration training\n\nIt appeared so often that experienced Unix users type it without thinking. The pattern influenced:\n- SQL's `SELECT DISTINCT` (doing the same thing in one command)\n- Programming language library designs\n- Data pipeline tools (Spark, Hadoop streaming)\n\n**Performance Note:**\nFor huge files (gigabytes), `sort | uniq` can be slow because `sort` must process everything first. Modern alternatives:\n```bash\nsort -u filename    # Built-in unique sort (faster)\nawk '!seen[$0]++'   # Hash-based (faster for some cases)\n```\n\nBut `sort | uniq` remains the standard, readable, portable solution.",
+        "example": "```bash\n# Remove all duplicates\nsort emails.txt | uniq\n\n# Count unique lines\nsort data.txt | uniq | wc -l\n\n# Save deduplicated results\nsort names.txt | uniq > unique-names.txt\n\n# Deduplicate command output\ncut -d ',' -f 2 data.csv | sort | uniq\n# (Extract field 2, get unique values)\n\n# Find unique IPs in access log\ncut -d ' ' -f 1 access.log | sort | uniq\n\n# Unique file extensions\nls | grep '\\.' | sed 's/.*\\./ /' | sort | uniq\n\n# Compare with sort -u (built-in unique)\nsort -u data.txt\n# (Same result as sort | uniq, slightly faster)\n\n# Full pipeline: extract, sort, dedupe, count\ngrep 'error' app.log | cut -d ':' -f 2 | sort | uniq | wc -l\n# (How many unique error types?)\n```",
+        "commonUses": [
+          "**Complete deduplication** - Remove ALL duplicate lines from any file",
+          "**Unique value lists** - Extract unique items from data",
+          "**Log analysis** - Find unique users, IPs, error messages",
+          "**Data cleanup** - Clean duplicate entries from exports",
+          "**Pipeline step** - Standard deduplication in complex workflows"
+        ]
+      },
+      "hints": [
+        "Pattern: sort filename | uniq",
+        "sort makes duplicates adjacent, uniq removes them",
+        "For complete deduplication, ALWAYS sort first"
+      ],
+      "sandbox": {
+        "startDir": "workspace",
+        "dirs": ["workspace"],
+        "files": {
+          "workspace/task.txt": "Task: Use the sort | uniq pipeline to remove ALL duplicates.\n\nThe file 'emails.txt' has duplicate email addresses scattered\nthroughout. Use the classic sort | uniq pattern to get unique emails.\n\nOnce deduplicated, check completion.txt for your code.",
+          "workspace/emails.txt": "alice@example.com\nbob@example.com\nalice@example.com\ncharlie@example.com\nbob@example.com\nUNIQ-PIPELINE-MASTER\ndavid@example.com\nalice@example.com\ncharlie@example.com\nUNIQ-PIPELINE-MASTER\neve@example.com\nbob@example.com",
+          "workspace/completion.txt": "Perfect! You've mastered the sort | uniq pattern.\n\n===============================================\nCOMPLETION CODE: UNIQ-PIPELINE-MASTER\n===============================================\n\nThis is THE Unix deduplication pattern:\n\nsort | uniq\n\nWhy both?\n  sort alone:  Groups duplicates but keeps all copies\n  uniq alone:  Only removes adjacent duplicates\n  sort | uniq: Complete deduplication!\n\nCommon usage patterns:\n\n  # Unique values\n  sort data.txt | uniq\n\n  # Count unique\n  sort data.txt | uniq | wc -l\n\n  # Unique field values\n  cut -d ',' -f 2 data.csv | sort | uniq\n\n  # Save results\n  sort emails.txt | uniq > unique-emails.txt\n\nModern shortcut:\n  sort -u data.txt\n  (Built-in unique sort, slightly faster)\n\nBut 'sort | uniq' is the classic, readable standard!"
+        }
+      },
+      "instructions": "## Your Task\n\nUse the `sort | uniq` pipeline to remove ALL duplicates from `emails.txt`.\n\n**Steps:**\n1. Read the task: `cat task.txt`\n2. View the file: `cat emails.txt` - notice scattered duplicates\n3. Try uniq alone: `uniq emails.txt` - doesn't remove all duplicates!\n4. Try sort alone: `sort emails.txt` - groups duplicates but keeps them\n5. Try the pipeline: `sort emails.txt | uniq` - removes all duplicates!\n6. Count unique emails: `sort emails.txt | uniq | wc -l`\n7. Find the completion code in the unique output\n8. Read completion file: `cat completion.txt`\n9. Copy the code\n10. Type `exit` and paste the code\n\n**Learn:** `sort | uniq` is the classic Unix pattern for complete deduplication!",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from deduplicated output",
+          "validator": "exact",
+          "expected": "UNIQ-PIPELINE-MASTER"
+        }
+      ]
+    },
+    {
+      "id": "uniq-c",
+      "command": "uniq",
+      "code": "uniq -c",
+      "title": "Count Occurrences with Uniq",
+      "tags": ["intermediate", "text", "counting", "analysis"],
+      "level": "intermediate",
+      "module": "text-operations",
+      "about": {
+        "what": "The `uniq -c` flag **counts occurrences** of each unique line, prefixing each line with its count.\n\n```bash\nsort filename | uniq -c\n```\n\n**Output format:**\n```\n   3 apple\n   5 banana\n   2 cherry\n```\n\nThe numbers show how many times each line appeared in the input.\n\n**Frequency analysis pipeline:**\n```bash\nsort filename | uniq -c | sort -rn\n```\n\nThis three-command pipeline:\n1. `sort` - Groups identical lines together\n2. `uniq -c` - Counts each unique line\n3. `sort -rn` - Sorts by count (highest first)\n\nResult: Most common items first - perfect for finding patterns, popular items, or frequent errors in logs.",
+        "history": "The `-c` (count) flag was added to `uniq` in the mid-1970s, transforming it from a simple deduplication tool into a powerful data analysis utility.\n\nBefore `-c`, counting occurrences required complex scripting:\n```bash\n# Old way (without -c)\nsort data | uniq > unique-items\nfor item in $(cat unique-items); do\n  grep -c \"$item\" data\ndone\n```\n\nWith `-c`, it became one line:\n```bash\nsort data | uniq -c\n```\n\n**The Triple Pipeline:**\nThe pattern `sort | uniq -c | sort -rn` became one of the most powerful one-liners in Unix for frequency analysis. It enabled:\n\n**System Administration:**\n```bash\n# Most common errors in logs\ngrep ERROR app.log | sort | uniq -c | sort -rn\n\n# Most active users\ncut -d ' ' -f 1 access.log | sort | uniq -c | sort -rn\n```\n\n**Data Analysis:**\n```bash\n# Most common words in a text\ntr ' ' '\\n' < book.txt | sort | uniq -c | sort -rn\n\n# Most frequent status codes\ncut -d ' ' -f 9 access.log | sort | uniq -c | sort -rn\n```\n\nThis pattern influenced:\n- SQL's `GROUP BY` with `COUNT(*)`\n- MapReduce's word count example\n- Pandas' `value_counts()` in Python\n- Data science \"frequency distribution\" tools\n\nThe triple pipeline became a teaching example for:\n- The power of Unix composition\n- How simple tools create complex analysis\n- The elegance of pipelines\n\nIt remains one of the first things taught in system administration and data science shell scripting courses.",
+        "example": "```bash\n# Count occurrences\nsort data.txt | uniq -c\n# Output:\n#    3 apple\n#    5 banana\n#    2 cherry\n\n# Frequency analysis (most common first)\nsort data.txt | uniq -c | sort -rn\n# Output:\n#    5 banana\n#    3 apple\n#    2 cherry\n\n# Top 10 most common items\nsort data.txt | uniq -c | sort -rn | head -10\n\n# Most common HTTP status codes\ncut -d ' ' -f 9 access.log | sort | uniq -c | sort -rn\n\n# Word frequency in text\ntr ' ' '\\n' < document.txt | sort | uniq -c | sort -rn | head -20\n# (Top 20 most common words)\n\n# Most active IP addresses\ncut -d ' ' -f 1 access.log | sort | uniq -c | sort -rn | head -10\n\n# Error message frequency\ngrep ERROR app.log | cut -d ':' -f 2 | sort | uniq -c | sort -rn\n\n# User activity counts\ncut -d ',' -f 1 user-actions.csv | sort | uniq -c | sort -rn\n```",
+        "commonUses": [
+          "**Frequency analysis** - Count how often each item appears",
+          "**Log analysis** - Find most common errors, users, or events",
+          "**Top-N queries** - Identify most frequent items",
+          "**Pattern detection** - Discover trends in data",
+          "**Data profiling** - Understand value distributions"
+        ]
+      },
+      "hints": [
+        "Use -c flag to count occurrences",
+        "Pattern: sort filename | uniq -c",
+        "For top frequencies: sort | uniq -c | sort -rn"
+      ],
+      "sandbox": {
+        "startDir": "workspace",
+        "dirs": ["workspace"],
+        "files": {
+          "workspace/task.txt": "Task: Count how many times each HTTP status appears in requests.txt.\n\nUse uniq -c to count occurrences of each status code.\nThen sort by frequency to find the most common status.\n\nOnce you've analyzed the frequencies, check completion.txt.",
+          "workspace/requests.txt": "200 OK\n200 OK\n200 OK\n404 Not Found\n200 OK\n500 Error\n404 Not Found\n200 OK\n200 OK\n403 Forbidden\n200 OK\n500 Error\n200 OK\n404 Not Found\n200 OK\nUNIQ-COUNT-EXPERT\nUNIQ-COUNT-EXPERT\nUNIQ-COUNT-EXPERT\n404 Not Found\n200 OK",
+          "workspace/completion.txt": "Excellent! You've mastered frequency analysis with uniq -c.\n\n===============================================\nCOMPLETION CODE: UNIQ-COUNT-EXPERT\n===============================================\n\nThe -c flag counts occurrences of each unique line.\n\nBasic pattern:\n  sort data.txt | uniq -c\n  Output: count followed by line\n\nFrequency analysis (THE pattern):\n  sort data.txt | uniq -c | sort -rn\n  Step 1: sort         (group identical lines)\n  Step 2: uniq -c      (count each group)\n  Step 3: sort -rn     (highest count first)\n\nReal-world examples:\n\n  # Most common errors\n  grep ERROR app.log | sort | uniq -c | sort -rn\n\n  # Top 10 IPs\n  cut -d ' ' -f 1 access.log | sort | uniq -c | sort -rn | head -10\n\n  # Word frequency\n  tr ' ' '\\n' < file.txt | sort | uniq -c | sort -rn\n\nThe triple pipeline is one of Unix's most\npowerful data analysis patterns!"
+        }
+      },
+      "instructions": "## Your Task\n\nUse `uniq -c` to count HTTP status code frequencies, then sort by count.\n\n**Steps:**\n1. Read the task: `cat task.txt`\n2. View the file: `cat requests.txt` - notice repeated status codes\n3. Count occurrences: `sort requests.txt | uniq -c`\n4. See counts like \"10 200 OK\", \"4 404 Not Found\", etc.\n5. Sort by frequency: `sort requests.txt | uniq -c | sort -rn`\n6. Notice most common status appears first\n7. Find the completion code (appears 3 times)\n8. Read completion file: `cat completion.txt`\n9. Copy the code\n10. Type `exit` and paste the code\n\n**Learn:** `sort | uniq -c | sort -rn` is the classic frequency analysis pattern!",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from requests.txt",
+          "validator": "exact",
+          "expected": "UNIQ-COUNT-EXPERT"
+        }
+      ]
+    }
+  ]
+}

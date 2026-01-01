@@ -1,0 +1,140 @@
+{
+  "version": "1.0",
+  "lessons": [
+    {
+      "id": "mv",
+      "command": "mv",
+      "code": "mv",
+      "title": "Move and Rename Files",
+      "tags": ["basics", "files", "moving"],
+      "level": "beginner",
+      "module": "file-operations",
+      "about": {
+        "what": "The `mv` command **moves or renames** files and directories. The name stands for **'move'**. The basic syntax is:\n\n```bash\nmv source destination\n```\n\nUnlike `cp`, which creates a copy and leaves the original, `mv` **moves** the file - the original location no longer has the file.\n\n`mv` serves two purposes:\n1. **Renaming**: `mv oldname.txt newname.txt` (same directory, new name)\n2. **Moving**: `mv file.txt /other/directory/` (different location, same name)\n\nYou can also move AND rename simultaneously: `mv old.txt /new/location/new.txt`",
+        "history": "`mv` has been a core Unix command since Version 1 in 1971. It's one of the fundamental file operations alongside `cp` and `rm`.\n\nInterestingly, `mv` is usually **much faster** than copying and deleting because:\n- Within the same filesystem, `mv` just updates directory entries (metadata)\n- The actual file data doesn't move - only the reference to it changes\n- This means moving a 10GB file can take milliseconds!\n\nHowever, when moving across different filesystems (different drives), `mv` must actually copy the data and then delete the original, making it slower.\n\nThe dual purpose (move and rename) initially confused some users, but it makes perfect sense in Unix's filesystem model - renaming and moving are the same operation at a low level.",
+        "example": "```bash\n# Rename a file (same directory)\nmv oldname.txt newname.txt\n\n# Move to another directory (keep same name)\nmv file.txt /destination/\n\n# Move and rename simultaneously\nmv old.txt /destination/new.txt\n\n# Rename a directory\nmv old-project-name new-project-name\n\n# Move multiple files to a directory\nmv file1.txt file2.txt file3.txt /destination/\n\n# Common pattern: organize files\nmv *.jpg ~/Pictures/\nmv *.mp3 ~/Music/\n```",
+        "commonUses": [
+          "**Renaming files** - Give files more descriptive or correct names",
+          "**Organizing files** - Move files into appropriate directories",
+          "**Project cleanup** - Reorganize project structure",
+          "**Fixing mistakes** - Correct misnamed or misplaced files",
+          "**Deployment** - Move files to their final locations"
+        ]
+      },
+      "hints": [
+        "Syntax: mv source destination",
+        "After moving, the file only exists at the new location",
+        "Use 'ls' to verify the file moved successfully"
+      ],
+      "sandbox": {
+        "startDir": "workspace",
+        "dirs": ["workspace"],
+        "files": {
+          "workspace/task.txt": "Task: Rename 'old-name.txt' to 'new-name.txt'\n\nOnce renamed, check completion.txt for your code.",
+          "workspace/old-name.txt": "This file has an old, unclear name.\n\nRename it to 'new-name.txt' for better clarity.\n\nUse: mv old-name.txt new-name.txt",
+          "workspace/completion.txt": "Great! You've successfully renamed a file.\n\n=========================================\nCOMPLETION CODE: MV-RENAME-SUCCESS\n=========================================\n\nThe mv command both moves and renames files.\nWhen source and destination are in the same directory,\nit's a rename operation.\n\nThe original file no longer exists at the old name."
+        }
+      },
+      "instructions": "## Your Task\n\nRename the file `old-name.txt` to `new-name.txt`.\n\n**Steps:**\n1. Read the task: `cat task.txt`\n2. View current files: `ls` - you should see 'old-name.txt'\n3. Read the old file: `cat old-name.txt`\n4. Run `mv old-name.txt new-name.txt` to rename it\n5. Verify with `ls` - should see 'new-name.txt', not 'old-name.txt'\n6. Verify contents: `cat new-name.txt` - should be same content\n7. Read completion file: `cat completion.txt`\n8. Copy the code\n9. Type `exit` and paste the code\n\n**Learn:** `mv` renames files when source and destination are in the same directory.",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from completion.txt",
+          "validator": "exact",
+          "expected": "MV-RENAME-SUCCESS"
+        }
+      ]
+    },
+    {
+      "id": "mv-directory",
+      "command": "mv",
+      "code": "mv (directory)",
+      "title": "Move and Rename Directories",
+      "tags": ["intermediate", "directories", "moving"],
+      "level": "intermediate",
+      "module": "file-operations",
+      "about": {
+        "what": "The `mv` command works on **directories** exactly the same way it works on files - no special flags needed!\n\n```bash\nmv old-dir-name new-dir-name  # Rename directory\nmv project /other/location/   # Move directory\n```\n\nThis is different from `cp`, which requires `-r` for directories. With `mv`, you can:\n- Rename directories\n- Move entire directory trees to new locations\n- Reorganize project structures\n\nAll files and subdirectories move with the directory - no special handling required. Within the same filesystem, this is nearly instant regardless of directory size.",
+        "history": "The fact that `mv` works identically for files and directories is a beautiful example of Unix's **'everything is a file'** philosophy.\n\nIn the Unix filesystem model, directories are just special files that contain references to other files. Moving a directory means updating its parent directory's reference to point to a new location - the directory's contents don't need to change at all.\n\nThis design decision (made in the early 1970s) means:\n- No need to learn separate commands for directories\n- Moving a directory with 10,000 files is as fast as moving a single file (on the same filesystem)\n- The interface is consistent and predictable\n\nOther operating systems made different choices - MS-DOS required separate commands (`REN` for rename, `MOVE` for moving), and early versions couldn't move directories at all!",
+        "example": "```bash\n# Rename a directory\nmv old-project new-project\n\n# Move directory to another location\nmv myapp /opt/applications/\n\n# Reorganize project structure\nmv src/old-module src/components/new-module\n\n# Common pattern: organize projects\nmv project-2024-12-31 ~/archive/projects/\n\n# Rename with move\nmv ~/Desktop/messy-folder ~/Documents/organized-project\n\n# Move multiple directories\nmv dir1 dir2 dir3 /destination/\n```",
+        "commonUses": [
+          "**Project organization** - Restructure project directories",
+          "**Renaming projects** - Give projects clearer names",
+          "**Archiving** - Move old projects to archive locations",
+          "**Cleanup** - Organize messy directory structures",
+          "**Deployment** - Move application directories to deployment locations"
+        ]
+      },
+      "hints": [
+        "mv works the same for directories as for files",
+        "No -r flag needed like with cp",
+        "All contents move with the directory"
+      ],
+      "sandbox": {
+        "startDir": "workspace",
+        "dirs": ["workspace", "workspace/old-project", "workspace/old-project/src"],
+        "files": {
+          "workspace/task.txt": "Task: Rename the 'old-project' directory to 'my-app'\n\nOnce renamed, check completion.txt for your code.",
+          "workspace/old-project/README.md": "# Project Documentation\n\nThis is a sample project.",
+          "workspace/old-project/src/main.js": "console.log('Hello from the project!');",
+          "workspace/completion.txt": "Perfect! You've renamed a directory.\n\n===============================================\nCOMPLETION CODE: MV-DIRECTORY-MASTER\n===============================================\n\nMoving directories is just as easy as moving files.\nNo special flags needed - mv handles it automatically.\n\nAll files and subdirectories move with the directory.\n\nWithin the same filesystem, this is nearly instant!"
+        }
+      },
+      "instructions": "## Your Task\n\nRename the directory `old-project` to `my-app`.\n\n**Steps:**\n1. Read the task: `cat task.txt`\n2. View current directories: `ls` - should see 'old-project'\n3. Check its contents: `ls old-project/` and `ls old-project/src/`\n4. Run `mv old-project my-app` to rename the directory\n5. Verify with `ls` - should see 'my-app', not 'old-project'\n6. Check contents moved: `ls my-app/` and `ls my-app/src/`\n7. Read completion file: `cat completion.txt`\n8. Copy the code\n9. Type `exit` and paste the code\n\n**Learn:** `mv` works on directories without needing any special flags.",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from completion.txt",
+          "validator": "exact",
+          "expected": "MV-DIRECTORY-MASTER"
+        }
+      ]
+    },
+    {
+      "id": "mv-multiple",
+      "command": "mv",
+      "code": "mv (multiple files)",
+      "title": "Move Multiple Files to Directory",
+      "tags": ["intermediate", "files", "moving"],
+      "level": "intermediate",
+      "module": "file-operations",
+      "about": {
+        "what": "When moving **multiple files**, the last argument to `mv` must be a **directory**. All files will be moved into that directory:\n\n```bash\nmv file1.txt file2.txt file3.txt destination/\n```\n\nYou can also use **wildcards** to move groups of files:\n```bash\nmv *.txt documents/     # Move all .txt files\nmv *.jpg images/        # Move all images\nmv log-*.txt archive/   # Move files matching pattern\n```\n\nThis is perfect for organizing files, cleaning up directories, or preparing files for archiving. Unlike `cp`, the files **move** - they no longer exist in the original location.",
+        "history": "Multi-file moving follows the same pattern as `cp` - list all sources, then the destination directory. This consistent interface across Unix commands made the system learnable and predictable.\n\n**Wildcard expansion** makes `mv` incredibly powerful. Combined with wildcards, you can reorganize entire directory structures with single commands:\n\n```bash\nmv *.log logs/          # Organize all log files\nmv *.jpg *.png images/  # Gather all images\n```\n\nThis pattern became essential in the 1980s and 1990s as hard drives grew larger and users accumulated thousands of files. Being able to move hundreds of files matching a pattern in one command was revolutionary.\n\nThe shell expands wildcards *before* passing them to `mv`, so:\n```bash\nmv *.txt docs/\n```\n\nBecomes:\n```bash\nmv file1.txt file2.txt file3.txt docs/\n```\n\nThis shell-based expansion (rather than command-based) is a core Unix design principle.",
+        "example": "```bash\n# Move multiple specific files\nmv file1.txt file2.txt file3.txt documents/\n\n# Move all files of a type\nmv *.jpg ~/Pictures/\nmv *.mp3 ~/Music/\n\n# Move files matching a pattern\nmv report-*.pdf ~/Documents/reports/\n\n# Organize downloads\nmv *.zip *.tar.gz ~/Downloads/archives/\n\n# Clean up workspace\nmkdir old-files\nmv backup-* old-files/\n\n# Move numbered files\nmv photo-{1..100}.jpg ~/Pictures/vacation-2024/\n```",
+        "commonUses": [
+          "**File organization** - Move related files into organized directories",
+          "**Cleanup** - Organize messy directories by file type or pattern",
+          "**Archiving** - Move old files to archive locations",
+          "**Media management** - Organize photos, music, videos by moving sets",
+          "**Project organization** - Reorganize files into proper directory structures"
+        ]
+      },
+      "hints": [
+        "Last argument must be a directory when moving multiple files",
+        "List all source files first, then destination",
+        "Use 'ls source/' and 'ls destination/' to verify the move"
+      ],
+      "sandbox": {
+        "startDir": "workspace",
+        "dirs": ["workspace", "workspace/archive"],
+        "files": {
+          "workspace/task.txt": "Task: Move all three log files into the 'archive' directory:\n  - app.log\n  - error.log\n  - debug.log\n\nOnce moved, check completion.txt for your code.",
+          "workspace/app.log": "Application log file - contains runtime logs.",
+          "workspace/error.log": "Error log file - contains error messages.",
+          "workspace/debug.log": "Debug log file - contains debug output.",
+          "workspace/completion.txt": "Excellent! You've mastered moving multiple files.\n\n================================================\nCOMPLETION CODE: MV-MULTIPLE-FILES-EXPERT\n================================================\n\nMoving multiple files to a directory is essential for organization.\n\nThe files no longer exist in the original location.\n\nYou can use wildcards for powerful file organization:\n  mv *.log archive/\nThis moves all log files at once!"
+        }
+      },
+      "instructions": "## Your Task\n\nMove three log files into the `archive` directory in a single command: `app.log`, `error.log`, and `debug.log`.\n\n**Steps:**\n1. Read the task: `cat task.txt`\n2. View the log files: `ls *.log`\n3. Check archive is empty: `ls archive/`\n4. Run `mv app.log error.log debug.log archive/` to move all three\n5. Verify they're gone from workspace: `ls *.log` - should show none found\n6. Verify they're in archive: `ls archive/` - should see all three\n7. Read completion file: `cat completion.txt`\n8. Copy the code\n9. Type `exit` and paste the code\n\n**Learn:** Moving multiple files to a directory reorganizes your filesystem efficiently.",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from completion.txt",
+          "validator": "exact",
+          "expected": "MV-MULTIPLE-FILES-EXPERT"
+        }
+      ]
+    }
+  ]
+}

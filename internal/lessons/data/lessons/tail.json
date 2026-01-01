@@ -1,0 +1,137 @@
+{
+  "version": "1.0",
+  "lessons": [
+    {
+      "id": "tail",
+      "command": "tail",
+      "code": "tail",
+      "title": "View End of Files",
+      "tags": ["basics", "text", "viewing"],
+      "level": "beginner",
+      "module": "text-operations",
+      "about": {
+        "what": "The `tail` command displays the **last lines** of a file. By default, it shows the last **10 lines**.\n\n```bash\ntail filename\n```\n\nThis is perfect for:\n- Viewing recent log entries\n- Checking the end of data files\n- Seeing the most recent content\n- Monitoring file growth\n\nWhile `head` shows the beginning, `tail` shows the end - essential for files that grow over time like logs.",
+        "history": "`tail` was created for Unix in the late 1970s as the complement to `head`. The name is literal - it shows the 'tail' (end) of a file.\n\nThe creators quickly realized that log files grow by appending new entries at the end. System administrators needed to see the **most recent** entries, not the oldest ones at the beginning. `tail` solved this perfectly.\n\nLike `head`, the 10-line default was pragmatic:\n- Fit on most terminals\n- Show enough context to be useful\n- Became a Unix convention\n\nThe breakthrough feature came with `tail -f` (follow mode) in the early 1980s. This lets you **watch files as they grow** in real-time - revolutionary for monitoring logs and debugging running systems.\n\nBefore `tail -f`, monitoring logs required:\n- Repeatedly running `cat` or opening in an editor\n- Manually refreshing to see new entries\n- Writing custom scripts to poll files\n\nWith `tail -f`, you just run it once and watch:\n```bash\ntail -f application.log    # Shows new lines as they're written\n```\n\nThis became so popular that 'tailing a log' became standard sysadmin terminology. Modern tools like `less +F` and `multitail` expanded on this, but `tail -f` remains the standard.",
+        "example": "```bash\n# View last 10 lines (default)\ntail application.log\n\n# View last 5 lines\ntail -5 data.txt\n\n# View last 20 lines\ntail -20 large-file.txt\n\n# Check end of CSV file (last data rows)\ntail -5 data.csv\n\n# Preview multiple files\ntail file1.txt file2.txt\n# Shows last 10 lines of each, with headers\n\n# Common pattern: check recent log entries\ntail /var/log/system.log\n\n# See how a file ends\ntail README.md\n```",
+        "commonUses": [
+          "**Log monitoring** - View recent log entries",
+          "**Data inspection** - Check last rows of data files",
+          "**File verification** - Ensure files completed writing properly",
+          "**Recent activity** - See latest entries in growing files",
+          "**Debugging** - Check most recent error messages"
+        ]
+      },
+      "hints": [
+        "Syntax: tail filename",
+        "By default shows last 10 lines",
+        "Use -n to specify number of lines: tail -5 filename"
+      ],
+      "sandbox": {
+        "startDir": "workspace",
+        "dirs": ["workspace"],
+        "files": {
+          "workspace/task.txt": "Task: Use tail to view the end of 'events.log'\n\nThe completion code is in the last few lines.\n\nOnce you see it, check completion.txt for verification.",
+          "workspace/events.log": "[2024-12-31 08:00:00] System startup initiated\n[2024-12-31 08:00:01] Loading configuration files\n[2024-12-31 08:00:02] Database connection established\n[2024-12-31 08:00:03] Cache warming started\n[2024-12-31 08:00:04] Background workers initialized\n[2024-12-31 08:00:05] HTTP server starting on port 8080\n[2024-12-31 08:00:06] WebSocket server ready\n[2024-12-31 08:00:07] Application ready for requests\n[2024-12-31 08:01:15] User login: alice@example.com\n[2024-12-31 08:01:30] API request: GET /api/users\n[2024-12-31 08:02:45] File upload completed: document.pdf\n[2024-12-31 08:03:10] Background job started: email-digest\n[2024-12-31 08:04:20] Cache refresh completed\n[2024-12-31 08:05:00] Health check: all systems operational\n[2024-12-31 08:06:15] API request: POST /api/data\n[2024-12-31 08:07:30] User logout: alice@example.com\n[2024-12-31 08:08:00] Automated backup completed\n[2024-12-31 08:09:15] COMPLETION CODE: TAIL-BASIC-SUCCESS\n[2024-12-31 08:10:00] End of log snapshot",
+          "workspace/completion.txt": "Great! You've used tail to view the end of a file.\n\n=========================================\nCOMPLETION CODE: TAIL-BASIC-SUCCESS\n=========================================\n\nThe tail command is essential for:\n- Viewing recent log entries\n- Checking the end of data files\n- Monitoring file growth\n- Debugging recent activity\n\nUse tail -n to specify line count:\n  tail -5 file.txt    (last 5 lines)\n  tail -1 file.log    (just the last line)"
+        }
+      },
+      "instructions": "## Your Task\n\nUse `tail` to view the end of the file `events.log`.\n\n**Steps:**\n1. Read the task: `cat task.txt`\n2. Run `tail events.log` to see the last 10 lines\n3. Notice the completion code appears near the end\n4. Read completion file: `cat completion.txt`\n5. Copy the code\n6. Type `exit` and paste the code\n\n**Learn:** `tail` shows the end of files - perfect for checking recent log entries!",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from tail output",
+          "validator": "exact",
+          "expected": "TAIL-BASIC-SUCCESS"
+        }
+      ]
+    },
+    {
+      "id": "tail-n",
+      "command": "tail",
+      "code": "tail -n",
+      "title": "Specify Number of Lines",
+      "tags": ["intermediate", "text", "viewing"],
+      "level": "intermediate",
+      "module": "text-operations",
+      "about": {
+        "what": "The `tail -n` flag lets you specify **exactly how many lines** to display from the end of a file.\n\n```bash\ntail -n 5 filename    # Last 5 lines\ntail -5 filename      # Shorthand (same thing)\n```\n\n**Syntax variations** (all equivalent):\n```bash\ntail -n 3 file.txt\ntail -3 file.txt\n```\n\nThis control is essential for:\n- Viewing specific amounts of recent data\n- Extracting exact sections from file ends\n- Sampling recent log entries\n- Getting just the summary line (tail -1)",
+        "history": "The `-n` flag in `tail` mirrors `head -n`, providing symmetric control over both commands. Like `head`, both `-n number` and `-number` syntax work.\n\nAn interesting historical feature: **negative line numbers** in `head` and positive offsets in `tail`:\n```bash\ntail -n +10 file    # Start from line 10 to end\n```\n\nThis lets you skip the first N lines - incredibly useful for CSV files:\n```bash\ntail -n +2 data.csv > data-no-header.csv\n# Removes the header row\n```\n\nThis feature is less known but powerful for data processing scripts.\n\nThe combination of `head -n` and `tail -n` enables precise line extraction:\n```bash\nhead -100 file | tail -1    # Line 100 exactly\nhead -50 file | tail -10    # Lines 41-50\n```\n\nThis pattern became fundamental in Unix text processing, especially before tools like `sed` and `awk` became widespread.\n\nModern data scientists use this for sampling:\n```bash\ntail -1000 huge-dataset.csv > recent-sample.csv\n# Last 1000 rows\n```",
+        "example": "```bash\n# Last 5 lines\ntail -n 5 data.txt\ntail -5 data.txt       # Shorthand\n\n# Just the last line\ntail -1 logfile.txt\n\n# Last 20 lines\ntail -20 application.log\n\n# Skip first N lines (show from line 5 onwards)\ntail -n +5 file.txt\n\n# Real-world: remove CSV header\ntail -n +2 data.csv > data-without-header.csv\n\n# Extract specific line (line 100)\nhead -100 file.txt | tail -1\n\n# Extract range (lines 50-60)\nhead -60 file.txt | tail -11\n\n# Check last entry in log\ntail -1 /var/log/system.log\n```",
+        "commonUses": [
+          "**Recent entries** - Get specific number of recent log lines",
+          "**Last record** - Extract just the final line with tail -1",
+          "**Skip headers** - Use tail -n +2 to skip CSV headers",
+          "**Range extraction** - Combine with head for precise line ranges",
+          "**Data sampling** - Get last N rows from large datasets"
+        ]
+      },
+      "hints": [
+        "Use -n to specify exact line count",
+        "Syntax: tail -n 5 filename or tail -5 filename",
+        "tail -1 shows just the last line"
+      ],
+      "sandbox": {
+        "startDir": "workspace",
+        "dirs": ["workspace"],
+        "files": {
+          "workspace/task.txt": "Task: The file 'codes.txt' contains multiple lines.\n\nUse tail with -n flag to view ONLY the last 3 lines.\nThe completion code is on the 3rd-to-last line.\n\nOnce you see it, check completion.txt for verification.",
+          "workspace/codes.txt": "Line 1: Start of file\nLine 2: Unimportant data\nLine 3: More filler content\nLine 4: Still not the code\nLine 5: Keep going\nLine 6: Almost there\nLine 7: Getting closer\nLine 8: TAIL-LINE-COUNT-EXPERT\nLine 9: Second to last\nLine 10: Final line of file",
+          "workspace/completion.txt": "Perfect! You can control exactly how many lines tail shows.\n\n===============================================\nCOMPLETION CODE: TAIL-LINE-COUNT-EXPERT\n===============================================\n\nThe -n flag gives you precise control:\n\ntail -n 1 file.log     # Just the last line\ntail -n 5 file.txt     # Last 5 lines\ntail -n 100 data.txt   # Last 100 lines\n\nShorthand also works:\n  tail -1 file.log\n  tail -5 file.txt\n\nAdvanced: Skip first N lines\n  tail -n +2 data.csv  # Skip header row"
+        }
+      },
+      "instructions": "## Your Task\n\nUse `tail -n` to view exactly the **last 3 lines** of `codes.txt`.\n\n**Steps:**\n1. Read the task: `cat task.txt`\n2. Run `tail -n 3 codes.txt` to see the last 3 lines only\n3. Notice the 3rd-to-last line (line 8) contains the completion code\n4. Verify you only see lines 8, 9, and 10\n5. Read completion file: `cat completion.txt`\n6. Copy the code\n7. Type `exit` and paste the code\n\n**Learn:** The `-n` flag controls exactly how many lines tail displays from the end!",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from 3rd-to-last line",
+          "validator": "exact",
+          "expected": "TAIL-LINE-COUNT-EXPERT"
+        }
+      ]
+    },
+    {
+      "id": "tail-f",
+      "command": "tail",
+      "code": "tail -f",
+      "title": "Follow Files in Real-Time",
+      "tags": ["intermediate", "text", "monitoring"],
+      "level": "intermediate",
+      "module": "text-operations",
+      "about": {
+        "what": "The `tail -f` flag makes tail **follow** a file, displaying new lines as they're added in **real-time**.\n\n```bash\ntail -f logfile.txt\n```\n\nThis command:\n- Shows the last 10 lines initially\n- Keeps running and watching the file\n- Displays new lines as they're written\n- Continues until you press Ctrl+C to stop\n\nThis is **essential** for:\n- Monitoring application logs while debugging\n- Watching system logs for errors\n- Observing file growth in real-time\n- Live debugging of running applications\n\n'Tailing a log' with `tail -f` is one of the most common sysadmin and developer activities.",
+        "history": "The `-f` (follow) flag was added to `tail` in the early 1980s and became one of the most revolutionary features in Unix system administration.\n\nBefore `tail -f`, monitoring logs required:\n- Repeatedly running commands to check for changes\n- Writing custom scripts with sleep loops\n- Opening files in editors and manually refreshing\n- Using complex `watch` commands\n\nWith `tail -f`, you simply:\n```bash\ntail -f /var/log/application.log\n```\n\nAnd watch changes happen live. This transformed debugging and monitoring.\n\n**How it works technically:**\n`tail -f` uses the `inotify` system (on Linux) or similar mechanisms to watch for file changes. When new data is written, `tail` immediately displays it.\n\n**Cultural impact:**\n- 'Tailing logs' became standard developer terminology\n- Changed how developers debug (live monitoring vs. batch checking)\n- Inspired modern logging tools (Splunk, ELK stack, CloudWatch)\n- Led to innovations like `multitail` (monitor multiple files)\n\n**Common variations:**\n- `tail -f` - follow by file name (stops if file is rotated)\n- `tail -F` - follow and retry (handles log rotation)\n- `less +F file` - follow mode in less (more interactive)\n\nThe simple `-f` flag created an entire category of real-time monitoring tools and became fundamental to DevOps culture.",
+        "example": "```bash\n# Follow a log file (Ctrl+C to stop)\ntail -f application.log\n# Shows new entries as they're written\n\n# Follow with more context (last 50 lines first)\ntail -n 50 -f server.log\n\n# Follow and handle log rotation\ntail -F /var/log/syslog\n# -F retries if file is rotated\n\n# Follow multiple files\ntail -f app.log error.log\n# Shows updates from both files\n\n# Real-world debugging workflow\ntail -f /var/log/application.log &\n./start-server.sh\n# Watch logs while app runs\n\n# Common pattern: filter while following\ntail -f application.log | grep ERROR\n# Shows only ERROR lines as they appear\n\n# Follow recent activity\ntail -n 20 -f access.log\n# Last 20 lines, then follow\n```",
+        "commonUses": [
+          "**Live debugging** - Watch application logs while testing",
+          "**Error monitoring** - Observe errors as they occur",
+          "**Deployment monitoring** - Watch logs during deployments",
+          "**Performance monitoring** - Track request/response logs live",
+          "**System administration** - Monitor system logs for issues"
+        ]
+      },
+      "hints": [
+        "Use -f to follow files and see new lines as they're added",
+        "Syntax: tail -f filename",
+        "Press Ctrl+C to stop following"
+      ],
+      "sandbox": {
+        "startDir": "workspace",
+        "dirs": ["workspace"],
+        "files": {
+          "workspace/task.txt": "Task: Understanding tail -f (follow mode)\n\nWhile tail -f is incredibly useful for monitoring live logs,\nit requires an interactive session to see new content appearing.\n\nFor this lesson, we'll demonstrate the concept:\n\n1. View the current state of growing.log\n2. Understand that tail -f would show new lines as they appear\n3. In production, you'd use: tail -f logfile.txt\n   Then watch as your application writes new lines\n\nThe completion code is at the end of growing.log.\nCheck completion.txt for verification.",
+          "workspace/growing.log": "[08:00:00] Application started\n[08:00:01] Connecting to database\n[08:00:02] Database connection established\n[08:00:03] Loading configuration\n[08:00:04] Configuration loaded\n[08:00:05] Starting web server\n[08:00:06] Server listening on port 8080\n[08:00:07] Application ready\n[08:01:00] Request: GET /api/users\n[08:01:01] Response: 200 OK\n[08:02:00] Request: POST /api/data\n[08:02:01] Response: 201 Created\n[08:03:00] Health check passed\n[08:04:00] Cache refresh completed\n[08:05:00] COMPLETION CODE: TAIL-FOLLOW-MASTER",
+          "workspace/completion.txt": "Excellent! You understand tail -f for real-time monitoring.\n\n===============================================\nCOMPLETION CODE: TAIL-FOLLOW-MASTER\n===============================================\n\ntail -f is THE essential tool for log monitoring:\n\ntail -f application.log\n  Watch logs in real-time\n  See new entries as they're written\n  Press Ctrl+C to stop\n\ntail -F logfile.txt\n  Follows even if file is rotated\n\ntail -n 50 -f server.log\n  Show last 50 lines, then follow\n\nReal-world usage:\n  tail -f app.log | grep ERROR\n  tail -f /var/log/nginx/access.log\n\nThis is how developers debug live applications!"
+        }
+      },
+      "instructions": "## Your Task\n\nUnderstand how `tail -f` works for real-time log monitoring.\n\n**Steps:**\n1. Read the task: `cat task.txt`\n2. View the log file: `tail growing.log`\n3. Understand that `tail -f growing.log` would:\n   - Show the last 10 lines\n   - Keep running and watching the file\n   - Display new lines as they're written\n   - Continue until Ctrl+C\n4. Find the completion code at the end of growing.log\n5. Read completion file: `cat completion.txt`\n6. Copy the code\n7. Type `exit` and paste the code\n\n**Learn:** `tail -f` follows files in real-time - essential for monitoring logs during development and debugging!\n\n**Note:** In production, you'd run `tail -f logfile.txt` and watch as your application adds new lines. This is the standard way to monitor live applications.",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from growing.log",
+          "validator": "exact",
+          "expected": "TAIL-FOLLOW-MASTER"
+        }
+      ]
+    }
+  ]
+}

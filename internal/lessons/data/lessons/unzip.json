@@ -1,0 +1,47 @@
+{
+  "version": "1.0",
+  "lessons": [
+    {
+      "id": "unzip",
+      "command": "unzip",
+      "code": "unzip",
+      "title": "Extract ZIP Archives",
+      "tags": ["compression", "archives", "intermediate"],
+      "level": "intermediate",
+      "module": "archives",
+      "about": {
+        "what": "The `unzip` command **extracts** files from ZIP archives. It's the counterpart to the `zip` command and allows you to:\n\n- **Extract entire archives** - Unpack all files and directories\n- **List contents** - See what's inside without extracting\n- **Extract specific files** - Pull out individual files from the archive\n- **Extract to specific locations** - Control where files are extracted\n- **Preserve structure** - Maintain directory organization from the archive\n\nEvery time you download a `.zip` file from the web, email, or GitHub, you'll use `unzip` to access its contents. It's an essential tool for working with downloaded software, project files, and file distributions.",
+        "history": "The `unzip` utility was created in 1989 by Samuel H. Smith as part of the Info-ZIP project, a collaborative effort to create free, portable ZIP tools for Unix systems.\n\nBefore `unzip`, Unix users had difficulty working with ZIP files created on DOS and Windows systems. The Info-ZIP project aimed to provide 100% compatible ZIP tools that could read and write archives across all platforms.\n\nThe project was revolutionary for being:\n- **Open source** before open source was common (late 1980s)\n- **Cross-platform** working on Unix, VMS, Amiga, Atari, and more\n- **Community-driven** with contributors worldwide\n- **Highly portable** written in C to work everywhere\n\nThe `unzip` command became so ubiquitous that it's now pre-installed on virtually every Unix/Linux system and macOS. It's maintained by the Info-ZIP group and has been in continuous development for over 30 years.\n\nInterestingly, Windows didn't have built-in ZIP support until Windows XP (2001), long after Unix had `unzip`. Today, `unzip` remains the standard way to extract ZIP files on Linux/Unix systems.",
+        "example": "```bash\n# Extract entire ZIP archive\nunzip archive.zip\n\n# List contents without extracting\nunzip -l archive.zip\n\n# Extract to specific directory\nunzip archive.zip -d /destination/path\n\n# Extract specific file from archive\nunzip archive.zip filename.txt\n\n# Extract quietly (no output)\nunzip -q archive.zip\n\n# Overwrite existing files without prompting\nunzip -o archive.zip\n\n# Extract with password\nunzip -P password secure.zip\n\n# Test archive integrity\nunzip -t archive.zip\n\n# Extract preserving permissions\nunzip -K archive.zip\n\n# View detailed listing\nunzip -v archive.zip\n```",
+        "commonUses": [
+          "**Software installation** - Extract downloaded programs and tools",
+          "**Project setup** - Unpack project templates and starter files",
+          "**File downloads** - Extract files from web downloads and email attachments",
+          "**GitHub repositories** - Extract downloaded repository ZIP files",
+          "**Deployment** - Unpack application archives on servers"
+        ]
+      },
+      "hints": [
+        "Use 'unzip -l filename.zip' to list contents first",
+        "Use 'unzip filename.zip' to extract all files",
+        "Check the extracted files for the completion code"
+      ],
+      "sandbox": {
+        "startDir": "downloads",
+        "dirs": ["downloads"],
+        "files": {
+          "downloads/project.zip": "UEsDBBQAAAAIAKqLUFkbMqiYQgAAAEYAAAAOAAAAcmVhZG1lLm1kCk1haW4gZmlsZTpDYXQgdGhlIGNvbXBsZXRpb24uIG1haW4uanMgZmlsZSB0byBmaW5kIHRoZSBjb2RlClBLAwQUAAAACACqi1BZmw8lgjAAAAA0AAAACQAAAGJhY2t1cC50eHQKRGF0YTpiYWNrdXAgZmlsZSAtIG5vdCB0aGUgY29kZSBoZXJlClBLAwQUAAAACACqi1BZgKyRt5wAAADBAAAACQAAAG1haW4uanMKRmlsZSBjb250ZW50OkNvbmdyYXR1bGF0aW9ucyBvbiB1c2luZyB1bnppcCEKCj09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQpDT0RFOiBVTlpJUC1FWFRSQUNULU1BU1RFUgo9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0KClVuemlwIGV4dHJhY3RzIGZpbGVzIGZyb20gWklQIGFyY2hpdmVzLgoKS2V5IGNvbW1hbmRzOgotIHVuemlwIGFyY2hpdmUuemlwIOKGkiBleHRyYWN0IGFsbAotIHVuemlwIC1sIGFyY2hpdmUuemlwIOKGkiBsaXN0IGNvbnRlbnRzCi0gdW56aXAgYXJjaGl2ZS56aXAgLWQgZGlyLyDihpIgZXh0cmFjdCB0byBkaXJlY3RvcnkKLSB1bnppcCBhcmNoaXZlLnppcCBmaWxlLnR4dCDihpIgZXh0cmFjdCBzcGVjaWZpYyBmaWxlClBLAQIUAxQAAAAIAKqLUFkbMqiYQgAAAEYAAAAOAAAAAAAAAAAAAAC2gQAAAAByZWFkbWUubWQKUEsBAhQDFAAAAAgAqotQWZsPJYIwAAAANAAAAAkAAAAAAAAAAAAAALaBeAAAAGJhY2t1cC50eHQKUEsBAhQDFAAAAAgAqotQWYCskbecAAAAwQAAAAkAAAAAAAAAAAAAALaBtwAAAG1haW4uanMKUEsFBgAAAAADAAMAogAAAIgBAAAAAA=="
+        }
+      },
+      "instructions": "## Your Task\n\nYou've downloaded a ZIP file. Extract it and find the completion code inside.\n\n**Steps:**\n1. List the files in the downloads directory: `ls`\n2. View the contents of the ZIP without extracting: `unzip -l project.zip`\n   - This shows you what's inside the archive\n3. Extract the ZIP file: `unzip project.zip`\n   - This creates the files in the current directory\n4. List the extracted files: `ls`\n5. Read the main.js file (as suggested in readme.md): `cat main.js`\n6. Copy the completion code\n7. Type `exit` and paste the code\n\n**Learn:** Always use `unzip -l` first to see what's in an archive before extracting it.",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from main.js",
+          "validator": "exact",
+          "expected": "UNZIP-EXTRACT-MASTER"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,229 @@
+{
+  "version": "1.0",
+  "lessons": [
+    {
+      "id": "chmod-intro",
+      "command": "chmod",
+      "code": "chmod",
+      "title": "Understanding File Permissions",
+      "tags": ["permissions", "basics", "security"],
+      "level": "beginner",
+      "module": "permissions",
+      "about": {
+        "what": "The `chmod` command **changes file permissions** - controlling who can read, write, or execute files. The name stands for **'change mode'**.\n\nEvery file in Unix/Linux has three types of permissions:\n- **Read (r)** - View the file's contents\n- **Write (w)** - Modify or delete the file\n- **Execute (x)** - Run the file as a program\n\nThese permissions apply to three categories of users:\n- **Owner (u)** - The user who owns the file\n- **Group (g)** - Users in the file's group\n- **Others (o)** - Everyone else\n\nView permissions with `ls -l`:\n```\n-rwxr-xr--  1 user group  file.txt\n ```rwxr-xr--` shows permissions for owner/group/others",
+        "history": "`chmod` has been part of Unix since the very beginning in 1969. File permissions were one of Unix's revolutionary features - earlier operating systems had little to no access control.\n\nThe permission system was designed by Dennis Ritchie and Ken Thompson at Bell Labs. They needed multiple users to share a single computer safely, without users accidentally (or intentionally) modifying each other's files.\n\nThe three-tier system (owner/group/others) was simple but powerful enough to handle most security needs. The execute bit was particularly innovative - it allowed files to be marked as programs that could run.\n\nInterestingly, the octal notation (755, 644) came later as a shorthand. Early Unix used only symbolic notation (u+x, g-w), but programmers quickly adopted octal as it was faster to type.\n\nOver 50 years later, this same permission model is still used in every Unix-like system, from servers to Android phones.",
+        "example": "```bash\n# View current permissions\nls -l script.sh\n# Output: -rw-r--r-- 1 user group 125 Dec 31 10:30 script.sh\n\n# Make a script executable (add execute permission)\nchmod +x script.sh\n\n# Now it shows: -rwxr-xr-x\n# Owner, group, and others can all execute it\n\n# Remove write permission from group and others\nchmod go-w file.txt\n\n# Add read permission for everyone\nchmod a+r document.txt\n```",
+        "commonUses": [
+          "**Making scripts executable** - Enable shell scripts and programs to run",
+          "**Securing sensitive files** - Remove read/write access from others",
+          "**Fixing permission errors** - Resolve 'Permission denied' issues",
+          "**Web server setup** - Set correct permissions for web files",
+          "**Shared systems** - Control who can access your files"
+        ]
+      },
+      "hints": [
+        "Use 'ls -l' to see the current permissions of files",
+        "Look for the permission string at the start: -rwxr-xr-x",
+        "The +x flag makes a file executable"
+      ],
+      "sandbox": {
+        "startDir": "workspace",
+        "dirs": ["workspace"],
+        "files": {
+          "workspace/script.sh": "#!/bin/bash\necho 'Congratulations! This script is now executable.'\necho ''\necho '================================================'\necho 'COMPLETION CODE: CHMOD-BASIC-EXECUTABLE'\necho '================================================'\necho ''\necho 'You used chmod +x to add execute permissions.'\necho 'This is one of the most common chmod operations.'\n",
+          "workspace/instructions.txt": "Task: Make the script.sh file executable.\n\nSteps:\n1. Check current permissions: ls -l script.sh\n2. Add execute permission: chmod +x script.sh\n3. Run the script: ./script.sh\n4. Copy the completion code"
+        }
+      },
+      "instructions": "## Your Task\n\nMake the `script.sh` file executable and run it to get your completion code.\n\n**Steps:**\n1. Read the instructions: `cat instructions.txt`\n2. Check current permissions: `ls -l script.sh` (notice it's NOT executable)\n3. Make it executable: `chmod +x script.sh`\n4. Verify the change: `ls -l script.sh` (notice the 'x' bits are now set)\n5. Run the script: `./script.sh`\n6. Copy the completion code\n7. Type `exit` and paste the code\n\n**Learn:** The `+x` flag adds execute permission, allowing the file to be run as a program.",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The code from running the executable script",
+          "validator": "exact",
+          "expected": "CHMOD-BASIC-EXECUTABLE"
+        }
+      ]
+    },
+    {
+      "id": "chmod-symbolic",
+      "command": "chmod",
+      "code": "chmod u+x",
+      "title": "Symbolic Permission Notation",
+      "tags": ["permissions", "intermediate", "security"],
+      "level": "intermediate",
+      "module": "permissions",
+      "about": {
+        "what": "**Symbolic notation** lets you modify permissions using readable letters:\n\n**Who (user classes):**\n- `u` - Owner (user)\n- `g` - Group\n- `o` - Others\n- `a` - All (everyone)\n\n**Operation:**\n- `+` - Add permission\n- `-` - Remove permission\n- `=` - Set exact permission\n\n**Permission:**\n- `r` - Read\n- `w` - Write\n- `x` - Execute\n\n**Examples:**\n- `chmod u+x file` - Give owner execute permission\n- `chmod go-w file` - Remove write from group and others\n- `chmod a+r file` - Give everyone read permission\n- `chmod u=rwx,go=rx file` - Set exact permissions",
+        "history": "Symbolic notation was the original way to specify permissions in early Unix. It was designed to be human-readable and intuitive - you could say exactly what you wanted: \"user plus execute\" or \"group minus write\".\n\nThe notation follows a simple grammar:\n```\n[who][operation][permission]\n```\n\nThis made it easy to remember and reduced errors compared to memorizing numeric codes. In the 1970s, when Unix was used primarily through slow teletype terminals, being able to think through permissions logically was important.\n\nDennis Ritchie designed the notation to be:\n- **Explicit** - You say exactly what you want\n- **Flexible** - Can modify just one permission at a time\n- **Safe** - You can't accidentally change permissions you didn't mean to\n\nWhile numeric (octal) notation became popular for its brevity, symbolic notation is still preferred in scripts and documentation because it's self-documenting - you can read `chmod u+x script.sh` and immediately understand what it does.",
+        "example": "```bash\n# Add execute for owner only\nchmod u+x script.sh\n\n# Remove write permission from group and others\nchmod go-w sensitive.txt\n\n# Give everyone read permission\nchmod a+r public.txt\n\n# Set exact permissions: owner=rwx, group=rx, others=none\nchmod u=rwx,g=rx,o= file.sh\n\n# Multiple operations at once\nchmod u+x,go-w script.sh\n\n# Copy permissions from one class to another\nchmod g=u file.txt  # Make group permissions match owner's\n```",
+        "commonUses": [
+          "**Selective permission changes** - Modify only specific permissions without affecting others",
+          "**Script execution** - Add execute permission for scripts: `chmod u+x script.sh`",
+          "**Security hardening** - Remove permissions from others: `chmod go-rwx private/`",
+          "**Readable scripts** - Self-documenting permission changes in automation",
+          "**Incremental changes** - Add or remove one permission at a time"
+        ]
+      },
+      "hints": [
+        "Use 'u' for owner (user), 'g' for group, 'o' for others",
+        "The task requires specific permissions for different user classes",
+        "Read the task file carefully to see what permissions are needed"
+      ],
+      "sandbox": {
+        "startDir": "workspace",
+        "dirs": ["workspace"],
+        "files": {
+          "workspace/secret.sh": "#!/bin/bash\ncat << 'EOF'\nPerfect! You've set the correct permissions.\n\n================================================\nCOMPLETION CODE: CHMOD-SYMBOLIC-MASTER\n================================================\n\nSymbolic notation breakdown:\n  u = user (owner)\n  g = group  \n  o = others\n  a = all\n\nOperations:\n  + = add permission\n  - = remove permission\n  = = set exact permission\n\nPermissions:\n  r = read\n  w = write\n  x = execute\n\nExample: chmod u+x,go-w file\n  - Adds execute for owner\n  - Removes write for group and others\nEOF\n",
+          "workspace/task.txt": "Task: Set the following permissions on secret.sh:\n  - Owner: read, write, execute (rwx)\n  - Group: read, execute (rx)\n  - Others: no permissions (---)\n\nUse symbolic notation with a single chmod command:\n  chmod u=rwx,g=rx,o= secret.sh\n\nThen run ./secret.sh to get your code."
+        }
+      },
+      "instructions": "## Your Task\n\nSet specific permissions using symbolic notation, then run the script.\n\n**Steps:**\n1. Read the task: `cat task.txt`\n2. Check current permissions: `ls -l secret.sh`\n3. Set exact permissions: `chmod u=rwx,g=rx,o= secret.sh`\n4. Verify: `ls -l secret.sh` (should show: -rwxr-x---)\n5. Run the script: `./secret.sh`\n6. Copy the completion code\n7. Type `exit` and paste the code\n\n**Learn:** Symbolic notation with `=` sets exact permissions, while `+` and `-` modify existing ones.",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The code from the script with correct permissions",
+          "validator": "exact",
+          "expected": "CHMOD-SYMBOLIC-MASTER"
+        }
+      ]
+    },
+    {
+      "id": "chmod-octal",
+      "command": "chmod",
+      "code": "chmod 755",
+      "title": "Octal Permission Notation",
+      "tags": ["permissions", "intermediate", "security"],
+      "level": "intermediate",
+      "module": "permissions",
+      "about": {
+        "what": "**Octal notation** uses three digits to set all permissions at once. Each digit represents owner, group, and others:\n\n```\nchmod 755 file\n      ^^^  \n      ||└─ Others: 5 (r-x)\n      |└── Group:  5 (r-x)\n      └─── Owner:  7 (rwx)\n```\n\n**Each digit is the sum of:**\n- **4** = Read (r)\n- **2** = Write (w)\n- **1** = Execute (x)\n\n**Common permissions:**\n- **755** - Owner: rwx, Group: rx, Others: rx (scripts, programs)\n- **644** - Owner: rw, Group: r, Others: r (regular files)\n- **600** - Owner: rw, Group: none, Others: none (private files)\n- **777** - Everyone: rwx (dangerous, avoid!)\n- **700** - Owner: rwx, Group: none, Others: none (private scripts)",
+        "history": "Octal notation became popular in the late 1970s as Unix spread to more users and system administrators needed a fast way to set permissions.\n\nThe octal system maps perfectly to the binary representation of permissions:\n```\nrwx = 111 in binary = 7 in octal\nr-x = 101 in binary = 5 in octal\nr-- = 100 in binary = 4 in octal\n```\n\nProgrammers and sysadmins, already familiar with octal and binary numbering, quickly adopted this as a shorthand. Instead of typing `chmod u=rwx,g=rx,o=rx`, they could just type `chmod 755`.\n\nCertain permission patterns became standard:\n- **644** for regular files (rw-r--r--)\n- **755** for executable files (rwxr-xr-x)\n- **700** for private directories (rwx------)\n\nThese numbers are so ingrained in Unix culture that experienced users can \"speak in octal\" - saying \"make it 755\" or \"it should be 644\".\n\nWhile less readable than symbolic notation, octal is faster to type and guarantees you set all permissions exactly as intended, with no ambiguity.",
+        "example": "```bash\n# Standard file permissions (owner: rw, group: r, others: r)\nchmod 644 document.txt\n\n# Standard script permissions (owner: rwx, group: rx, others: rx)\nchmod 755 script.sh\n\n# Private file (owner: rw, group: none, others: none)\nchmod 600 private-key.pem\n\n# Private script (owner: rwx, group: none, others: none)\nchmod 700 ~/.ssh/authorized_keys\n\n# Web server files (owner: rw, group: r, others: r)\nchmod 644 index.html\n\n# Calculating permissions:\n# rwx = 4+2+1 = 7\n# rw- = 4+2+0 = 6\n# r-x = 4+0+1 = 5\n# r-- = 4+0+0 = 4\n```",
+        "commonUses": [
+          "**Quick permission setting** - Faster than symbolic notation for setting all permissions",
+          "**Standard patterns** - Use common values (644, 755) for typical file types",
+          "**Security keys** - Protect SSH keys and credentials with 600 or 400",
+          "**Script deployment** - Set executable permissions with 755",
+          "**Exact permission control** - Guarantee all nine permission bits are set correctly"
+        ]
+      },
+      "hints": [
+        "Use three octal digits: owner, group, others",
+        "Each digit is the sum: 4=read, 2=write, 1=execute",
+        "For rwx: 4+2+1=7, for rw-: 4+2=6, for r-x: 4+1=5"
+      ],
+      "sandbox": {
+        "startDir": "workspace",
+        "dirs": ["workspace"],
+        "files": {
+          "workspace/deploy.sh": "#!/bin/bash\ncat << 'EOF'\nExcellent! You've mastered octal permissions.\n\n================================================\nCOMPLETION CODE: CHMOD-OCTAL-EXPERT\n================================================\n\nOctal Permission Reference:\n\n  7 = rwx (4+2+1) - Read, Write, Execute\n  6 = rw- (4+2)   - Read, Write\n  5 = r-x (4+1)   - Read, Execute\n  4 = r-- (4)     - Read only\n  3 = -wx (2+1)   - Write, Execute (rare)\n  2 = -w- (2)     - Write only (rare)\n  1 = --x (1)     - Execute only (rare)\n  0 = --- (0)     - No permissions\n\nCommon patterns:\n  755 - Standard scripts (rwxr-xr-x)\n  644 - Regular files (rw-r--r--)\n  700 - Private scripts (rwx------)\n  600 - Private files (rw-------)\n  400 - Read-only secrets (r--------)\n\nUsage: chmod 755 file\n            ^^^  \n            ||└─ Others\n            |└── Group\n            └─── Owner\nEOF\n",
+          "workspace/task.txt": "Task: Set permissions to 755 on deploy.sh\n\nThis means:\n  - Owner: 7 = rwx (read, write, execute)\n  - Group: 5 = r-x (read, execute)\n  - Others: 5 = r-x (read, execute)\n\nCommand: chmod 755 deploy.sh\n\nThen run ./deploy.sh to get your code."
+        }
+      },
+      "instructions": "## Your Task\n\nSet permissions to `755` (rwxr-xr-x) using octal notation.\n\n**Steps:**\n1. Read the task: `cat task.txt`\n2. Check current permissions: `ls -l deploy.sh`\n3. Set permissions: `chmod 755 deploy.sh`\n4. Verify: `ls -l deploy.sh` (should show: -rwxr-xr-x)\n5. Run the script: `./deploy.sh`\n6. Copy the completion code\n7. Type `exit` and paste the code\n\n**Learn:** Octal notation is faster for setting exact permissions. 755 is the standard for executable scripts.",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The code from the script with 755 permissions",
+          "validator": "exact",
+          "expected": "CHMOD-OCTAL-EXPERT"
+        }
+      ]
+    },
+    {
+      "id": "chmod-644",
+      "command": "chmod",
+      "code": "chmod 644",
+      "title": "Standard File Permissions (644)",
+      "tags": ["permissions", "intermediate", "security", "best-practices"],
+      "level": "intermediate",
+      "module": "permissions",
+      "about": {
+        "what": "**644** is the **most common permission** for regular files. It means:\n- **Owner: 6 (rw-)** - Read and write\n- **Group: 4 (r--)** - Read only\n- **Others: 4 (r--)** - Read only\n\nThis is perfect for documents, configuration files, and source code:\n- The owner can edit the file\n- Everyone else can read it but not modify it\n- Nobody can execute it (it's not a program)\n\n**Why 644 is standard:**\n- Allows collaboration (others can read your code)\n- Prevents accidents (others can't modify it)\n- Clear ownership (only owner can edit)\n- Security (no unexpected execution)",
+        "history": "The 644 permission pattern emerged as a convention in the early Unix community during the 1970s and 1980s.\n\nWhen Unix systems moved from single-user to multi-user environments, developers needed a balance between:\n- **Sharing** - Others should be able to read and use your code\n- **Safety** - Others shouldn't accidentally break your files\n- **Ownership** - Only you should control your own files\n\n644 became the default for most files because:\n1. Most files aren't programs (don't need execute)\n2. Collaboration requires reading others' code\n3. Write protection prevents accidents\n4. It works for both personal and shared files\n\nBy the 1980s, 644 was so standard that:\n- Text editors default to creating files as 644\n- Git checks out files as 644\n- Build systems set output files to 644\n- Package managers install data files as 644\n\nThe pattern is so ingrained that \"make it 644\" is understood by every Unix user to mean \"make it a normal, readable file.\"",
+        "example": "```bash\n# Set standard file permissions\nchmod 644 document.txt\nchmod 644 README.md\nchmod 644 config.yaml\n\n# Common pattern: fix permissions after transfer\nscp file.txt server:/path/to/file.txt\nssh server chmod 644 /path/to/file.txt\n\n# Git defaults to 644 for regular files\ngit add file.txt  # Will be stored as 644\n\n# Fix overly permissive files\nfind . -type f -perm 777 -exec chmod 644 {} \\;\n\n# Web server files (HTML, CSS, JS)\nchmod 644 index.html style.css app.js\n```",
+        "commonUses": [
+          "**Source code files** - .js, .py, .go, .c files in repositories",
+          "**Documents** - README, LICENSE, .md files",
+          "**Configuration** - .yaml, .json, .toml, .conf files (non-secret)",
+          "**Web content** - HTML, CSS, JavaScript files",
+          "**Data files** - .csv, .json, .xml files"
+        ]
+      },
+      "hints": [
+        "644 means owner can read/write, others can only read",
+        "This is the standard permission for regular files",
+        "No execute permission - it's not a program"
+      ],
+      "sandbox": {
+        "startDir": "workspace",
+        "dirs": ["workspace"],
+        "files": {
+          "workspace/config.yaml": "# Application Configuration\napp_name: RootCamp\nversion: 1.0\n\n# This file should have 644 permissions:\n# - Owner can read and write (modify config)\n# - Group can read (view settings)  \n# - Others can read (view settings)\n# - Nobody can execute (it's not a program)\n\ncompletion_code: CHMOD-644-STANDARD",
+          "workspace/task.txt": "Task: Set proper permissions for the config file.\n\nConfiguration files should use 644 permissions:\n  - Owner: rw- (can edit the config)\n  - Group: r-- (can read the config)\n  - Others: r-- (can read the config)\n\nCommand: chmod 644 config.yaml\n\nThen read the config file to get your code."
+        }
+      },
+      "instructions": "## Your Task\n\nSet standard file permissions (644) on the configuration file.\n\n**Steps:**\n1. Read the task: `cat task.txt`\n2. Check current permissions: `ls -l config.yaml`\n3. Set standard permissions: `chmod 644 config.yaml`\n4. Verify: `ls -l config.yaml` (should show: -rw-r--r--)\n5. Read the config: `cat config.yaml`\n6. Find the completion_code in the file\n7. Type `exit` and paste the code\n\n**Learn:** 644 is the standard permission for regular files - owner can edit, everyone can read, nobody can execute.",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from the config file",
+          "validator": "exact",
+          "expected": "CHMOD-644-STANDARD"
+        }
+      ]
+    },
+    {
+      "id": "chmod-recursive",
+      "command": "chmod",
+      "code": "chmod -R",
+      "title": "Recursive Permission Changes",
+      "tags": ["permissions", "advanced", "directories"],
+      "level": "advanced",
+      "module": "permissions",
+      "about": {
+        "what": "The `chmod -R` flag **recursively** changes permissions on a directory and **all its contents** (subdirectories and files).\n\n```bash\nchmod -R 755 myproject/\n```\n\nThis sets 755 permissions on:\n- The `myproject` directory\n- All subdirectories inside it\n- All files inside it (and subdirectories)\n\n**When to use:**\n- Setting up entire project directories\n- Fixing permissions after extraction or transfer\n- Securing entire directory trees\n- Deploying web applications\n\n**Caution:** Be careful with `-R` - it affects everything. You might not want the same permissions on all files (e.g., scripts need execute, but text files don't).",
+        "history": "The `-R` (recursive) flag was added to Unix commands in the mid-1970s as filesystems grew deeper and more complex. Before `-R`, users had to either:\n- Manually change each file (tedious)\n- Write shell scripts with loops (error-prone)\n- Use `find` with `-exec` (complicated)\n\nThe `-R` flag was added to `chmod`, `chown`, `chgrp`, and other file utilities to handle entire directory trees in one command. The 'R' stands for 'recursive', a programming term for operations that call themselves on nested structures.\n\nThis became essential as projects grew larger:\n- In the 1970s, a project might have 10-20 files\n- By the 1980s, projects had hundreds of files in nested directories\n- Modern projects can have thousands or millions of files\n\nHowever, `-R` gained a reputation for being dangerous:\n- `chmod -R 777` makes everything accessible (security risk)\n- Accidentally running it on `/` could break the entire system\n- It's often too broad - not all files need the same permissions\n\nBest practice evolved: Use `-R` carefully, and prefer more targeted approaches when possible.",
+        "example": "```bash\n# Make entire directory tree readable\nchmod -R 755 website/\n\n# Secure entire directory (owner only)\nchmod -R 700 ~/.ssh/\n\n# Common pattern: fix extracted archive\ntar -xzf project.tar.gz\nchmod -R 755 project/\n\n# Better approach: different permissions for files vs directories\nfind myproject/ -type d -exec chmod 755 {} \\;  # Directories: 755\nfind myproject/ -type f -exec chmod 644 {} \\;  # Files: 644\n\n# Dangerous (don't do this!)\nchmod -R 777 /  # Makes everything writable by everyone!\n```",
+        "commonUses": [
+          "**Project setup** - Set permissions after cloning or extracting",
+          "**Web deployment** - Configure web server directories and files",
+          "**Security lockdown** - Restrict entire directory trees (chmod -R 700)",
+          "**Shared directories** - Make project folders accessible to team",
+          "**Fix bulk permission issues** - Correct permissions after transfer or backup"
+        ]
+      },
+      "hints": [
+        "The -R flag applies chmod recursively to all subdirectories and files",
+        "Navigate through the directory structure to find the completion code",
+        "Use 'ls -lR' to see recursive listing of all files"
+      ],
+      "sandbox": {
+        "startDir": "workspace",
+        "dirs": [
+          "workspace",
+          "workspace/project",
+          "workspace/project/src",
+          "workspace/project/src/components",
+          "workspace/project/tests"
+        ],
+        "files": {
+          "workspace/task.txt": "Task: The entire 'project' directory needs to be made executable.\n\nUse chmod -R to recursively set permissions to 755 on:\n  project/ (directory)\n  project/src/ (directory)\n  project/src/components/ (directory)\n  project/tests/ (directory)\n  All files inside\n\nCommand: chmod -R 755 project/\n\nThen find and run the completion script.",
+          "workspace/project/run-me.sh": "#!/bin/bash\ncat << 'EOF'\nPerfect! You've applied recursive permissions.\n\n================================================\nCOMPLETION CODE: CHMOD-RECURSIVE-MASTER\n================================================\n\nThe -R flag is powerful but use it carefully:\n\nGood:\n  chmod -R 755 project/     - Make project accessible\n  chmod -R 700 ~/.ssh/      - Secure SSH directory\n  chmod -R 644 docs/        - Make docs readable\n\nDangerous:\n  chmod -R 777 /            - Makes EVERYTHING writable!\n  chmod -R 777 project/     - Too permissive\n\nBetter approach for mixed content:\n  find . -type d -exec chmod 755 {} \\;  # Directories\n  find . -type f -exec chmod 644 {} \\;  # Regular files\n  find . -name '*.sh' -exec chmod 755 {} \\;  # Scripts\n\nThis gives you finer control over different file types.\nEOF\n",
+          "workspace/project/src/main.js": "// Main application file\nconsole.log('Application running');",
+          "workspace/project/src/components/ui.js": "// UI Components\nexport const Button = () => {};",
+          "workspace/project/tests/test.js": "// Test file\ntest('basic test', () => {});"
+        }
+      },
+      "instructions": "## Your Task\n\nUse recursive chmod to set permissions on an entire directory tree, then find and run the completion script.\n\n**Steps:**\n1. Read the task: `cat task.txt`\n2. View the directory structure: `ls -lR project/`\n3. Set recursive permissions: `chmod -R 755 project/`\n4. Verify: `ls -lR project/` (all files should now be rwxr-xr-x)\n5. Find the executable script in the project directory: `ls project/`\n6. Run it: `./project/run-me.sh`\n7. Copy the completion code\n8. Type `exit` and paste the code\n\n**Learn:** -R applies chmod recursively to all contents. Use carefully - not all files need the same permissions!",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The code from the script in the project directory",
+          "validator": "exact",
+          "expected": "CHMOD-RECURSIVE-MASTER"
+        }
+      ]
+    }
+  ]
+}

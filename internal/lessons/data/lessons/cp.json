@@ -1,0 +1,141 @@
+{
+  "version": "1.0",
+  "lessons": [
+    {
+      "id": "cp",
+      "command": "cp",
+      "code": "cp",
+      "title": "Copy Files",
+      "tags": ["basics", "files", "copying"],
+      "level": "beginner",
+      "module": "file-operations",
+      "about": {
+        "what": "The `cp` command **copies files and directories** from one location to another. The name stands for **'copy'**. The basic syntax is:\n\n```bash\ncp source destination\n```\n\nThis creates a duplicate of the source file at the destination. The original file remains unchanged - you now have two identical copies.\n\n`cp` is fundamental for:\n- Backing up important files\n- Creating file duplicates before editing\n- Moving files between directories (combined with rm)\n- Duplicating project structures",
+        "history": "`cp` has been a core Unix command since Version 1 in 1971. Before `cp`, copying files required complex sequences of `cat` and output redirection:\n\n```bash\ncat source > destination  # Old way\n```\n\nKen Thompson and Dennis Ritchie (Unix creators) realized this was so common it needed a dedicated command. They created `cp` to make file copying simple and safe.\n\nThe command's behavior has remained remarkably consistent for over 50 years. The `cp` you use today works almost identically to the version from 1971.\n\nInterestingly, `cp` became a template for similar commands across operating systems. DOS/Windows adopted `COPY`, which works similarly, though with different flag conventions.",
+        "example": "```bash\n# Copy a file\ncp file.txt file-backup.txt\n\n# Copy to a different directory\ncp file.txt /path/to/destination/\n\n# Copy and rename at once\ncp original.txt /backups/original-2024-12-31.txt\n\n# Common pattern: backup before editing\ncp config.json config.json.bak\nvim config.json  # Now safe to edit\n\n# Copy multiple files to a directory\ncp file1.txt file2.txt file3.txt /destination/\n\n# Preserve permissions and timestamps\ncp -p important-file.txt backup/\n```",
+        "commonUses": [
+          "**File backup** - Create backups before making changes",
+          "**Duplication** - Make copies of files for editing or testing",
+          "**Distribution** - Copy files to multiple locations",
+          "**Archiving** - Duplicate files to backup directories",
+          "**Development** - Copy configuration templates or example files"
+        ]
+      },
+      "hints": [
+        "Syntax: cp source destination",
+        "The source file stays unchanged, destination is the new copy",
+        "After copying, use 'cat' to verify the copy succeeded"
+      ],
+      "sandbox": {
+        "startDir": "workspace",
+        "dirs": ["workspace"],
+        "files": {
+          "workspace/task.txt": "Task: Create a backup of 'important.txt' by copying it to 'important-backup.txt'\n\nOnce copied, check completion.txt for your code.",
+          "workspace/important.txt": "This is an important file that contains critical data.\n\nYou should always back up important files before editing them!\n\nUse: cp important.txt important-backup.txt",
+          "workspace/completion.txt": "Excellent! You've successfully copied a file.\n\n=========================================\nCOMPLETION CODE: CP-BASIC-SUCCESS\n=========================================\n\nThe cp command creates an exact duplicate of a file.\nThe original remains unchanged.\n\nThis is essential for creating backups before editing files."
+        }
+      },
+      "instructions": "## Your Task\n\nCreate a backup copy of `important.txt` by copying it to `important-backup.txt`.\n\n**Steps:**\n1. Read the task: `cat task.txt`\n2. View the original file: `cat important.txt`\n3. Run `cp important.txt important-backup.txt` to create the copy\n4. Verify with `ls` - you should see both files\n5. Verify the copy: `cat important-backup.txt` - should be identical\n6. Read completion file: `cat completion.txt`\n7. Copy the code\n8. Type `exit` and paste the code\n\n**Learn:** `cp` creates exact duplicates of files - perfect for backups.",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from completion.txt",
+          "validator": "exact",
+          "expected": "CP-BASIC-SUCCESS"
+        }
+      ]
+    },
+    {
+      "id": "cp-r",
+      "command": "cp",
+      "code": "cp -r",
+      "title": "Copy Directories Recursively",
+      "tags": ["intermediate", "directories", "copying"],
+      "level": "intermediate",
+      "module": "file-operations",
+      "about": {
+        "what": "The `cp -r` flag enables **recursive copying**, which means copying entire directories and all their contents (files and subdirectories).\n\n```bash\ncp -r source-dir destination-dir\n```\n\nWithout `-r`, `cp` refuses to copy directories - you'll get an error. The `-r` flag tells `cp` to:\n1. Copy the directory itself\n2. Copy all files inside it\n3. Copy all subdirectories\n4. Recursively copy everything inside those subdirectories\n\nThis is essential for duplicating entire project folders, backing up directory structures, or creating project templates.",
+        "history": "The `-r` (recursive) flag was added to `cp` in the mid-1970s as Unix filesystems became more complex with deeper directory hierarchies.\n\nEarly Unix systems had shallow directory structures, so copying directories wasn't as critical. But as projects grew larger and more organized, developers needed a way to copy entire directory trees.\n\nThe term **'recursive'** comes from computer science - it means a function that calls itself. When copying directories, `cp -r` essentially:\n1. Copies a directory\n2. For each subdirectory, calls itself to copy that subdirectory\n3. This continues until all levels are copied\n\nInterestingly, some systems use `-R` (capital R) instead of `-r`. Modern `cp` implementations accept both. The GNU version (used in Linux) also accepts `--recursive` for clarity.",
+        "example": "```bash\n# Copy a directory and all its contents\ncp -r project project-backup\n\n# Copy to a different location\ncp -r ~/documents/work ~/backups/work-2024-12-31\n\n# Create project template\ncp -r project-template new-project\n\n# Common pattern: backup before major changes\ncp -r myapp myapp-before-refactor\n# Now safe to make major changes to myapp/\n\n# Copy preserving attributes\ncp -rp source destination\n# -p preserves permissions, timestamps, ownership\n```",
+        "commonUses": [
+          "**Project backup** - Duplicate entire project directories",
+          "**Project templates** - Copy starter projects for new work",
+          "**Directory migration** - Copy folders between drives or systems",
+          "**Development** - Create multiple versions of a codebase",
+          "**Deployment** - Copy application directories to servers"
+        ]
+      },
+      "hints": [
+        "Use the -r flag for recursive directory copying",
+        "Syntax: cp -r source-directory destination-directory",
+        "After copying, navigate into the copy to verify contents"
+      ],
+      "sandbox": {
+        "startDir": "workspace",
+        "dirs": ["workspace", "workspace/project", "workspace/project/src"],
+        "files": {
+          "workspace/task.txt": "Task: Create a backup of the entire 'project' directory.\n\nCopy it to 'project-backup' using recursive copy.\n\nOnce copied, check completion.txt for your code.",
+          "workspace/project/README.md": "# My Project\n\nThis is a sample project structure.",
+          "workspace/project/src/main.js": "console.log('Hello, World!');",
+          "workspace/project/src/utils.js": "export function helper() { return true; }",
+          "workspace/completion.txt": "Perfect! You've mastered recursive directory copying.\n\n===========================================\nCOMPLETION CODE: CP-RECURSIVE-MASTER\n===========================================\n\nThe -r flag is essential for copying directories.\nIt recursively copies all files and subdirectories.\n\nWithout -r, cp refuses to copy directories.\n\nUse this for backing up entire projects or creating templates."
+        }
+      },
+      "instructions": "## Your Task\n\nCreate a complete backup of the `project` directory by copying it to `project-backup`.\n\n**Steps:**\n1. Read the task: `cat task.txt`\n2. View project structure: `ls project/` and `ls project/src/`\n3. Run `cp -r project project-backup` to copy recursively\n4. Verify the copy exists: `ls` - should see 'project-backup'\n5. Check it has the same structure: `ls project-backup/` and `ls project-backup/src/`\n6. Read completion file: `cat completion.txt`\n7. Copy the code\n8. Type `exit` and paste the code\n\n**Learn:** The `-r` flag enables recursive copying of entire directory trees.",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from completion.txt",
+          "validator": "exact",
+          "expected": "CP-RECURSIVE-MASTER"
+        }
+      ]
+    },
+    {
+      "id": "cp-multiple",
+      "command": "cp",
+      "code": "cp (multiple files)",
+      "title": "Copy Multiple Files to Directory",
+      "tags": ["intermediate", "files", "copying"],
+      "level": "intermediate",
+      "module": "file-operations",
+      "about": {
+        "what": "When copying **multiple files**, the last argument to `cp` must be a **directory**. All the files will be copied into that directory:\n\n```bash\ncp file1.txt file2.txt file3.txt destination/\n```\n\nYou can also use **wildcards** (glob patterns) to copy groups of files:\n```bash\ncp *.txt documents/     # Copy all .txt files\ncp file-*.js scripts/   # Copy files matching pattern\ncp photo-{1..10}.jpg images/  # Copy numbered files\n```\n\nThis is incredibly useful for organizing files, gathering related files into one location, or preparing files for archiving.",
+        "history": "Multi-file copying was part of `cp` from early Unix, following the philosophy that commands should accept multiple inputs.\n\nThe pattern of 'last argument is the destination' became a Unix convention adopted by many commands (`mv`, `ln`, etc.). This consistent interface made Unix powerful and predictable.\n\n**Wildcard expansion** (also called 'globbing') dates back to the earliest Unix shells. The shell expands patterns like `*.txt` into a list of matching files *before* passing them to `cp`. This means:\n\n```bash\ncp *.txt backup/\n```\n\nActually becomes:\n```bash\ncp file1.txt file2.txt file3.txt backup/\n```\n\nThe wildcard expansion is done by the shell, not by `cp`. This separation of concerns is a core Unix design principle - each tool does one thing well.",
+        "example": "```bash\n# Copy multiple specific files\ncp file1.txt file2.txt file3.txt backup/\n\n# Copy all text files\ncp *.txt documents/\n\n# Copy all JavaScript files\ncp *.js src/\n\n# Copy files matching a pattern\ncp config-*.json configs/\n\n# Copy multiple file types\ncp *.html *.css *.js website/\n\n# Copy numbered files\ncp photo-{1..50}.jpg ~/Pictures/vacation/\n\n# Common workflow: gather files for backup\nmkdir backup\ncp *.doc *.pdf *.txt backup/\n```",
+        "commonUses": [
+          "**File organization** - Gather related files into one directory",
+          "**Backup preparation** - Copy multiple files to backup location",
+          "**Project deployment** - Copy necessary files to deployment directory",
+          "**Media management** - Organize photos, videos by copying sets",
+          "**Log collection** - Gather log files matching patterns"
+        ]
+      },
+      "hints": [
+        "When copying multiple files, the last argument must be a directory",
+        "List all source files first, then the destination directory",
+        "Use 'ls destination/' to verify files were copied"
+      ],
+      "sandbox": {
+        "startDir": "workspace",
+        "dirs": ["workspace", "workspace/backup"],
+        "files": {
+          "workspace/task.txt": "Task: Copy all three document files into the 'backup' directory:\n  - report.txt\n  - notes.txt\n  - summary.txt\n\nOnce copied, check completion.txt for your code.",
+          "workspace/report.txt": "Annual Report 2024\n\nThis file contains important data.",
+          "workspace/notes.txt": "Meeting notes from December 31st.",
+          "workspace/summary.txt": "Executive summary of Q4 results.",
+          "workspace/completion.txt": "Excellent! You've mastered multi-file copying.\n\n===============================================\nCOMPLETION CODE: CP-MULTIPLE-FILES-EXPERT\n===============================================\n\nCopying multiple files to a directory is a huge time-saver.\n\nThe last argument must always be the destination directory.\n\nYou can also use wildcards:\n  cp *.txt backup/\nThis copies all text files at once!"
+        }
+      },
+      "instructions": "## Your Task\n\nCopy three files into the `backup` directory in a single command: `report.txt`, `notes.txt`, and `summary.txt`.\n\n**Steps:**\n1. Read the task: `cat task.txt`\n2. View the files: `ls *.txt`\n3. Check backup is empty: `ls backup/`\n4. Run `cp report.txt notes.txt summary.txt backup/` to copy all three\n5. Verify they're in backup: `ls backup/` - should see all three files\n6. Read completion file: `cat completion.txt`\n7. Copy the code\n8. Type `exit` and paste the code\n\n**Learn:** You can copy multiple files to a directory in one command by listing sources first, then destination.",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from completion.txt",
+          "validator": "exact",
+          "expected": "CP-MULTIPLE-FILES-EXPERT"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "version": "1.0",
+  "lessons": [
+    {
+      "id": "bg",
+      "command": "bg",
+      "code": "bg",
+      "title": "Resume Jobs in Background",
+      "tags": ["processes", "job-control", "intermediate"],
+      "level": "intermediate",
+      "module": "processes",
+      "about": {
+        "what": "The `bg` command **resumes a suspended job in the background**, allowing it to continue running while you use your terminal for other tasks.\n\nTypical workflow:\n1. You start a long-running command (like a file download or compilation)\n2. You realize it's taking forever and blocking your terminal\n3. You press **Ctrl+Z** to suspend it\n4. You run `bg` to resume it in the background\n5. The command continues running, and you can use your terminal\n\nThe `bg` command sends a **SIGCONT** signal to the suspended process, telling it to resume execution. The process continues from exactly where it was paused, but now runs in the background instead of the foreground.\n\nYou can specify which job to background:\n- `bg` - Resume the most recent job (marked with +)\n- `bg %1` - Resume job number 1\n- `bg %2` - Resume job number 2",
+        "history": "The `bg` command was introduced as part of the job control feature added to BSD Unix at UC Berkeley in the late 1970s. It was created alongside `fg` and `jobs` to form a complete job management system.\n\nBefore job control existed, if you started a long command:\n- Your terminal was locked until it finished\n- Your only option was to kill it (Ctrl+C) or wait\n- You couldn't multitask within a single terminal\n\nThe Berkeley team recognized this was a major productivity problem. They designed job control around these concepts:\n- **Suspend** (Ctrl+Z) - Pause the current job\n- **bg** - Resume it in background (keep terminal free)\n- **fg** - Resume it in foreground (take over terminal again)\n\nThe implementation was technically sophisticated:\n- When you press Ctrl+Z, the terminal sends **SIGTSTP** (terminal stop) to the foreground process group\n- The kernel pauses the entire process group\n- The shell marks it as \"Stopped\" and returns control to you\n- When you run `bg`, the shell sends **SIGCONT** (continue) to resume execution\n- The shell redirects the process's input/output and moves it to background\n\nThis feature was so useful that it was quickly adopted by other shells (bash, ksh, zsh) and became a standard part of Unix/Linux systems.\n\n**Modern usage:** Today, with tmux and screen providing terminal multiplexing, the need for `bg` is reduced. But it remains useful for quick backgrounding without the overhead of a multiplexer.",
+        "example": "```bash\n# Typical scenario: accidentally running in foreground\n$ python train_model.py\n# Output appears... this will take hours!\n# Press Ctrl+Z\n[1]+ Stopped   python train_model.py\n\n# Resume in background\n$ bg\n[1]+ python train_model.py &\n# Now it runs in background, you can continue working\n\n# Another scenario: multiple stopped jobs\n$ sleep 100\n# Press Ctrl+Z\n[1]+ Stopped   sleep 100\n$ sleep 200\n# Press Ctrl+Z\n[2]+ Stopped   sleep 200\n\n# Check jobs\n$ jobs\n[1]- Stopped   sleep 100\n[2]+ Stopped   sleep 200\n\n# Background specific job\n$ bg %1\n[1]- sleep 100 &\n$ bg %2\n[2]+ sleep 200 &\n\n# Check jobs again\n$ jobs\n[1]- Running   sleep 100 &\n[2]+ Running   sleep 200 &\n\n# Start command directly in background (skip bg)\n$ sleep 300 &\n[3] 45678\n# No need for bg, already in background\n\n# Background the current (most recent) job\n$ bg\n# Backgrounds job marked with +\n\n# Background the previous job\n$ bg %-\n# Backgrounds job marked with -\n```",
+        "commonUses": [
+          "**Long downloads** - Background wget/curl downloads that are taking too long",
+          "**Compilation** - Background builds that block your terminal",
+          "**Development servers** - Background test servers while you edit code",
+          "**File processing** - Background scripts processing large datasets",
+          "**Accidental foreground** - Fix commands you meant to run with & but forgot"
+        ]
+      },
+      "hints": [
+        "Read the scenario to understand bg usage",
+        "Learn when to use bg vs starting with &",
+        "The completion code is in the guide file"
+      ],
+      "sandbox": {
+        "startDir": "background-jobs",
+        "dirs": ["background-jobs"],
+        "files": {
+          "background-jobs/scenario.txt": "SCENARIO: Backgrounding a Long-Running Task\n\nYou're downloading a large file:\n\n$ wget https://example.com/large-dataset.tar.gz\n--2025-01-01 10:00:00--  https://example.com/large-dataset.tar.gz\nResolving example.com... 93.184.216.34\nConnecting to example.com|93.184.216.34|:443... connected.\nHTTP request sent, awaiting response... 200 OK\nLength: 5368709120 (5.0G) [application/gzip]\nSaving to: 'large-dataset.tar.gz'\n\nlarge-dataset.tar.gz   2%[>                    ] 107M  1.2MB/s  eta 45m\n\nOh no! This will take 45 minutes and your terminal is blocked!\n\nSOLUTION:\n\n1. Press Ctrl+Z to suspend the download\n   [1]+ Stopped   wget https://example.com/large-dataset.tar.gz\n\n2. Resume it in the background\n   $ bg\n   [1]+ wget https://example.com/large-dataset.tar.gz &\n\n3. The download continues, but you can use your terminal\n   $ ls\n   $ vim notes.txt\n   $ jobs\n   [1]+ Running   wget https://example.com/large-dataset.tar.gz &\n\n4. When it's done, you'll see a notification\n   [1]+ Done   wget https://example.com/large-dataset.tar.gz\n\nKEY LESSON:\nIf you forget to start a command with &, you can always:\n- Suspend with Ctrl+Z\n- Background with bg\n- Continue working",
+          "background-jobs/comparison.txt": "BG vs Starting with &:\n\n=== Method 1: Start directly in background ===\n$ command &\n[1] 12345\n# Immediately in background\n# Good when you KNOW it will take time\n\nPros:\n- Clean, intentional\n- One step\n\nCons:\n- Must remember the & before pressing Enter\n- Can't see initial output\n\n=== Method 2: Start, then background ===\n$ command\n# See initial output...\n# Press Ctrl+Z\n[1]+ Stopped   command\n$ bg\n[1]+ command &\n# Now in background\n\nPros:\n- See initial output to confirm it started correctly\n- Fix forgotten & easily\n- Can decide mid-execution\n\nCons:\n- Extra steps\n- Brief interruption\n\n=== When to use each ===\n\nUse & from the start:\n- Known long-running tasks (downloads, builds)\n- Background services (dev servers)\n- Scripts you don't need to watch\n\nExample: python -m http.server &\n\nUse Ctrl+Z + bg:\n- Unexpected long duration\n- Want to see startup output first\n- Forgot the & and already started\n\nExample:\n$ npm install  # Oops, this is taking forever\n# Ctrl+Z\n$ bg",
+          "background-jobs/guide.txt": "Complete Guide to BG Command:\n\n================================\nCODE: BG-BACKGROUND-EXPERT\n================================\n\nCOMMAND SYNTAX:\nbg            → Background the current job (marked with +)\nbg %1         → Background job number 1\nbg %2         → Background job number 2\nbg %-         → Background the previous job (marked with -)\n\nWORKFLOW:\n1. Command is running in foreground\n2. Press Ctrl+Z to suspend (SIGTSTP sent)\n3. Shell shows: [1]+ Stopped command\n4. Run: bg (or bg %1)\n5. Shell sends SIGCONT to resume\n6. Process continues in background\n\nIMPORTANT NOTES:\n\nOutput handling:\n- Background jobs still write to your terminal\n- Their output will interrupt your work\n- Redirect output when backgrounding:\n  command > output.log 2>&1 &\n\nInput handling:\n- Background jobs can't read from terminal\n- If they try, they'll suspend (SIGTTIN)\n- Interactive programs need foreground\n\nJob notifications:\n- Shell notifies when background jobs finish\n- Or when they suspend (if they need input)\n- Check manually with: jobs\n\nCOMMON PATTERNS:\n\n# Background with output redirected\n$ ./long-script.sh\n# Ctrl+Z\n$ bg\n$ disown  # Optional: detach from shell\n\n# Better: redirect from the start\n$ ./long-script.sh > output.log 2>&1 &\n\n# Background multiple jobs\n$ jobs\n[1]- Stopped   job1\n[2]+ Stopped   job2\n$ bg %1 && bg %2\n\nRELATED COMMANDS:\n- jobs  → List all jobs\n- fg    → Bring job to foreground\n- disown → Detach job from shell (survives logout)\n- nohup  → Start job immune to hangups\n\nPRO TIPS:\n- Use tmux/screen for long-running tasks\n- Redirect output for background jobs\n- Check 'jobs' before logout\n- Use 'disown' for critical background tasks"
+        }
+      },
+      "instructions": "## Your Task\n\nLearn about the `bg` command for resuming suspended jobs in the background.\n\n**Steps:**\n1. Read the scenario: `cat scenario.txt`\n   - See a real-world example of using bg\n2. Read the comparison: `cat comparison.txt`\n   - Understand bg vs starting with &\n3. Read the guide: `cat guide.txt`\n   - Learn complete bg usage\n4. Copy the completion code\n5. Type `exit` and paste the code\n\n**Try it yourself** (after this lesson):\n```bash\n# Start a long command\nsleep 30\n\n# Press Ctrl+Z to suspend\n# You'll see: [1]+ Stopped sleep 30\n\n# Resume in background\nbg\n# You'll see: [1]+ sleep 30 &\n\n# Verify it's running\njobs\n# You'll see: [1]+ Running sleep 30 &\n```\n\n**Remember:** Ctrl+Z to suspend, then `bg` to background!",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from guide.txt",
+          "validator": "exact",
+          "expected": "BG-BACKGROUND-EXPERT"
+        }
+      ]
+    }
+  ]
+}

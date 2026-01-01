@@ -1,0 +1,137 @@
+{
+  "version": "1.0",
+  "lessons": [
+    {
+      "id": "chown-intro",
+      "command": "chown",
+      "code": "chown",
+      "title": "Understanding File Ownership",
+      "tags": ["ownership", "permissions", "intermediate"],
+      "level": "intermediate",
+      "module": "permissions",
+      "about": {
+        "what": "The `chown` command **changes file ownership** - setting which user and group own a file. The name stands for **'change owner'**.\n\nEvery file has two owners:\n- **User owner** - The primary owner (usually who created it)\n- **Group owner** - A group of users who share access\n\nView ownership with `ls -l`:\n```\n-rw-r--r-- 1 alice developers 1024 Dec 31 file.txt\n               ^^^^^  ^^^^^^^^^^  \n               user    group\n```\n\n**Syntax:**\n```bash\nchown user file              # Change user owner\nchown user:group file        # Change both user and group\nchown :group file            # Change group only\n```\n\n**Note:** Usually requires `sudo` for files you don't own.",
+        "history": "`chown` has been part of Unix since the early 1970s, created alongside the multi-user file system at Bell Labs.\n\nIn early Unix, computers were expensive and shared among many users. The ownership system solved critical problems:\n- **Accountability** - Know who created each file\n- **Quotas** - Track disk usage per user\n- **Permissions** - Control access based on ownership\n- **Organization** - Group related users (developers, admins, etc.)\n\nOriginally, any user could give away their files to others using `chown`. This created security issues - users could avoid disk quotas by transferring large files to other users' ownership.\n\nIn the 1980s, BSD Unix restricted `chown` to require root access. This became the standard: only administrators can change file ownership, preventing abuse.\n\nThe group ownership feature was particularly clever - it allowed project-based collaboration without making files world-readable. A development team could share a group, and all their files could be group-owned by 'developers', giving the team access while keeping others out.\n\nToday, `chown` is essential for:\n- System administration\n- Web server configuration (chown www-data)\n- Container/Docker file ownership\n- Fixing permission issues after file transfers",
+        "example": "```bash\n# View current ownership\nls -l file.txt\n# -rw-r--r-- 1 alice developers 1024 Dec 31 file.txt\n\n# Change user owner (requires sudo)\nsudo chown bob file.txt\n\n# Change both user and group\nsudo chown bob:admin file.txt\n\n# Change group only\nsudo chown :staff file.txt\n\n# Recursive - change entire directory\nsudo chown -R www-data:www-data /var/www/html/\n\n# Common pattern: web server files\nsudo chown www-data:www-data website/*\n\n# Fix files after extraction\nsudo chown -R $USER:$USER extracted-files/\n```",
+        "commonUses": [
+          "**Web server setup** - Change files to web server user (www-data, nginx)",
+          "**Fix extracted archives** - Reset ownership after tar/zip extraction",
+          "**Container configuration** - Set ownership for Docker/containerized apps",
+          "**System administration** - Manage system file ownership",
+          "**Shared projects** - Set group ownership for team collaboration"
+        ]
+      },
+      "hints": [
+        "Check file ownership with 'ls -l'",
+        "Look at the user and group columns",
+        "The completion code is in the analysis file"
+      ],
+      "sandbox": {
+        "startDir": "workspace",
+        "dirs": ["workspace"],
+        "files": {
+          "workspace/example.txt": "This file is owned by the current user.\n\nYou can view ownership with: ls -l example.txt\n\nThe output shows:\n  -rw-r--r-- 1 USER GROUP SIZE DATE example.txt\n                 ^^^^  ^^^^^  \n                 user  group\n\nOwnership determines the base permissions that chmod modifies.",
+          "workspace/ownership-analysis.txt": "File Ownership Analysis\n=======================\n\nRun: ls -l\n\nYou'll see output like:\n  -rw-r--r-- 1 user group 1234 Dec 31 file.txt\n\nBreakdown:\n  user  = The user who owns the file\n  group = The group that owns the file\n\nThe owner can:\n  - Change permissions (chmod)\n  - Delete the file (if directory allows)\n  - Read/write based on permission bits\n\nGroup members can:\n  - Access based on group permission bits\n  - Collaborate on shared files\n\nOthers:\n  - Access based on 'others' permission bits\n\nChanging ownership:\n  - chown user file         (change user owner)\n  - chown user:group file   (change user and group)\n  - chown :group file       (change group only)\n  - Usually requires sudo!\n\nCommon scenarios:\n  - Web servers: chown www-data:www-data website/\n  - Fix extractions: chown -R $USER:$USER files/\n  - Container apps: chown node:node app/\n\n================================================\nCOMPLETION CODE: CHOWN-BASICS-UNDERSTOOD\n================================================\n\nKey takeaway:\n  Ownership determines WHO the permission bits apply to.\n  chmod sets WHAT they can do.\n  Together, they control file access.",
+          "workspace/task.txt": "Task: Understand file ownership by examining the files in this directory.\n\n1. Run: ls -l\n2. Observe the user and group columns\n3. Read: cat ownership-analysis.txt\n4. Find the completion code in the analysis file\n\nNote: You cannot change ownership without sudo privileges,\nbut understanding how it works is essential for system administration."
+        }
+      },
+      "instructions": "## Your Task\n\nLearn about file ownership by examining the files in this workspace.\n\n**Steps:**\n1. Read the task: `cat task.txt`\n2. Check file ownership: `ls -l` (observe the user and group columns)\n3. Read the example: `cat example.txt`\n4. Read the analysis: `cat ownership-analysis.txt`\n5. Find and copy the completion code\n6. Type `exit` and paste the code\n\n**Learn:** Every file has a user owner and group owner. The `chown` command changes ownership (usually requires sudo).",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from the ownership analysis",
+          "validator": "exact",
+          "expected": "CHOWN-BASICS-UNDERSTOOD"
+        }
+      ]
+    },
+    {
+      "id": "chown-webserver",
+      "command": "chown",
+      "code": "chown www-data",
+      "title": "Web Server File Ownership",
+      "tags": ["ownership", "permissions", "advanced", "webserver"],
+      "level": "advanced",
+      "module": "permissions",
+      "about": {
+        "what": "Web servers (Apache, Nginx) run as specific users for security. Files served by the web server must be **owned by the web server user** to be accessible.\n\n**Common web server users:**\n- **www-data** - Debian, Ubuntu (Apache, Nginx)\n- **nginx** - RHEL, CentOS (Nginx)\n- **apache** - Some systems (Apache)\n- **httpd** - Older systems (Apache)\n\n**Typical web server setup:**\n```bash\n# Give web server ownership of website files\nsudo chown -R www-data:www-data /var/www/html/\n\n# Set proper permissions\nsudo chmod -R 755 /var/www/html/\n\n# Result: Web server can read/serve files\n# You (admin) can still modify them via sudo\n```\n\n**Why this matters:**\n- Web server can read and serve your HTML/CSS/JS\n- PHP/Python apps can write logs and uploads\n- Security: web server runs as limited user, not root\n- Separation: web files separate from personal files",
+        "history": "In the early days of the web (early 1990s), web servers often ran as **root** - the all-powerful superuser account. This was extremely dangerous:\n- A bug in the web server could compromise the entire system\n- Hackers exploiting the web server gained full system access\n- There was no isolation between the web server and critical system files\n\nThe Apache web server (released 1995) popularized the concept of running as a **dedicated non-privileged user**. Instead of root, Apache would:\n1. Start as root (to bind to port 80)\n2. Immediately drop privileges to a limited user (www-data, nobody, apache)\n3. Run all request handling as that limited user\n\nThis meant:\n- If the web server was compromised, attackers only got www-data access, not root\n- Web server couldn't modify system files\n- Files had to be explicitly owned by www-data to be served\n\nThe `www-data` user became standard on Debian/Ubuntu systems in the late 1990s. It's a **system user** with:\n- No login shell (can't log in as www-data)\n- No home directory\n- Minimal permissions\n- Only purpose: run the web server\n\nThis pattern is now universal:\n- Docker containers run apps as non-root users\n- Node.js apps run as 'node' user\n- Database servers run as 'postgres', 'mysql', etc.\n\nThe `chown www-data:www-data` command became one of the most common operations in web hosting and deployment.",
+        "example": "```bash\n# Basic web server setup\nsudo chown -R www-data:www-data /var/www/html/\nsudo chmod -R 755 /var/www/html/\n\n# Deploy new website\nsudo cp -R my-site/* /var/www/html/\nsudo chown -R www-data:www-data /var/www/html/\n\n# WordPress/PHP application (needs write access)\nsudo chown -R www-data:www-data /var/www/wordpress/\nsudo chmod -R 755 /var/www/wordpress/\n# Uploads directory needs write permission\nsudo chmod 775 /var/www/wordpress/wp-content/uploads/\n\n# Static site (read-only)\nsudo chown -R www-data:www-data /var/www/static-site/\nsudo chmod -R 644 /var/www/static-site/*.html\nsudo chmod 755 /var/www/static-site/  # Directory needs execute\n\n# Check web server user\nps aux | grep nginx\nps aux | grep apache\n```",
+        "commonUses": [
+          "**Website deployment** - Make files accessible to Apache/Nginx",
+          "**PHP/WordPress setup** - Allow web apps to read and write files",
+          "**Static site hosting** - Serve HTML/CSS/JS files",
+          "**API servers** - Let Node.js/Python apps access their files",
+          "**File upload handling** - Allow web server to save uploaded files"
+        ]
+      },
+      "hints": [
+        "Read through the scenario file to understand the problem",
+        "Look at the recommended commands in the solution file",
+        "The completion code is in the solution"
+      ],
+      "sandbox": {
+        "startDir": "workspace",
+        "dirs": ["workspace", "workspace/website"],
+        "files": {
+          "workspace/scenario.txt": "Web Server Deployment Scenario\n================================\n\nYou've just deployed a new website to /var/www/html/\n\nProblem:\n  Your website files are owned by 'alice' (you)\n  The web server runs as 'www-data'\n  Web server can't read your files!\n  \nCurrent state:\n  $ ls -l /var/www/html/\n  -rw-r--r-- 1 alice alice 2048 Dec 31 index.html\n  -rw-r--r-- 1 alice alice 1024 Dec 31 style.css\n  drwxr-xr-x 2 alice alice 4096 Dec 31 images/\n\nSymptom:\n  Visiting the website shows: 403 Forbidden\n  Web server logs: Permission denied reading index.html\n\nWhy this happens:\n  - Web server process runs as user 'www-data'\n  - Files owned by 'alice'\n  - www-data is 'others' in permission model\n  - 'others' permissions are r-- (read-only)\n  - But www-data needs read access\n\nSolution needed:\n  Change ownership to www-data so the web server can access files\n  \nRead solution.txt for the fix.",
+          "workspace/solution.txt": "Web Server Ownership Solution\n==============================\n\nThe Problem:\n  Files owned by: alice:alice\n  Web server runs as: www-data\n  Result: Permission denied\n\nThe Solution:\n  Change file ownership to match web server user\n\nCommands:\n  # Change ownership of entire website\n  sudo chown -R www-data:www-data /var/www/html/\n  \n  # Set readable permissions\n  sudo chmod -R 755 /var/www/html/\n\nResult:\n  $ ls -l /var/www/html/\n  -rwxr-xr-x 1 www-data www-data 2048 Dec 31 index.html\n  -rwxr-xr-x 1 www-data www-data 1024 Dec 31 style.css\n  drwxr-xr-x 2 www-data www-data 4096 Dec 31 images/\n  \nNow:\n  - Files owned by www-data\n  - Web server can read and serve them\n  - Website loads successfully!\n\nCommon web server users:\n  - Debian/Ubuntu: www-data\n  - RHEL/CentOS: nginx or apache\n  - Alpine Linux: nginx\n  \nBest practices:\n  1. Web server owns the files (www-data:www-data)\n  2. Directories: 755 (rwxr-xr-x)\n  3. Files: 644 (rw-r--r--) for static content\n  4. Scripts: 755 if they need to execute\n  5. Uploads directory: 775 if app needs write access\n\nSecurity notes:\n  - Never run web server as root!\n  - Never use 777 permissions (world-writable)\n  - Limit write permissions to only what's needed\n  - Use dedicated user (www-data) for isolation\n\n================================================\nCOMPLETION CODE: CHOWN-WEBSERVER-MASTERY\n================================================\n\nKey lesson:\n  Application processes run as specific users.\n  Files must be owned by (or readable by) those users.\n  chown + chmod together configure access correctly.",
+          "workspace/task.txt": "Task: Learn about web server file ownership\n\n1. Read the scenario: cat scenario.txt\n2. Understand the permission problem\n3. Read the solution: cat solution.txt\n4. Find the completion code\n\nWhile you can't run the actual sudo commands in this sandbox,\nunderstanding this pattern is essential for:\n  - Web hosting\n  - Server administration\n  - Docker/container deployments\n  - DevOps workflows"
+        }
+      },
+      "instructions": "## Your Task\n\nLearn about web server file ownership through a real-world scenario.\n\n**Steps:**\n1. Read the task: `cat task.txt`\n2. Read the scenario: `cat scenario.txt` (understand the problem)\n3. Read the solution: `cat solution.txt` (learn the fix)\n4. Find and copy the completion code\n5. Type `exit` and paste the code\n\n**Learn:** Web servers run as specific users (www-data). Files must be owned by or readable by that user. chown + chmod configure access.",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from the solution file",
+          "validator": "exact",
+          "expected": "CHOWN-WEBSERVER-MASTERY"
+        }
+      ]
+    },
+    {
+      "id": "chown-group",
+      "command": "chown",
+      "code": "chown :group",
+      "title": "Group Ownership for Collaboration",
+      "tags": ["ownership", "permissions", "advanced", "collaboration"],
+      "level": "advanced",
+      "module": "permissions",
+      "about": {
+        "what": "**Group ownership** enables **team collaboration** without making files world-readable.\n\n**The pattern:**\n1. Create a group for your team (e.g., 'developers')\n2. Add team members to the group\n3. Set group ownership on shared files: `chown :developers project/`\n4. Set group permissions: `chmod g+rw project/`\n\n**Result:**\n- Team members can read/write shared files\n- Other users can't access them\n- No need to make files world-readable (security!)\n\n**Syntax:**\n```bash\nchown :groupname file     # Change group only\nchown user:group file     # Change both\nsudo chown -R :devs project/  # Recursive group change\n```\n\n**Use with setgid bit:**\n```bash\nchmod g+s shared-dir/\n# New files inherit directory's group automatically!\n```",
+        "history": "Group ownership was part of Unix from the beginning (early 1970s), but its purpose evolved over time.\n\n**Original purpose (1970s):**\nIn early Unix at Bell Labs, groups represented **departments**:\n- 'research' group for researchers\n- 'admin' group for administrators  \n- 'operators' group for system operators\n\nFiles were group-owned by your primary department, enabling basic collaboration within teams.\n\n**Evolution (1980s-1990s):**\nAs Unix spread to universities and companies, groups became more **project-based**:\n- 'webteam' for website developers\n- 'dbadmins' for database administrators\n- 'mobile-dev' for mobile app team\n\nThe key innovation was the **setgid bit** (`chmod g+s`), added in BSD Unix. When set on a directory:\n- New files automatically inherit the directory's group\n- Team members don't need to manually `chown :group` each file\n- Perfect for shared project directories\n\n**Modern usage (2000s-present):**\nGroup ownership is essential for:\n- **Shared hosting** - Multiple developers working on same codebase\n- **CI/CD systems** - Build agents need group access to repos\n- **Container environments** - Apps run as specific groups\n- **File servers** - Network drives with group-based access\n\nWithout group ownership, you'd have two bad choices:\n1. Make files world-readable (insecure)\n2. Make all team members use same user account (unaccountable)\n\nGroups provide the middle ground: controlled sharing among trusted team members.",
+        "example": "```bash\n# View current group ownership\nls -l project/\n# drwxr-xr-x 2 alice developers 4096 Dec 31 project/\n#                      ^^^^^^^^^^  \n#                      group owner\n\n# Change group ownership\nsudo chown :developers shared-project/\n\n# Set group permissions (read/write for group)\nsudo chmod g+rw shared-project/\n\n# Recursive: entire project directory\nsudo chown -R :developers /home/shared/project/\nsudo chmod -R g+rw /home/shared/project/\n\n# Enable setgid (new files inherit group)\nsudo chmod g+s /home/shared/project/\n\n# Complete team setup\nsudo mkdir /projects/website\nsudo chown :webteam /projects/website\nsudo chmod 2775 /projects/website\n# 2775 = setgid(2) + rwx(7)r-x(7)rwx(5)\n#        New files inherit 'webteam' group\n\n# Check your groups\ngroups\n# Output: alice developers webteam admin\n```",
+        "commonUses": [
+          "**Shared development projects** - Team members collaborate on code",
+          "**Web server directories** - Multiple admins manage web content",
+          "**Document repositories** - Shared docs for department/project",
+          "**Build systems** - CI/CD agents access source code via group",
+          "**Research data** - Scientists share datasets within research group"
+        ]
+      },
+      "hints": [
+        "Read the collaboration scenario to understand group ownership",
+        "Look at how groups enable secure sharing without world-readable files",
+        "Find the completion code in the guide file"
+      ],
+      "sandbox": {
+        "startDir": "workspace",
+        "dirs": ["workspace"],
+        "files": {
+          "workspace/scenario.txt": "Team Collaboration Scenario\n============================\n\nYour team:\n  - Alice (you)\n  - Bob\n  - Charlie\n  \nProject: Shared web application\nProblem: How do you share files securely?\n\nBad solutions:\n  ❌ Make files world-readable (chmod 777)\n     - Anyone on the system can access them\n     - Security risk\n     \n  ❌ Share one user account\n     - Can't tell who made which changes\n     - Password sharing is insecure\n     - No accountability\n     \n  ❌ Each person copies files\n     - Constant syncing nightmares\n     - Merge conflicts\n     - Wasted storage\n\nGood solution: Group ownership!\n  ✓ Create 'webdevs' group\n  ✓ Add Alice, Bob, Charlie to group\n  ✓ Set group ownership on shared files\n  ✓ Only team members can access\n  ✓ Each person uses their own account\n  ✓ Full accountability\n\nSee collaboration-guide.txt for implementation.",
+          "workspace/collaboration-guide.txt": "Group Ownership Collaboration Guide\n====================================\n\nSetup Steps:\n------------\n\n1. Create a group (admin/root required):\n   sudo groupadd webdevs\n\n2. Add team members to group:\n   sudo usermod -a -G webdevs alice\n   sudo usermod -a -G webdevs bob\n   sudo usermod -a -G webdevs charlie\n\n3. Create shared project directory:\n   sudo mkdir /projects/webapp\n   \n4. Set group ownership:\n   sudo chown :webdevs /projects/webapp\n   \n5. Set permissions:\n   sudo chmod 2775 /projects/webapp\n   # 2 = setgid (new files inherit group)\n   # 7 = owner rwx\n   # 7 = group rwx (team can read/write/execute)\n   # 5 = others r-x (can read/execute, not write)\n\n6. Verify:\n   ls -ld /projects/webapp\n   # drwxrwsr-x 2 root webdevs 4096 Dec 31 webapp/\n   #         ^        ^^^^^^^^  \n   #         |        group owner\n   #         setgid bit (s)\n\nHow it works:\n-------------\n\nAlice creates a file:\n  $ cd /projects/webapp\n  $ echo 'code' > app.js\n  $ ls -l app.js\n  -rw-rw-r-- 1 alice webdevs 5 Dec 31 app.js\n  #                   ^^^^^^^  \n  #                   Automatically group-owned by webdevs!\n\nBob can edit it:\n  $ echo 'more code' >> app.js  # Success!\n  # Bob is in webdevs group\n  # Group has rw permission\n  # Bob can read and write\n\nCharlie (not in webdevs group) cannot:\n  $ echo 'malicious' >> app.js\n  # Permission denied\n  # Charlie not in webdevs group\n  # 'Others' only have r-- permission\n\nBenefits:\n---------\n\n✓ Secure: Only team members have access\n✓ Accountable: Each person uses own account\n✓ Automatic: setgid makes new files inherit group\n✓ Flexible: Easy to add/remove team members\n✓ Standard: Works on all Unix/Linux systems\n\nCommon patterns:\n----------------\n\nDevelopment team:\n  Group: developers\n  Directory: /home/shared/code\n  Permissions: 2775\n  Members: All developers\n\nWeb admin team:\n  Group: webadmins\n  Directory: /var/www\n  Permissions: 2775\n  Members: Web server admins\n  \nResearch group:\n  Group: research\n  Directory: /data/research\n  Permissions: 2770 (no others access)\n  Members: Research scientists\n\nKey commands:\n-------------\n\n# Check your groups\ngroups\n\n# Change group ownership\nsudo chown :groupname file\n\n# Recursive group change\nsudo chown -R :groupname directory/\n\n# Set group permissions\nsudo chmod g+rw file\n\n# Enable setgid on directory\nsudo chmod g+s directory/\n\n# Combined (2775 = setgid + rwxrwxr-x)\nsudo chmod 2775 directory/\n\n================================================\nCOMPLETION CODE: CHOWN-GROUP-COLLABORATION\n================================================\n\nRemember:\n  User ownership = individual responsibility\n  Group ownership = team collaboration\n  Together they enable secure, accountable sharing!",
+          "workspace/task.txt": "Task: Learn about group ownership for team collaboration\n\n1. Read the scenario: cat scenario.txt\n2. Understand why group ownership matters\n3. Read the guide: cat collaboration-guide.txt\n4. Find the completion code\n\nGroup ownership is essential for:\n  - Development teams\n  - Shared projects\n  - Multi-admin systems\n  - Collaborative environments"
+        }
+      },
+      "instructions": "## Your Task\n\nLearn how group ownership enables secure team collaboration.\n\n**Steps:**\n1. Read the task: `cat task.txt`\n2. Read the scenario: `cat scenario.txt` (understand the problem)\n3. Read the guide: `cat collaboration-guide.txt` (learn the solution)\n4. Find and copy the completion code\n5. Type `exit` and paste the code\n\n**Learn:** Group ownership enables teams to share files securely without making them world-readable. The setgid bit makes new files automatically inherit the group.",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from the collaboration guide",
+          "validator": "exact",
+          "expected": "CHOWN-GROUP-COLLABORATION"
+        }
+      ]
+    }
+  ]
+}

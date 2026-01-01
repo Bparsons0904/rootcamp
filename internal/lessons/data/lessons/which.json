@@ -1,0 +1,116 @@
+{
+  "version": "1.0",
+  "lessons": [
+    {
+      "id": "which",
+      "command": "which",
+      "code": "which",
+      "title": "Find Command Locations in PATH",
+      "tags": ["basics", "system", "commands"],
+      "level": "beginner",
+      "module": "file-operations",
+      "skipSandbox": true,
+      "about": {
+        "what": "The `which` command shows the **full path** to executable commands by searching your `$PATH` variable.\n\n```bash\nwhich bash\n# Output: /usr/bin/bash\n```\n\nWhen you type a command like `ls`, the shell searches through directories listed in `$PATH` until it finds an executable named `ls`. The `which` command shows you which one it found.\n\n**Key concepts:**\n- Shows the full path to the command that will execute\n- Searches only directories in your `$PATH`\n- Returns nothing if the command isn't found\n- Helps identify which version of a command runs\n\nPerfect for:\n- Finding where commands are installed\n- Debugging PATH issues\n- Identifying which version runs when multiple versions exist",
+        "history": "`which` originated in the C shell (csh) in the late 1970s at UC Berkeley. It was created to answer a simple question: \"Which executable will run when I type this command?\"\n\nBefore `which`, users had to:\n- Manually check each directory in `$PATH`\n- Use `ls /usr/bin/command` repeatedly\n- Wonder why the \"wrong\" version of a program ran\n\n**The PATH Problem:**\nIn Unix, the `$PATH` variable lists directories to search for executables:\n```bash\n/usr/local/bin:/usr/bin:/bin:/usr/sbin\n```\n\nIf you have Python installed in both `/usr/bin/python` and `/usr/local/bin/python`, which runs when you type `python`? The first match in PATH wins.\n\n`which` makes this transparent.\n\n**Interesting history:**\n- Originally a csh built-in command\n- Later became a standalone program for compatibility with other shells\n- Different implementations exist (some shells have built-in `which`, others use external programs)\n- Modern systems usually have both `/usr/bin/which` and shell built-ins\n\n**Cultural impact:**\n\"Which Python am I using?\" became a famous debugging question, especially with:\n- Multiple Python versions (2.x vs 3.x)\n- Virtual environments\n- Homebrew vs system installations\n- Conda environments\n\nThe answer: `which python` (or better: `which python3`)",
+        "example": "```bash\n# Find where bash is installed\nwhich bash\n# Output: /usr/bin/bash\n\n# Find multiple commands\nwhich ls cat grep\n# Output (example):\n# /usr/bin/ls\n# /usr/bin/cat\n# /usr/bin/grep\n\n# Check which Python runs\nwhich python\nwhich python3\n\n# Verify command exists\nwhich nonexistent\n# (No output - command not found)\n\n# Check if command is in PATH\nif which git > /dev/null; then\n  echo \"git is installed\"\nfi\n\n# Find your editor\nwhich vim\nwhich nano\nwhich emacs\n\n# Debug PATH issues\nwhich node\nwhich npm\n# (Are they where you expect?)\n\n# See what executes\nwhich python\n# /usr/bin/python\ntype python\n# python is /usr/bin/python\n```",
+        "commonUses": [
+          "**Command location** - Find where executables are installed",
+          "**PATH debugging** - Identify which version runs",
+          "**Script validation** - Check if required commands exist",
+          "**Environment verification** - Confirm correct versions are in PATH",
+          "**Version conflicts** - Diagnose multiple version issues"
+        ]
+      },
+      "hints": [
+        "Syntax: which command-name",
+        "Shows full path to the executable",
+        "Returns nothing if command not found in PATH"
+      ],
+      "sandbox": {},
+      "instructions": "## Your Task\n\nUse `which` to find where common commands are located on your system.\n\n**Steps:**\n1. Find bash: `which bash` - shows path like /usr/bin/bash or /bin/bash\n2. Find ls: `which ls` - shows where ls executable lives\n3. Find grep: `which grep`\n4. Try non-existent command: `which nonexistent` - no output (not found)\n5. Understand: which searches your $PATH and shows the first match\n\n**Understanding PATH:**\nView your PATH: `echo $PATH`\n\nYou'll see colon-separated directories like:\n/usr/local/bin:/usr/bin:/bin\n\nWhen you run a command, the shell searches these directories in order.\n`which` shows you which file it found.\n\n**Completion Code:** WHICH-BASIC-SUCCESS\n\n**Learn:** `which` finds the full path to executables in your PATH - essential for understanding which version of a command runs!",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from instructions",
+          "validator": "exact",
+          "expected": "WHICH-BASIC-SUCCESS"
+        }
+      ]
+    },
+    {
+      "id": "which-a",
+      "command": "which",
+      "code": "which -a",
+      "title": "Find All Command Locations",
+      "tags": ["intermediate", "system", "commands"],
+      "level": "intermediate",
+      "module": "file-operations",
+      "skipSandbox": true,
+      "about": {
+        "what": "The `which -a` flag shows **all matching executables** in your PATH, not just the first one.\n\n```bash\nwhich -a python\n# Output:\n# /usr/local/bin/python\n# /usr/bin/python\n```\n\nWithout `-a`, `which` stops at the first match. With `-a`, it shows every match in every PATH directory.\n\n**Why this matters:**\n\nYou might have multiple versions installed:\n- System version in `/usr/bin/`\n- Homebrew version in `/usr/local/bin/`\n- User-installed version in `~/.local/bin/`\n- Virtual environment version\n\nThe **first one in PATH** is what runs, but `-a` shows you all of them.\n\n**Common scenarios:**\n- Multiple Python versions (2.7, 3.8, 3.9, 3.10...)\n- Multiple Node.js versions (via nvm)\n- System vs Homebrew installations\n- Old versions you forgot to remove",
+        "history": "The `-a` (all) flag was added to `which` to help users debug version conflicts - a growing problem as package managers proliferated.\n\n**The Multiple Version Problem:**\n\nIn the 1980s-1990s, most systems had one version of each tool. Simple.\n\nBy the 2000s, users commonly had:\n- System packages (yum, apt)\n- User-compiled versions\n- Multiple language versions (Python 2 vs 3)\n- Package manager versions (Homebrew, MacPorts)\n\nSuddenly, `which python` might show `/usr/bin/python`, but there could also be:\n- `/usr/local/bin/python` (Homebrew)\n- `~/.local/bin/python` (pip install --user)\n- `/opt/python/bin/python` (custom install)\n\nWithout `-a`, users didn't realize other versions existed, leading to:\n- \"Why is the old version still running?\"\n- \"I installed Python 3 but Python 2 still runs!\"\n- \"My program works in one terminal but not another!\"\n\nThe `-a` flag made these conflicts visible.\n\n**Modern tools:**\nVersion managers learned from this:\n- `nvm` (Node Version Manager)\n- `pyenv` (Python Version Manager)\n- `rbenv` (Ruby Version Manager)\n- `rustup` (Rust toolchain manager)\n\nThey manipulate PATH to control which version runs, and `which -a` helps verify they're working correctly.",
+        "example": "```bash\n# Find all Python installations\nwhich -a python\nwhich -a python3\n\n# Find all node installations\nwhich -a node\nwhich -a npm\n\n# Check for duplicates\nwhich -a git\n# Might show:\n# /usr/local/bin/git (Homebrew)\n# /usr/bin/git (System)\n\n# Debug version issues\nwhich python    # Shows first match\nwhich -a python # Shows all matches\n# Now you see why the \"wrong\" one runs!\n\n# Verify single installation\nwhich -a ruby\n# Should ideally show only one\n\n# Find all instances of a command\nwhich -a bash\n# /usr/local/bin/bash\n# /bin/bash\n\n# Compare with type command\ntype -a python\n# Shows similar info, includes aliases/functions\n```",
+        "commonUses": [
+          "**Version debugging** - Find all installed versions",
+          "**Conflict resolution** - Identify duplicate installations",
+          "**PATH verification** - Ensure correct version is first",
+          "**Cleanup identification** - Find old versions to remove",
+          "**Environment auditing** - Document all installations"
+        ]
+      },
+      "hints": [
+        "Use -a flag to see all matches",
+        "Syntax: which -a command-name",
+        "Shows every match in PATH, not just the first"
+      ],
+      "sandbox": {},
+      "instructions": "## Your Task\n\nUse `which -a` to find all versions of commands on your system.\n\n**Steps:**\n1. Find first Python: `which python` or `which python3`\n2. Find all Pythons: `which -a python3`\n   - You might see multiple versions!\n3. Find all bash instances: `which -a bash`\n   - Might show /bin/bash and /usr/local/bin/bash\n4. Try with other commands: `which -a git`, `which -a node`\n\n**Understanding priority:**\nIf `which -a python3` shows:\n```\n/usr/local/bin/python3\n/usr/bin/python3\n```\n\nThe FIRST one (/usr/local/bin/python3) is what runs when you type `python3`.\nThat's because /usr/local/bin comes before /usr/bin in your PATH.\n\n**Use case:**\n\"I installed Python 3.10 but Python 3.8 still runs!\"\n\nSolution:\n```bash\nwhich -a python3\n# /usr/bin/python3 (3.8)\n# /usr/local/bin/python3 (3.10)\n```\n\nNow you see the problem: /usr/bin is earlier in PATH!\n\n**Completion Code:** WHICH-ALL-PATHS-PRO\n\n**Learn:** `which -a` shows ALL versions in PATH - essential for debugging version conflicts!",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from instructions",
+          "validator": "exact",
+          "expected": "WHICH-ALL-PATHS-PRO"
+        }
+      ]
+    },
+    {
+      "id": "which-path",
+      "command": "which",
+      "code": "which + $PATH",
+      "title": "Understanding PATH and Command Discovery",
+      "tags": ["intermediate", "system", "commands"],
+      "level": "intermediate",
+      "module": "file-operations",
+      "skipSandbox": true,
+      "about": {
+        "what": "Understanding how `which` searches through `$PATH` is fundamental to understanding how your shell finds and runs commands.\n\n**The PATH variable:**\n```bash\necho $PATH\n# Output: /usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin\n```\n\nThis colon-separated list tells the shell where to search for executables.\n\n**How command discovery works:**\n1. You type: `python`\n2. Shell splits $PATH by colons: `/usr/local/bin`, `/usr/bin`, `/bin`, ...\n3. Shell checks each directory in order:\n   - Is there `/usr/local/bin/python`? Yes → Execute it! (STOP)\n   - (Never checks later directories)\n4. If nothing found → `command not found`\n\n**First match wins:** The first directory containing the command determines what runs.\n\n**which shows the result** of this search without actually running the command.",
+        "history": "The `$PATH` variable is one of the most important concepts in Unix, dating back to the earliest Unix shells in the 1970s.\n\n**Before PATH:**\nEarly Unix required full paths to run programs:\n```bash\n/bin/ls\n/usr/bin/grep\n```\n\nThis was tedious!\n\n**The PATH Solution:**\nThe Thompson shell (1971) introduced PATH - a list of directories to search automatically. Now users could just type `ls` instead of `/bin/ls`.\n\n**Convention: Search order matters:**\n```bash\nPATH=/usr/local/bin:/usr/bin:/bin\n```\n\nOrder: local → user → system\n\nWhy?\n- `/usr/local/bin` - site-local installations (override system)\n- `/usr/bin` - standard user programs\n- `/bin` - essential system programs\n\nThis lets administrators and users install newer versions that take precedence over system versions.\n\n**Security concern:**\n**Never put `.` (current directory) first in PATH!**\n\nBad:\n```bash\nPATH=.:/usr/bin:/bin  # DANGEROUS!\n```\n\nWhy? If someone puts a malicious `ls` in a directory you visit, it runs instead of the real `/bin/ls`.\n\n**Modern complexity:**\nToday's PATH can be huge:\n- System directories\n- Package manager additions (Homebrew, etc.)\n- Language-specific paths (npm global, pip user, gem, cargo)\n- Version managers (nvm, pyenv, rbenv)\n- User paths (~/.local/bin)\n\nManaging PATH became a science, leading to tools that manipulate it:\n- `nvm` (prepends Node version to PATH)\n- `pyenv` (shims Python versions)\n- Modules systems (environment modules)\n\nUnderstanding PATH is essential for:\n- Debugging \"command not found\"\n- Controlling which version runs\n- Understanding environment setup scripts",
+        "example": "```bash\n# View your PATH\necho $PATH\n\n# Split PATH into lines (easier to read)\necho $PATH | tr ':' '\\n'\n\n# Check command priority\nwhich python\necho $PATH | tr ':' '\\n' | head -1\n# First PATH directory\n\n# See how shell finds commands\ntype python\n# python is /usr/local/bin/python\n\n# Compare which and type\nwhich python  # Shows path\ntype python   # Shows how it's defined (path/alias/function)\n\n# Check what would run\ncommand -v python\n# Similar to which\n\n# Add directory to PATH (temporary)\nexport PATH=\"/new/directory:$PATH\"\nwhich mycommand  # Now checks /new/directory first\n\n# Check if directory is in PATH\necho $PATH | grep -q \"/usr/local/bin\" && echo \"Found\"\n\n# Debug PATH issues\nwhich -a node\necho $PATH | tr ':' '\\n'\n# Find which PATH entry contains each version\n```",
+        "commonUses": [
+          "**PATH debugging** - Understand command search order",
+          "**Environment setup** - Verify PATH configuration",
+          "**Version management** - Control which version runs",
+          "**Installation verification** - Check if directories are in PATH",
+          "**Shell configuration** - Design .bashrc/.zshrc PATH setup"
+        ]
+      },
+      "hints": [
+        "View PATH: echo $PATH",
+        "PATH is searched left-to-right, first match wins",
+        "which shows the result of the PATH search"
+      ],
+      "sandbox": {},
+      "instructions": "## Your Task\n\nUnderstand how PATH controls which commands run.\n\n**Steps:**\n\n1. **View your PATH:**\n   ```bash\n   echo $PATH\n   ```\n   You'll see colon-separated directories like:\n   `/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin`\n\n2. **Make it readable (split by colons):**\n   ```bash\n   echo $PATH | tr ':' '\\n'\n   ```\n   Now each directory is on its own line\n\n3. **Find a command:**\n   ```bash\n   which bash\n   ```\n   Shows something like `/bin/bash`\n\n4. **Understand the search:**\n   The shell searched your PATH directories in order:\n   - Check /usr/local/bin/bash? (probably not there)\n   - Check /usr/bin/bash? (maybe)\n   - Check /bin/bash? (YES - found it!)\n   - Stop searching (first match wins)\n\n5. **Compare with type command:**\n   ```bash\n   type bash\n   ```\n   Shows: \"bash is /bin/bash\" (same info, different format)\n\n6. **Try with Python:**\n   ```bash\n   which python3\n   echo $PATH | tr ':' '\\n'\n   ```\n   Figure out which PATH directory contains your Python!\n\n**Key insight:**\nThe ORDER of directories in PATH matters!\n- Earlier directories take priority\n- `/usr/local/bin` usually comes before `/usr/bin`\n- This lets you override system programs with local installations\n\n**Completion Code:** WHICH-PATH-EXPERT\n\n**Learn:** PATH determines which executables run. which shows the result. Understanding this is crucial for debugging environment issues!",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from instructions",
+          "validator": "exact",
+          "expected": "WHICH-PATH-EXPERT"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "version": "1.0",
+  "lessons": [
+    {
+      "id": "ps",
+      "command": "ps",
+      "code": "ps",
+      "title": "View Running Processes",
+      "tags": ["processes", "system", "intermediate"],
+      "level": "intermediate",
+      "module": "processes",
+      "about": {
+        "what": "The `ps` command shows you **running processes** on your system. Every program, command, or service that's currently running is a process, and `ps` lets you see:\n\n- **What's running** - All active programs and commands\n- **Process IDs (PIDs)** - Unique numbers identifying each process\n- **Resource usage** - CPU and memory consumption\n- **User ownership** - Who started each process\n- **Process hierarchy** - Parent-child relationships between processes\n\nThe name stands for **'process status'**. You'll use `ps` constantly to:\n- Find hung or frozen programs\n- Monitor resource usage\n- Debug applications\n- Check if services are running\n- Get PIDs for use with `kill`",
+        "history": "The `ps` command has existed since the earliest days of Unix in the 1970s. It was created because Unix was a **multi-tasking, multi-user** system - multiple programs and users could run simultaneously, so administrators needed a way to see what was happening.\n\nInterestingly, `ps` has one of the most complicated and inconsistent interfaces in Unix history. This happened because:\n- Different Unix variants (BSD, System V, GNU) each developed their own `ps` syntax\n- Each version had different flags and output formats\n- When Linux was created, it tried to support all variations\n- The result is that modern `ps` accepts three different flag styles!\n\nToday's `ps` supports:\n- **Unix options** - `-ef`, `-aux` (with dash)\n- **BSD options** - `aux`, `ef` (no dash)\n- **GNU long options** - `--forest`, `--sort`\n\nDespite this complexity, `ps` is essential. Every system administrator learns `ps aux` as one of the first commands for system monitoring. It's used millions of times daily on servers worldwide.",
+        "example": "```bash\n# Show your processes\nps\n\n# Show all processes (BSD style)\nps aux\n# a = all users\n# u = user-oriented format\n# x = include processes without controlling terminal\n\n# Show all processes (Unix style)\nps -ef\n# -e = every process\n# -f = full format listing\n\n# Show process tree/hierarchy\nps auxf   # BSD style\nps -ef --forest   # Unix style with GNU option\n\n# Find specific process\nps aux | grep firefox\nps aux | grep python\n\n# Show processes for specific user\nps -u username\n\n# Custom output format\nps -eo pid,user,cmd,%cpu,%mem --sort=-%cpu\n# Show PID, user, command, CPU%, memory%, sorted by CPU\n\n# Show threads\nps -eLf\n```",
+        "commonUses": [
+          "**Finding processes** - Locate specific programs or services",
+          "**Getting PIDs** - Find process IDs for use with kill command",
+          "**Monitoring resources** - See which processes use most CPU/memory",
+          "**Debugging** - Check if your application is running correctly",
+          "**System administration** - Monitor server processes and services"
+        ]
+      },
+      "hints": [
+        "Use 'ps aux' to see all running processes",
+        "Look through the process list to find the one mentioned in hint.txt",
+        "The process command line will contain the completion code"
+      ],
+      "sandbox": {
+        "startDir": "monitoring",
+        "dirs": ["monitoring"],
+        "files": {
+          "monitoring/hint.txt": "Your task is to find the background process that's running.\n\nUse 'ps aux' to list all processes.\nLook for a process with 'secret-service' in its name.\nThe completion code is in the command line of that process.\n\nNote: In this sandbox, we can't actually spawn processes, so imagine\nyou ran 'ps aux' and found this line in the output:\n\nuser     12345  0.0  0.1  12345  1234 ?  S  10:00  0:00 secret-service --code=PS-PROCESS-MONITOR\n\nThe code is: PS-PROCESS-MONITOR",
+          "monitoring/processes.txt": "Understanding Processes:\n\n1. Every running program is a process\n2. Each process has a unique PID (Process ID)\n3. Processes can spawn child processes\n4. You can view processes with 'ps'\n5. You can kill processes with 'kill'\n\nCommon ps commands:\n- ps          → your processes\n- ps aux      → all processes (BSD style)\n- ps -ef      → all processes (Unix style)\n- ps aux | grep name  → find specific process"
+          }
+      },
+      "instructions": "## Your Task\n\nLearn about the `ps` command and retrieve the completion code from the hint file.\n\n**Steps:**\n1. Read the hint file: `cat hint.txt`\n2. Understand what `ps aux` shows (all processes on the system)\n3. In a real scenario, you would run: `ps aux` to see all processes\n4. You would search for processes: `ps aux | grep secret-service`\n5. The hint file shows you what that output would look like\n6. Copy the completion code from the hint\n7. Type `exit` and paste the code\n\n**Learn:** The `ps` command is essential for monitoring what's running on your system.\n\n**Note:** This lesson focuses on understanding `ps` output. In real usage, you'd run `ps aux` to see actual processes.",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from the hint file",
+          "validator": "exact",
+          "expected": "PS-PROCESS-MONITOR"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,142 @@
+{
+  "version": "1.0",
+  "lessons": [
+    {
+      "id": "rm",
+      "command": "rm",
+      "code": "rm",
+      "title": "Remove Files",
+      "tags": ["basics", "files", "deletion"],
+      "level": "beginner",
+      "module": "file-operations",
+      "about": {
+        "what": "The `rm` command **permanently deletes files**. The name stands for **'remove'**. Basic syntax:\n\n```bash\nrm filename\n```\n\n⚠️ **CRITICAL WARNING**: `rm` is **permanent**. Unlike your desktop's trash/recycle bin, deleted files **cannot be recovered**. There is no undo!\n\nThis makes `rm` powerful but dangerous. Always:\n- Double-check the filename before pressing Enter\n- Use `ls` to verify you're targeting the right file\n- Consider using `rm -i` for confirmation prompts\n- Back up important files before removing anything\n\nDespite the danger, `rm` is essential for managing disk space, cleaning up temporary files, and maintaining organized filesystems.",
+        "history": "`rm` has been a core Unix command since Version 1 in 1971. Its permanent, unrecoverable deletion was intentional - early Unix systems had limited disk space and no room for a 'recycle bin.'\n\nIn the early days, storage was expensive (thousands of dollars per megabyte!), so every deleted file immediately freed valuable space. The concept of a 'trash' folder wasn't practical.\n\nThis permanence led to legendary horror stories:\n- `rm -rf /` (deleting the entire filesystem) became an infamous cautionary tale\n- Many beginners learned about backups the hard way\n- System administrators developed elaborate safety practices\n\nModern Unix systems added safeguards:\n- `rm -i` for interactive confirmation (1970s)\n- Protection for root directories (2000s)\n- Some distros alias `rm` to `rm -i` by default\n\nDespite 50+ years, `rm`'s permanent deletion remains unchanged - it's a core Unix principle that users are trusted with power.",
+        "example": "```bash\n# Remove a single file\nrm unwanted-file.txt\n\n# Remove multiple files\nrm file1.txt file2.txt file3.txt\n\n# Remove with confirmation\nrm -i important-file.txt\n# Prompts: rm: remove regular file 'important-file.txt'? y\n\n# Common pattern: clean up temporary files\nrm *.tmp\nrm temp-*\n\n# Remove backup files\nrm *~\nrm *.bak\n\n# Safe workflow\nls *.log          # Verify which files match\nrm *.log          # Remove them\n```",
+        "commonUses": [
+          "**Cleanup** - Remove temporary or unnecessary files",
+          "**Disk space management** - Delete large files no longer needed",
+          "**Build cleanup** - Remove compiled outputs before rebuilding",
+          "**Development** - Remove test files or generated content",
+          "**Organization** - Delete outdated or duplicate files"
+        ]
+      },
+      "hints": [
+        "Syntax: rm filename",
+        "Be careful - deletion is permanent!",
+        "Use 'ls' first to verify the file you want to delete"
+      ],
+      "sandbox": {
+        "startDir": "workspace",
+        "dirs": ["workspace"],
+        "files": {
+          "workspace/task.txt": "Task: Remove the file 'temporary.txt' - it's no longer needed.\n\nOnce deleted, check completion.txt for your code.",
+          "workspace/temporary.txt": "This is a temporary file that should be deleted.\n\nIt's safe to remove with: rm temporary.txt",
+          "workspace/important.txt": "⚠️ DO NOT DELETE THIS FILE ⚠️\n\nThis file contains important data!",
+          "workspace/completion.txt": "Good! You've successfully removed a file.\n\n=========================================\nCOMPLETION CODE: RM-DELETE-SUCCESS\n=========================================\n\nThe rm command permanently deletes files.\nThere is no undo and no recycle bin.\n\nAlways double-check before running rm!\n\nBest practice: use 'ls' to verify the file first."
+        }
+      },
+      "instructions": "## Your Task\n\nRemove the file `temporary.txt` - it's no longer needed.\n\n⚠️ **WARNING**: `rm` is permanent. Be careful!\n\n**Steps:**\n1. Read the task: `cat task.txt`\n2. View the temporary file: `cat temporary.txt`\n3. List all files: `ls` - verify which file to delete\n4. Run `rm temporary.txt` to delete it\n5. Verify it's gone: `ls` - should not see 'temporary.txt'\n6. **Important**: Make sure 'important.txt' still exists!\n7. Read completion file: `cat completion.txt`\n8. Copy the code\n9. Type `exit` and paste the code\n\n**Learn:** `rm` permanently deletes files - there's no undo!",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from completion.txt",
+          "validator": "exact",
+          "expected": "RM-DELETE-SUCCESS"
+        }
+      ]
+    },
+    {
+      "id": "rm-r",
+      "command": "rm",
+      "code": "rm -r",
+      "title": "Remove Directories Recursively",
+      "tags": ["intermediate", "directories", "deletion"],
+      "level": "intermediate",
+      "module": "file-operations",
+      "about": {
+        "what": "The `rm -r` flag enables **recursive deletion** - removing entire directories and all their contents.\n\n```bash\nrm -r directory-name\n```\n\n⚠️ **EXTREME WARNING**: This is one of the most dangerous commands in Unix!\n- Deletes the directory\n- Deletes all files inside\n- Deletes all subdirectories\n- Deletes everything inside those subdirectories\n- **ALL PERMANENTLY - NO RECOVERY**\n\n**ALWAYS**:\n- Triple-check the directory name\n- Use `ls -R directory/` to see what will be deleted\n- Consider `rm -ri` for confirmation on each file\n- Back up anything important first\n\nThe infamous `rm -rf /` (force delete everything) has destroyed countless systems. Treat `rm -r` with extreme respect!",
+        "history": "The `-r` (recursive) flag was added in the mid-1970s when users needed to delete directory trees. Without it, you had to manually delete all files, then all subdirectories, then the directory itself.\n\nThe addition of `-r` made cleanup easier but also enabled catastrophic mistakes. Stories of `rm -rf` disasters became legendary:\n\n- Toy Story 2 (1998): Almost lost to accidental `rm -rf` on the production server\n- Countless startups have lost data to mistyped `rm -rf` commands  \n- System admins developed elaborate safeguards and backup systems\n\nModern safety improvements:\n- `rm -rf /` now requires `--no-preserve-root` (GNU coreutils, 2006)\n- Some systems won't delete `/` at all\n- Many teams use version control and backups as primary protection\n\nDespite the danger, `rm -r` remains essential for:\n- Removing entire projects\n- Cleaning build directories\n- Deleting downloaded temporary folders\n\nThe key is using it carefully and deliberately.",
+        "example": "```bash\n# Remove a directory and all contents\nrm -r old-project\n\n# Remove multiple directories\nrm -r dir1 dir2 dir3\n\n# Safe pattern: inspect first\nls -R temp-files/    # See what's inside\nrm -r temp-files/    # Delete it\n\n# Interactive recursive deletion (safer)\nrm -ri old-folder/   # Prompts for each file\n\n# Common cleanup tasks\nrm -r node_modules/  # Remove dependencies (can reinstall)\nrm -r build/         # Remove build output\nrm -r .cache/        # Remove cache directories\n\n# DANGEROUS - Never do this!\n# rm -rf /           # Would delete everything (now blocked)\n# rm -rf *           # Deletes everything in current dir\n```",
+        "commonUses": [
+          "**Project cleanup** - Remove entire old projects or branches",
+          "**Build cleanup** - Delete build outputs and temporary directories",
+          "**Dependency cleanup** - Remove node_modules, vendor directories",
+          "**Cache cleanup** - Delete cache and temporary directories",
+          "**Development** - Remove test directories and generated content"
+        ]
+      },
+      "hints": [
+        "Use -r flag for recursive directory deletion",
+        "ALWAYS check what you're deleting first with ls -R",
+        "Deletion is permanent - be extremely careful!"
+      ],
+      "sandbox": {
+        "startDir": "workspace",
+        "dirs": ["workspace", "workspace/old-project", "workspace/old-project/src", "workspace/important-project"],
+        "files": {
+          "workspace/task.txt": "Task: Remove the entire 'old-project' directory - it's no longer needed.\n\nBe careful! Make sure to keep 'important-project'.\n\nOnce deleted, check completion.txt for your code.",
+          "workspace/old-project/README.md": "This is an old project that should be deleted.",
+          "workspace/old-project/src/old-code.js": "console.log('old code');",
+          "workspace/important-project/data.txt": "⚠️ CRITICAL DATA - DO NOT DELETE ⚠️",
+          "workspace/completion.txt": "Excellent! You've safely removed a directory.\n\n===============================================\nCOMPLETION CODE: RM-RECURSIVE-MASTER\n===============================================\n\nThe -r flag enables recursive deletion.\nThis removes the directory and ALL its contents.\n\nThis is one of the most dangerous commands in Unix!\n\nALWAYS:\n- Triple-check what you're deleting\n- Use 'ls -R' to see contents first  \n- Consider using 'rm -ri' for confirmations"
+        }
+      },
+      "instructions": "## Your Task\n\nRemove the entire `old-project` directory and all its contents.\n\n⚠️ **EXTREME CAUTION**: This deletes everything inside!\n\n**Steps:**\n1. Read the task: `cat task.txt`\n2. View what will be deleted: `ls -R old-project/`\n3. Verify the structure: `ls` - should see both 'old-project' and 'important-project'\n4. Run `rm -r old-project` to delete the directory recursively\n5. Verify it's gone: `ls` - should not see 'old-project'\n6. **CRITICAL**: Verify 'important-project' still exists!\n7. Read completion file: `cat completion.txt`\n8. Copy the code\n9. Type `exit` and paste the code\n\n**Learn:** `rm -r` recursively deletes entire directory trees - use with extreme caution!",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from completion.txt",
+          "validator": "exact",
+          "expected": "RM-RECURSIVE-MASTER"
+        }
+      ]
+    },
+    {
+      "id": "rm-i",
+      "command": "rm",
+      "code": "rm -i",
+      "title": "Interactive Deletion with Confirmation",
+      "tags": ["intermediate", "files", "safety"],
+      "level": "intermediate",
+      "module": "file-operations",
+      "about": {
+        "what": "The `rm -i` flag enables **interactive mode** - `rm` will prompt you to confirm each deletion before proceeding.\n\n```bash\nrm -i important-file.txt\n# Prompts: rm: remove regular file 'important-file.txt'? y\n```\n\nYou respond with:\n- `y` or `yes` - Confirm deletion\n- `n` or `no` - Skip this file\n\nThis is a **critical safety feature** that prevents accidental deletions. It's especially useful when:\n- Deleting with wildcards (`rm -i *.txt`)\n- Removing important files\n- Cleaning directories you're unsure about\n- Learning `rm` for the first time\n\nSome users alias `rm` to `rm -i` permanently for added safety.",
+        "history": "The `-i` (interactive) flag was added to `rm` in the mid-1970s after too many users accidentally deleted important files.\n\nEarly Unix users quickly learned that `rm` was permanently destructive. Typos and mistakes led to lost data and frustrated users. The `-i` flag was introduced as a safety mechanism.\n\nInteresting developments:\n- Some Unix distributions alias `rm` to `rm -i` by default (controversial!)\n- System administrators often mandate `rm -i` for junior admins\n- Many users create `alias rm='rm -i'` in their shell config\n- Advanced users sometimes use `\\rm` to bypass the alias when they're certain\n\nThe introduction of `-i` reflected a philosophical shift in Unix:\n- Original: Trust users completely (they know what they're doing)\n- Evolution: Provide safety mechanisms for complex operations\n\nToday, `-i` is considered a best practice for:\n- Production servers\n- Critical file operations  \n- Wildcard deletions\n- Learning environments",
+        "example": "```bash\n# Interactive single file deletion\nrm -i important.txt\n# rm: remove regular file 'important.txt'? y\n\n# Interactive with wildcards (VERY USEFUL)\nrm -i *.txt\n# rm: remove regular file 'file1.txt'? y\n# rm: remove regular file 'file2.txt'? n  (skipped)\n# rm: remove regular file 'file3.txt'? y\n\n# Combine with recursive for directory safety\nrm -ri old-folder/\n# Prompts for each file before deleting\n\n# Common safety alias in ~/.bashrc or ~/.zshrc\nalias rm='rm -i'\n\n# Bypass alias when you're certain\n\\rm file.txt  # No confirmation\n```",
+        "commonUses": [
+          "**Safe wildcards** - Review each match before deleting",
+          "**Important files** - Get confirmation for critical deletions",
+          "**Learning** - Safe practice while learning rm command",
+          "**Production systems** - Prevent catastrophic mistakes",
+          "**Cleanup tasks** - Review files before removing them"
+        ]
+      },
+      "hints": [
+        "Use -i flag for confirmation prompts",
+        "Answer 'y' to confirm deletion, 'n' to skip",
+        "This helps prevent accidental deletions"
+      ],
+      "sandbox": {
+        "startDir": "workspace",
+        "dirs": ["workspace"],
+        "files": {
+          "workspace/task.txt": "Task: Use interactive mode to safely delete 'temp1.txt' and 'temp2.txt'.\n\n⚠️ DO NOT delete 'keep.txt' - answer 'n' if prompted!\n\nOnce done, check completion.txt for your code.",
+          "workspace/temp1.txt": "Temporary file 1 - safe to delete.",
+          "workspace/temp2.txt": "Temporary file 2 - safe to delete.",
+          "workspace/keep.txt": "⚠️ IMPORTANT - Keep this file!",
+          "workspace/completion.txt": "Perfect! You've mastered interactive deletion.\n\n===============================================\nCOMPLETION CODE: RM-INTERACTIVE-EXPERT\n===============================================\n\nThe -i flag is one of the most important safety features.\nIt prompts before each deletion, preventing mistakes.\n\nThis is ESSENTIAL when using wildcards:\n  rm -i *.txt\n\nMany users alias 'rm' to 'rm -i' permanently:\n  alias rm='rm -i'\n\nAdd this to your ~/.bashrc or ~/.zshrc for safety!"
+        }
+      },
+      "instructions": "## Your Task\n\nUse interactive mode to delete only the temporary files, keeping `keep.txt` safe.\n\n**Steps:**\n1. Read the task: `cat task.txt`\n2. List all files: `ls`\n3. Run `rm -i temp1.txt temp2.txt keep.txt`\n4. When prompted for temp1.txt, answer: `y`\n5. When prompted for temp2.txt, answer: `y`  \n6. When prompted for keep.txt, answer: `n` (IMPORTANT!)\n7. Verify results: `ls` - should see 'keep.txt' but not the temp files\n8. Read completion file: `cat completion.txt`\n9. Copy the code\n10. Type `exit` and paste the code\n\n**Learn:** The `-i` flag adds confirmation prompts, preventing accidental deletions.",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from completion.txt",
+          "validator": "exact",
+          "expected": "RM-INTERACTIVE-EXPERT"
+        }
+      ]
+    }
+  ]
+}

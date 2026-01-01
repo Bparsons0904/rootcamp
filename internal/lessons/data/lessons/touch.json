@@ -1,0 +1,135 @@
+{
+  "version": "1.0",
+  "lessons": [
+    {
+      "id": "touch",
+      "command": "touch",
+      "code": "touch",
+      "title": "Create Empty Files",
+      "tags": ["basics", "files", "creation"],
+      "level": "beginner",
+      "module": "file-operations",
+      "about": {
+        "what": "The `touch` command **creates empty files** or **updates the timestamp** of existing files. While it seems simple, it's incredibly useful for:\n\n- Quickly creating placeholder files\n- Resetting file modification times\n- Creating files that other programs expect to exist\n- Testing scripts that check for file presence\n\nThe name 'touch' comes from the idea of 'touching' a file to update its modification time, but its most common use today is creating new empty files.",
+        "history": "`touch` was added to Unix in the early 1970s, but its original purpose was quite different from how it's used today!\n\nInitially, `touch` was created to **update file timestamps** for build systems. The `make` command (used for compiling programs) decides what to rebuild based on file modification times. Developers needed a way to manually update timestamps to force or prevent rebuilds, so `touch` was born.\n\nThe side effect of creating files if they didn't exist was almost accidental - the command would create a file with the current timestamp if it wasn't found. Over time, this side effect became the primary use case!\n\nToday, most people use `touch` to create empty files and rarely think about its timestamp-updating capabilities. It's a perfect example of a tool evolving beyond its original purpose.",
+        "example": "```bash\n# Create a single empty file\ntouch newfile.txt\n\n# Create multiple files at once\ntouch file1.txt file2.txt file3.txt\n\n# Common pattern: create before editing\ntouch config.json\nvim config.json\n\n# Create files with specific extensions\ntouch index.html style.css script.js\n\n# Update modification time of existing file\ntouch existing-file.txt  # Updates timestamp to now\n\n# Verify file was created\ntouch myfile.txt\nls -l myfile.txt  # Shows size of 0 bytes\n```",
+        "commonUses": [
+          "**Quick file creation** - Create empty files that you'll edit later",
+          "**Placeholder files** - Create files that scripts or programs expect",
+          "**Project setup** - Quickly create multiple files for a new project",
+          "**Testing** - Create test files for script development",
+          "**Timestamp updates** - Force make or build tools to rebuild files"
+        ]
+      },
+      "hints": [
+        "Use 'touch' followed by a filename to create it",
+        "After creating the file, use 'ls' to verify it exists",
+        "The task file tells you which filename to create"
+      ],
+      "sandbox": {
+        "startDir": "workspace",
+        "dirs": ["workspace"],
+        "files": {
+          "workspace/task.txt": "Task: Create an empty file called 'newfile.txt' using the touch command.\n\nOnce created, check completion.txt for your code.",
+          "workspace/completion.txt": "Great! You've created your first file with touch.\n\n=========================================\nCOMPLETION CODE: TOUCH-CREATE-SUCCESS\n=========================================\n\nThe touch command is perfect for quickly creating empty files.\nIt's much faster than opening an editor just to create a file.\n\nYou can create multiple files at once:\n  touch file1.txt file2.txt file3.txt"
+        }
+      },
+      "instructions": "## Your Task\n\nCreate an empty file called `newfile.txt` using the `touch` command.\n\n**Steps:**\n1. Read the task: `cat task.txt`\n2. Run `touch newfile.txt` to create the empty file\n3. Verify it exists: `ls` - you should see 'newfile.txt'\n4. Check its size: `ls -lh newfile.txt` - size should be 0 bytes\n5. Read completion file: `cat completion.txt`\n6. Copy the code\n7. Type `exit` and paste the code\n\n**Learn:** `touch` creates empty files instantly, perfect for placeholders or quick file creation.",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from completion.txt",
+          "validator": "exact",
+          "expected": "TOUCH-CREATE-SUCCESS"
+        }
+      ]
+    },
+    {
+      "id": "touch-multiple",
+      "command": "touch",
+      "code": "touch (multiple)",
+      "title": "Create Multiple Files",
+      "tags": ["intermediate", "files", "creation"],
+      "level": "intermediate",
+      "module": "file-operations",
+      "about": {
+        "what": "`touch` can create **multiple files simultaneously** by listing them as arguments:\n\n```bash\ntouch file1.txt file2.txt file3.txt\n```\n\nThis is incredibly useful for setting up project structures. Instead of running `touch` three times, you create all files at once.\n\nYou can also use **brace expansion** (a shell feature) for related files:\n```bash\ntouch {index,about,contact}.html\n# Creates: index.html, about.html, contact.html\n```\n\nThis makes project initialization much faster and more efficient.",
+        "history": "Multi-file support in `touch` has been present since early Unix, following the Unix philosophy of tools that work on multiple inputs.\n\nThe real productivity boost came with **brace expansion** in modern shells (Bash, Zsh). This feature lets you generate multiple filenames from patterns:\n\n```bash\n# Create a year's worth of log files\ntouch log-2024-{01..12}.txt\n# Creates: log-2024-01.txt through log-2024-12.txt\n```\n\nThis pattern became especially important with the rise of web development in the 1990s and 2000s, when developers needed to quickly scaffold projects with many files.\n\nToday, creating multiple files with `touch` is a fundamental skill for anyone working on the command line.",
+        "example": "```bash\n# Create multiple related files\ntouch index.html styles.css script.js\n\n# Use brace expansion for similar names\ntouch page-{1,2,3,4,5}.html\n\n# Create files with different extensions\ntouch README.{md,txt,html}\n\n# Set up a project structure\ntouch app.js config.js routes.js models.js\n\n# Create numbered files\ntouch test-{01..10}.txt\n\n# Combine with mkdir for full setup\nmkdir src tests\ntouch src/main.js tests/main.test.js\n```",
+        "commonUses": [
+          "**Project scaffolding** - Create all needed files for a new project",
+          "**Web development** - Quickly create HTML/CSS/JS file sets",
+          "**Testing** - Create multiple test files at once",
+          "**Documentation** - Generate placeholder docs for different formats",
+          "**Data processing** - Create empty output files before processing"
+        ]
+      },
+      "hints": [
+        "List multiple filenames separated by spaces",
+        "After creating them, use 'ls' to see all files",
+        "Read the completion file to get your code"
+      ],
+      "sandbox": {
+        "startDir": "workspace",
+        "dirs": ["workspace"],
+        "files": {
+          "workspace/task.txt": "Task: Create three files at once:\n  - index.html\n  - styles.css\n  - script.js\n\nCreate all three in a single touch command.\n\nOnce created, check completion.txt for your code.",
+          "workspace/completion.txt": "Excellent! You've mastered creating multiple files efficiently.\n\n============================================\nCOMPLETION CODE: TOUCH-MULTI-FILE-EXPERT\n============================================\n\nCreating multiple files at once is a huge productivity boost.\nYou can create dozens of files in a single command.\n\nTry brace expansion next time:\n  touch file-{1..10}.txt\nThis creates file-1.txt through file-10.txt instantly!"
+        }
+      },
+      "instructions": "## Your Task\n\nCreate three files at once: `index.html`, `styles.css`, and `script.js`\n\n**Steps:**\n1. Read the task: `cat task.txt`\n2. Run `touch index.html styles.css script.js` to create all three files\n3. Verify with `ls` - you should see all three files\n4. Check they're empty: `ls -lh` - all should be 0 bytes\n5. Read completion file: `cat completion.txt`\n6. Copy the code\n7. Type `exit` and paste the code\n\n**Learn:** Creating multiple files at once is much faster than running touch separately for each file.",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from completion.txt",
+          "validator": "exact",
+          "expected": "TOUCH-MULTI-FILE-EXPERT"
+        }
+      ]
+    },
+    {
+      "id": "touch-timestamp",
+      "command": "touch",
+      "code": "touch (update timestamp)",
+      "title": "Update File Timestamps",
+      "tags": ["intermediate", "files", "timestamps"],
+      "level": "intermediate",
+      "module": "file-operations",
+      "about": {
+        "what": "While most people use `touch` to create files, its **original purpose** was updating file modification timestamps. When you run `touch` on an **existing file**, it updates the timestamp to the current time **without changing the file contents**.\n\nThis is useful for:\n- **Build systems** - Force `make` to rebuild files\n- **Backup tools** - Mark files as modified for incremental backups  \n- **File monitoring** - Trigger file watchers\n- **Testing** - Simulate recent file modifications\n\nThe file's **modification time** (mtime) is what most tools check to determine if a file has changed.",
+        "history": "This was `touch`'s **original and primary purpose** when created in the 1970s!\n\nThe `make` build system (written in 1976) revolutionized software compilation by only rebuilding files that had changed. It determined this by comparing timestamps - if a source file was newer than its compiled output, it needed rebuilding.\n\nDevelopers needed a way to manually manipulate timestamps to:\n- Force a rebuild without changing code\n- Prevent rebuilding files they knew were current\n- Fix timestamp issues after restoring from backups\n\n`touch` was the solution. Its name literally means 'touch the file to update its timestamp.'\n\nInterestingly, the ability to create files if they didn't exist was initially just a side effect. But over time, file creation became the more common use case, and many modern developers don't even know about the timestamp functionality!",
+        "example": "```bash\n# Update timestamp of existing file\ntouch existing-file.txt\nls -l existing-file.txt  # Shows current time\n\n# Force rebuild with make\ntouch source.c\nmake  # Will rebuild because source.c is now 'newer'\n\n# Update timestamps of multiple files\ntouch *.js  # Updates all JavaScript files\n\n# Before and after comparison\nls -l myfile.txt\n# -rw-r--r-- 1 user group 1234 Dec 30 10:00 myfile.txt\n\ntouch myfile.txt\nls -l myfile.txt  \n# -rw-r--r-- 1 user group 1234 Dec 31 14:30 myfile.txt\n# Size unchanged, but timestamp updated!\n```",
+        "commonUses": [
+          "**Build systems** - Force make/cmake to rebuild specific files",
+          "**File monitoring** - Trigger file watchers or monitors",
+          "**Testing** - Simulate file modifications in test scenarios",
+          "**Backup systems** - Mark files for incremental backup",
+          "**Development** - Fix timestamp issues after git checkout or file restoration"
+        ]
+      },
+      "hints": [
+        "Run touch on an existing file to update its timestamp",
+        "Use 'ls -l' to view timestamps before and after",
+        "The file contents don't change, only the modification time"
+      ],
+      "sandbox": {
+        "startDir": "workspace",
+        "dirs": ["workspace"],
+        "files": {
+          "workspace/task.txt": "Task: The file 'oldfile.txt' has an old timestamp.\n\nUpdate its timestamp to the current time using touch.\n\nOnce updated, check completion.txt for your code.",
+          "workspace/oldfile.txt": "This file has been here a while.\nIts timestamp is old.\n\nUse touch to update it without changing the contents!",
+          "workspace/completion.txt": "Perfect! You've mastered timestamp updates.\n\n===============================================\nCOMPLETION CODE: TOUCH-TIMESTAMP-MASTER\n===============================================\n\nUpdating timestamps is touch's original purpose!\nThis is essential for build systems and file monitoring.\n\nThe file contents remain unchanged - only the mtime updates.\n\nUse 'ls -l' to verify timestamp changes."
+        }
+      },
+      "instructions": "## Your Task\n\nUpdate the timestamp of the existing file `oldfile.txt` without changing its contents.\n\n**Steps:**\n1. Read the task: `cat task.txt`\n2. View the current timestamp: `ls -l oldfile.txt`\n3. Run `touch oldfile.txt` to update the timestamp\n4. View the new timestamp: `ls -l oldfile.txt` - should be current time\n5. Verify contents unchanged: `cat oldfile.txt` - same text\n6. Read completion file: `cat completion.txt`\n7. Copy the code\n8. Type `exit` and paste the code\n\n**Learn:** Touch updates file timestamps without changing contents - its original purpose!",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from completion.txt",
+          "validator": "exact",
+          "expected": "TOUCH-TIMESTAMP-MASTER"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,137 @@
+{
+  "version": "1.0",
+  "lessons": [
+    {
+      "id": "cut-f",
+      "command": "cut",
+      "code": "cut -f",
+      "title": "Extract Fields from Delimited Data",
+      "tags": ["basics", "text", "extraction"],
+      "level": "beginner",
+      "module": "text-operations",
+      "about": {
+        "what": "The `cut` command **extracts specific fields (columns)** from delimited text data. By default, it assumes **tab-delimited** data.\n\n```bash\ncut -f 2 filename      # Extract field 2\ncut -f 1,3 filename    # Extract fields 1 and 3\ncut -f 2-4 filename    # Extract fields 2 through 4\n```\n\n**How it works:**\n- Each line is split by the delimiter (default: TAB)\n- Fields are numbered starting from 1\n- You specify which field(s) to extract\n- Only those fields are output\n\nPerfect for working with:\n- TSV (tab-separated values) files\n- Structured data with columns\n- CSV files (with `-d` flag)\n- Log files with consistent formats",
+        "history": "`cut` was created in the late 1970s at Bell Labs for extracting columns from structured text data - a common task in data processing.\n\nBefore `cut`, extracting specific fields required:\n- Complex `awk` or `sed` scripts\n- Custom programs\n- Manual parsing\n\nThe name \"cut\" literally means \"cut out\" specific pieces of each line. The tool was designed to complement:\n- `paste` (merges columns)\n- `join` (combines files by key)\n- `grep` (selects rows)\n\nTogether, these tools provided a complete text data processing toolkit.\n\n**Why TAB as default delimiter?**\nIn the 1970s-1980s, TSV (tab-separated values) was more common than CSV:\n- Tabs were visible in editors as whitespace\n- Easier to type than commas\n- Fewer conflicts with data content\n- Standard in Unix tools like `ps`, `df`, `who`\n\nCSV became dominant later with spreadsheet software (Excel, Lotus 1-2-3), but `cut` retained its TAB default for backward compatibility.\n\n**Design philosophy:**\n`cut` follows Unix's columnar thinking - data as tables where:\n- Each line is a row\n- Fields are columns separated by delimiters\n- Tools extract, merge, or transform columns\n\nThis thinking influenced:\n- Database query languages (SQL's SELECT)\n- Spreadsheet tools\n- Data frame libraries (Pandas, R)",
+        "example": "```bash\n# Extract single field (column 2)\ncut -f 2 users.tsv\n\n# Extract multiple specific fields\ncut -f 1,3,5 data.tsv\n# (Fields 1, 3, and 5)\n\n# Extract range of fields\ncut -f 2-4 data.tsv\n# (Fields 2, 3, and 4)\n\n# Extract from field N to end\ncut -f 3- data.tsv\n# (Field 3 through last field)\n\n# Extract from start to field N\ncut -f -2 data.tsv\n# (Field 1 through 2)\n\n# Real-world: extract names from /etc/passwd\ncut -f 1 -d ':' /etc/passwd\n\n# Common pattern: extract and process\ncut -f 2 data.tsv | sort | uniq\n# (Unique values from field 2)\n\n# Multiple files\ncut -f 1 file1.tsv file2.tsv\n```",
+        "commonUses": [
+          "**Column extraction** - Get specific columns from TSV/CSV data",
+          "**Data transformation** - Extract relevant fields from structured data",
+          "**Log parsing** - Extract fields from formatted log files",
+          "**System info** - Parse output from ps, df, who, etc.",
+          "**Pipeline component** - Extract fields in data processing pipelines"
+        ]
+      },
+      "hints": [
+        "Use -f to specify field numbers (columns)",
+        "Default delimiter is TAB",
+        "Syntax: cut -f 2 filename (extracts field 2)"
+      ],
+      "sandbox": {
+        "startDir": "workspace",
+        "dirs": ["workspace"],
+        "files": {
+          "workspace/task.txt": "Task: Extract the 'Status' column from users.tsv.\n\nThe file has 4 columns: ID, Name, Email, Status.\nUse cut to extract just the Status column (field 4).\n\nOnce you extract the status field, check completion.txt.",
+          "workspace/users.tsv": "ID\tName\tEmail\tStatus\n1\tAlice\talice@example.com\tactive\n2\tBob\tbob@example.com\tinactive\n3\tCharlie\tcharlie@example.com\tCUT-FIELDS-SUCCESS\n4\tDavid\tdavid@example.com\tactive\n5\tEve\teve@example.com\tactive",
+          "workspace/completion.txt": "Great! You've extracted a field from delimited data.\n\n=========================================\nCOMPLETION CODE: CUT-FIELDS-SUCCESS\n=========================================\n\nThe cut command extracts specific columns (fields).\n\nBasic syntax:\n  cut -f N filename     (extract field N)\n  cut -f 1,3 filename   (extract fields 1 and 3)\n  cut -f 2-4 filename   (extract fields 2 through 4)\n\nDefault delimiter: TAB\n  TSV files work directly\n  For CSV, use: cut -d ',' -f N\n\nCommon patterns:\n\n  # Extract and deduplicate\n  cut -f 2 data.tsv | sort | uniq\n\n  # Extract and count unique values\n  cut -f 3 data.tsv | sort | uniq | wc -l\n\n  # Extract multiple fields\n  cut -f 1,3 data.tsv"
+        }
+      },
+      "instructions": "## Your Task\n\nExtract the **Status** column (field 4) from `users.tsv`.\n\n**Steps:**\n1. Read the task: `cat task.txt`\n2. View the file: `cat users.tsv` - notice tab-separated columns\n3. Extract field 1: `cut -f 1 users.tsv` - shows IDs\n4. Extract field 2: `cut -f 2 users.tsv` - shows Names\n5. Extract field 4: `cut -f 4 users.tsv` - shows Status column\n6. Find the completion code in the Status column\n7. Read completion file: `cat completion.txt`\n8. Copy the code\n9. Type `exit` and paste the code\n\n**Learn:** `cut -f` extracts specific columns from tab-delimited data!",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from Status field",
+          "validator": "exact",
+          "expected": "CUT-FIELDS-SUCCESS"
+        }
+      ]
+    },
+    {
+      "id": "cut-d",
+      "command": "cut",
+      "code": "cut -d",
+      "title": "Extract Fields with Custom Delimiter",
+      "tags": ["intermediate", "text", "extraction"],
+      "level": "intermediate",
+      "module": "text-operations",
+      "about": {
+        "what": "The `cut -d` flag specifies a **custom delimiter** instead of the default TAB. This is essential for working with CSV files, colon-separated files, and other delimited formats.\n\n```bash\ncut -d ',' -f 2 file.csv       # CSV (comma-delimited)\ncut -d ':' -f 1 /etc/passwd    # Colon-delimited\ncut -d '|' -f 3 data.txt       # Pipe-delimited\n```\n\n**Important:** The delimiter must be a **single character**. Multi-character delimiters are not supported.\n\n**Common delimiters:**\n- `,` (comma) - CSV files\n- `:` (colon) - `/etc/passwd`, PATH variables\n- `|` (pipe) - Database exports\n- `;` (semicolon) - Alternative CSV format\n- ` ` (space) - Some log formats\n\nCombine `-d` and `-f` to extract specific fields from any delimited format.",
+        "history": "The `-d` (delimiter) flag was part of `cut` from its original implementation, reflecting the diversity of delimited file formats in Unix systems.\n\nIn the 1970s-1980s, different Unix tools and files used different delimiters:\n\n**System files:**\n- `/etc/passwd` - colon-separated (username:password:uid:gid:...)\n- `/etc/group` - colon-separated\n- `$PATH` - colon-separated directories\n\n**Data formats:**\n- Custom exports from databases\n- Output from Unix tools (often space or tab-separated)\n- Data exchange files between systems\n\nThe single-character restriction was a simplification:\n- Made parsing faster (just check each character)\n- Avoided ambiguity (multi-character delimiters complicate matching)\n- Covered 99% of real-world use cases\n\nWhen CSV became dominant in the 1990s (thanks to spreadsheet software), `-d ','` became the most common non-default use of `cut`.\n\n**Workarounds for multi-character delimiters:**\nFor delimiters like ` | ` (space-pipe-space), users learned to:\n```bash\n# Can't do this (multi-char delimiter):\ncut -d ' | ' -f 2 file.txt\n\n# Workaround with sed/awk:\nsed 's/ | /|/g' file.txt | cut -d '|' -f 2\nawk -F ' \\\\| ' '{print $2}' file.txt\n```\n\nModern alternatives like `awk` handle multi-character delimiters, but `cut -d` remains the standard for single-character delimiters due to its simplicity and speed.",
+        "example": "```bash\n# CSV files (comma-delimited)\ncut -d ',' -f 2 products.csv\ncut -d ',' -f 1,3,5 data.csv\n\n# Extract usernames from /etc/passwd\ncut -d ':' -f 1 /etc/passwd\n\n# Extract home directories\ncut -d ':' -f 6 /etc/passwd\n\n# Pipe-delimited data\ncut -d '|' -f 2 database-export.txt\n\n# Space-delimited (use quotes)\ncut -d ' ' -f 1 access.log\n\n# Semicolon-delimited\ncut -d ';' -f 3 european-data.csv\n\n# Extract prices from CSV\ncut -d ',' -f 3 products.csv | sort -n\n\n# Get unique values from CSV column\ncut -d ',' -f 2 data.csv | sort | uniq\n\n# Multiple files\ncut -d ',' -f 1 file1.csv file2.csv\n\n# PATH components\necho $PATH | tr ':' '\\n'\n# (tr converts : to newlines for readability)\n```",
+        "commonUses": [
+          "**CSV parsing** - Extract columns from comma-separated files",
+          "**System file parsing** - Process /etc/passwd, /etc/group, etc.",
+          "**Log analysis** - Extract fields from delimited log formats",
+          "**Data conversion** - Extract and transform delimited data",
+          "**Configuration files** - Parse colon or pipe-delimited configs"
+        ]
+      },
+      "hints": [
+        "Use -d to specify delimiter (single character)",
+        "Syntax: cut -d ',' -f 2 filename",
+        "Common: -d ',' for CSV, -d ':' for system files"
+      ],
+      "sandbox": {
+        "startDir": "workspace",
+        "dirs": ["workspace"],
+        "files": {
+          "workspace/task.txt": "Task: Extract the 'stock' column from products.csv.\n\nThis is a CSV file (comma-separated). Use cut with -d ',' to\nspecify comma as the delimiter, then extract field 4 (stock).\n\nOnce you extract stock values, check completion.txt.",
+          "workspace/products.csv": "id,name,price,stock\n1,Laptop,999.99,15\n2,Mouse,29.99,CUT-DELIMITER-MASTER\n3,Keyboard,79.99,42\n4,Monitor,299.99,8\n5,Headphones,129.99,23",
+          "workspace/completion.txt": "Perfect! You can now parse CSV files with cut.\n\n===============================================\nCOMPLETION CODE: CUT-DELIMITER-MASTER\n===============================================\n\nThe -d flag specifies custom delimiters.\n\nCommon delimiters:\n  -d ','   # CSV (comma-separated)\n  -d ':'   # /etc/passwd, PATH\n  -d '|'   # Pipe-delimited\n  -d ';'   # Semicolon-delimited\n  -d ' '   # Space-delimited\n\nExamples:\n\n  # Extract from CSV\n  cut -d ',' -f 2 data.csv\n\n  # Get usernames\n  cut -d ':' -f 1 /etc/passwd\n\n  # Extract prices\n  cut -d ',' -f 3 products.csv | sort -n\n\n  # Multiple fields\n  cut -d ',' -f 1,3,5 data.csv\n\nLimitation: Delimiter must be single character.\nFor multi-char delimiters, use awk or sed."
+        }
+      },
+      "instructions": "## Your Task\n\nExtract the **stock** column (field 4) from the CSV file `products.csv`.\n\n**Steps:**\n1. Read the task: `cat task.txt`\n2. View the file: `cat products.csv` - notice comma-separated values\n3. Try without -d: `cut -f 4 products.csv` - doesn't work (default is TAB!)\n4. Use comma delimiter: `cut -d ',' -f 4 products.csv` - extracts stock\n5. Try other fields: `cut -d ',' -f 2 products.csv` - shows names\n6. Find the completion code in the stock column\n7. Read completion file: `cat completion.txt`\n8. Copy the code\n9. Type `exit` and paste the code\n\n**Learn:** Use `-d` to specify delimiter - essential for CSV files!",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from stock field",
+          "validator": "exact",
+          "expected": "CUT-DELIMITER-MASTER"
+        }
+      ]
+    },
+    {
+      "id": "cut-pipes",
+      "command": "cut",
+      "code": "cut (with pipes)",
+      "title": "Combine Cut with Pipes for Data Analysis",
+      "tags": ["intermediate", "text", "extraction", "pipes"],
+      "level": "intermediate",
+      "module": "text-operations",
+      "about": {
+        "what": "`cut` becomes incredibly powerful when **combined with pipes** to create data processing pipelines.\n\n```bash\ncut -d ',' -f 2 data.csv | sort | uniq\n```\n\nThis pipeline:\n1. Extracts field 2 from CSV\n2. Sorts the values\n3. Removes duplicates\n4. Result: Unique values from that column\n\n**Common pipeline patterns:**\n\n**Extract and deduplicate:**\n```bash\ncut -d ',' -f 2 data.csv | sort | uniq\n```\n\n**Extract and count unique:**\n```bash\ncut -d ',' -f 2 data.csv | sort | uniq | wc -l\n```\n\n**Extract and analyze frequency:**\n```bash\ncut -d ',' -f 3 data.csv | sort | uniq -c | sort -rn\n```\n\n**Filter then extract:**\n```bash\ngrep 'active' users.csv | cut -d ',' -f 2\n```\n\n`cut` is most powerful as part of larger pipelines, not in isolation.",
+        "history": "The combination of `cut` with other Unix tools perfectly demonstrates the Unix pipe-and-filter architecture that revolutionized computing in the 1970s.\n\n**The Philosophy:**\nDoug McIlroy, inventor of Unix pipes, described the philosophy:\n> \"Write programs that do one thing well. Write programs to work together.\"\n\n`cut` does ONE thing: extract fields. But combined with:\n- `grep` (filter rows) \n- `sort` (order data)\n- `uniq` (deduplicate)\n- `wc` (count)\n\nIt becomes a complete data processing toolkit.\n\n**Classic Pipelines:**\n\nThese patterns became so common they're taught in every Unix course:\n\n**1. Unique column values:**\n```bash\ncut -d ',' -f 2 data.csv | sort | uniq\n```\n\n**2. Column value frequency:**\n```bash\ncut -d ',' -f 3 data.csv | sort | uniq -c | sort -rn\n```\n\n**3. Filter and extract:**\n```bash\ngrep 'error' log.csv | cut -d ',' -f 2 | sort | uniq\n```\n\n**Real-World Impact:**\n\nBefore modern databases and data tools, these pipelines processed:\n- System logs (millions of lines)\n- Financial data\n- Scientific datasets\n- Web server logs\n\nThey were the original \"big data\" processing tools.\n\n**Influence on Modern Tools:**\n\nThis pipeline thinking influenced:\n- SQL's chaining (SELECT → WHERE → GROUP BY → ORDER BY)\n- Pandas method chaining (.filter().groupby().sort_values())\n- Unix philosophy in general\n- Stream processing frameworks (Spark, Flink)\n\nThe `cut` pipeline pattern remains relevant today - it's often faster to prototype data analysis with shell pipelines than writing custom scripts.",
+        "example": "```bash\n# Unique values from column\ncut -d ',' -f 2 data.csv | sort | uniq\n\n# Count unique values\ncut -d ',' -f 2 data.csv | sort | uniq | wc -l\n\n# Most common values (frequency analysis)\ncut -d ',' -f 3 data.csv | sort | uniq -c | sort -rn\n\n# Filter then extract\ngrep 'active' users.csv | cut -d ',' -f 2\ngrep -v '^#' data.csv | cut -d ',' -f 1,3\n\n# Extract, grep, sort\ncut -d ',' -f 2 sales.csv | grep -i 'laptop' | sort\n\n# Multiple field extraction with processing\ncut -d ',' -f 2,3 data.csv | sort | uniq\n\n# Real-world: unique IPs from access log\ncut -d ' ' -f 1 access.log | sort | uniq | wc -l\n\n# Real-world: top 10 products sold\ncut -d ',' -f 2 sales.csv | sort | uniq -c | sort -rn | head -10\n\n# Real-world: active users\ngrep 'active' users.csv | cut -d ',' -f 2 | sort\n\n# Complex: extract, dedupe, count, sort\ncut -d ',' -f 4 data.csv | grep -v '^$' | sort | uniq | wc -l\n```",
+        "commonUses": [
+          "**Column analysis** - Get unique values, frequencies, statistics",
+          "**Data profiling** - Understand data distributions and patterns",
+          "**Log analysis** - Extract and analyze log fields",
+          "**Report generation** - Create summaries from delimited data",
+          "**Data validation** - Check for duplicates, invalid values"
+        ]
+      },
+      "hints": [
+        "Combine cut with other commands using pipes",
+        "Pattern: cut | sort | uniq (unique column values)",
+        "Pattern: grep | cut (filter then extract)"
+      ],
+      "sandbox": {
+        "startDir": "workspace",
+        "dirs": ["workspace"],
+        "files": {
+          "workspace/task.txt": "Task: Find unique product names from sales.csv using a pipeline.\n\nUse cut to extract the product column, then sort and uniq\nto get unique product names.\n\nOnce you have the unique products, check completion.txt.",
+          "workspace/sales.csv": "date,product,amount,region\n2024-01-15,Laptop,999.99,East\n2024-01-16,Mouse,29.99,West\n2024-01-17,Laptop,999.99,East\n2024-01-18,CUT-PIPELINE-EXPERT,0.00,Complete\n2024-01-19,Keyboard,79.99,North\n2024-01-20,Mouse,29.99,South\n2024-01-21,Laptop,999.99,West\n2024-01-22,Monitor,299.99,East\n2024-01-23,Keyboard,79.99,West",
+          "workspace/completion.txt": "Excellent! You've mastered cut in pipelines.\n\n===============================================\nCOMPLETION CODE: CUT-PIPELINE-EXPERT\n===============================================\n\nCut is most powerful in pipelines!\n\nEssential patterns:\n\n  # Unique column values\n  cut -d ',' -f 2 data.csv | sort | uniq\n\n  # Count unique\n  cut -d ',' -f 2 data.csv | sort | uniq | wc -l\n\n  # Frequency analysis\n  cut -d ',' -f 3 data.csv | sort | uniq -c | sort -rn\n\n  # Filter then extract\n  grep 'active' users.csv | cut -d ',' -f 2\n\n  # Top 10 most common\n  cut -d ',' -f 2 data.csv | sort | uniq -c | sort -rn | head -10\n\nReal-world examples:\n\n  # Unique IPs\n  cut -d ' ' -f 1 access.log | sort | uniq\n\n  # Top products\n  cut -d ',' -f 2 sales.csv | sort | uniq -c | sort -rn\n\nPipelines transform cut from simple extractor\nto powerful data analysis tool!"
+        }
+      },
+      "instructions": "## Your Task\n\nUse a pipeline to find **unique product names** from `sales.csv`.\n\n**Steps:**\n1. Read the task: `cat task.txt`\n2. View the file: `cat sales.csv` - notice repeated products\n3. Extract products: `cut -d ',' -f 2 sales.csv` - shows all products\n4. Skip header: `grep -v '^date' sales.csv | cut -d ',' -f 2`\n5. Get unique: `grep -v '^date' sales.csv | cut -d ',' -f 2 | sort | uniq`\n6. Find the completion code among the unique products\n7. Count unique products: `... | wc -l` - should be 5\n8. Read completion file: `cat completion.txt`\n9. Copy the code\n10. Type `exit` and paste the code\n\n**Learn:** Cut + pipes = powerful data analysis!",
+      "requirements": [
+        {
+          "type": "command_output",
+          "description": "The completion code from unique products",
+          "validator": "exact",
+          "expected": "CUT-PIPELINE-EXPERT"
+        }
+      ]
+    }
+  ]
+}
