@@ -15,6 +15,14 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
+const (
+	progressViewWidth     = 90
+	progressViewPadding   = 4
+	progressViewportChrome = 8
+	progressLabelWidth    = 15
+	progressStatsWidth    = 2
+)
+
 type ViewProgressModel struct {
 	database *sql.DB
 	isOpen   bool
@@ -64,7 +72,8 @@ func (m ViewProgressModel) View() string {
 	}
 
 	content := lipgloss.NewStyle().
-		Width(90).
+		Width(progressViewWidth).
+		PaddingTop(progressViewPadding).
 		Render(m.viewport.View())
 
 	footer := lipgloss.NewStyle().
@@ -98,11 +107,10 @@ func (m *ViewProgressModel) Open(width, height int) tea.Cmd {
 	}
 
 	progress := stats.CalculateProgress(lessonsData.Lessons, progressMap)
-
 	content := m.buildProgressView(progress)
 
-	viewportHeight := height - 8
-	m.viewport = viewport.New(90, viewportHeight)
+	viewportHeight := height - progressViewportChrome
+	m.viewport = viewport.New(progressViewWidth, viewportHeight)
 	m.viewport.SetContent(content)
 	m.ready = true
 
@@ -110,49 +118,54 @@ func (m *ViewProgressModel) Open(width, height int) tea.Cmd {
 }
 
 func (m *ViewProgressModel) buildProgressView(progress stats.OverallProgress) string {
-	var content string
+	var content strings.Builder
 
-	header := lipgloss.NewStyle().
+	header := m.renderSectionTitle("YOUR PROGRESS", AccentPurple)
+	content.WriteString(header + "\n\n")
+
+	overallTitle := m.renderSectionTitle("Overall Progress", TextPrimary)
+	content.WriteString(overallTitle + "\n")
+	content.WriteString(m.renderOverallProgress(progress.Overall) + "\n\n")
+
+	content.WriteString(m.renderLevelProgress(progress.ByLevel) + "\n\n")
+	content.WriteString(m.renderModuleProgress(progress.ByModule))
+
+	return content.String()
+}
+
+func (m *ViewProgressModel) renderSectionTitle(title string, color lipgloss.TerminalColor) string {
+	return lipgloss.NewStyle().
 		Bold(true).
-		Foreground(AccentPurple).
-		Render("YOUR PROGRESS")
-	content += header + "\n\n"
+		Foreground(color).
+		Render(title)
+}
 
-	content += m.renderOverallProgress(progress.Overall)
-	content += "\n\n"
+func (m *ViewProgressModel) renderProgressLine(label string, progStats stats.ProgressStats, color lipgloss.TerminalColor) string {
+	statsLine := fmt.Sprintf("  %-*s %*d/%-*d  ",
+		progressLabelWidth,
+		label,
+		progressStatsWidth,
+		progStats.Completed,
+		progressStatsWidth,
+		progStats.Total)
 
-	content += m.renderLevelProgress(progress.ByLevel)
-	content += "\n\n"
+	bar := lipgloss.NewStyle().
+		Foreground(color).
+		Render(stats.RenderProgressBar(progStats.Percentage))
 
-	content += m.renderModuleProgress(progress.ByModule)
+	percentStr := fmt.Sprintf(" %.0f%%", progStats.Percentage)
 
-	return content
+	return statsLine + bar + percentStr
 }
 
 func (m *ViewProgressModel) renderOverallProgress(overall stats.ProgressStats) string {
-	title := lipgloss.NewStyle().
-		Bold(true).
-		Foreground(TextPrimary).
-		Render("Overall Progress")
-
-	statsLine := fmt.Sprintf("%d/%d lessons completed (%.0f%%)",
-		overall.Completed, overall.Total, overall.Percentage)
-
-	bar := stats.RenderProgressBar(overall.Percentage)
-	barStyled := lipgloss.NewStyle().
-		Foreground(AccentGreen).
-		Render(bar)
-
-	return fmt.Sprintf("%s\n%s\n%s", title, statsLine, barStyled)
+	return m.renderProgressLine("Overall", overall, AccentGreen)
 }
 
 func (m *ViewProgressModel) renderLevelProgress(levels []stats.LevelStats) string {
-	title := lipgloss.NewStyle().
-		Bold(true).
-		Foreground(TextPrimary).
-		Render("Progress by Level")
+	var content strings.Builder
 
-	content := title + "\n"
+	content.WriteString(m.renderSectionTitle("Progress by Level", TextPrimary) + "\n")
 
 	colorMap := map[string]lipgloss.TerminalColor{
 		"beginner":     AccentGreen,
@@ -163,52 +176,29 @@ func (m *ViewProgressModel) renderLevelProgress(levels []stats.LevelStats) strin
 
 	for _, level := range levels {
 		levelName := capitalizeFirst(level.Level)
-		statsLine := fmt.Sprintf("  %-15s %2d/%-2d  ",
-			levelName,
-			level.Stats.Completed,
-			level.Stats.Total)
-
-		bar := stats.RenderProgressBar(level.Stats.Percentage)
 		color := colorMap[level.Level]
-		barStyled := lipgloss.NewStyle().Foreground(color).Render(bar)
-
-		percentStr := fmt.Sprintf(" %.0f%%", level.Stats.Percentage)
-
-		content += statsLine + barStyled + percentStr + "\n"
+		content.WriteString(m.renderProgressLine(levelName, level.Stats, color) + "\n")
 	}
 
-	return content
+	return content.String()
 }
 
 func (m *ViewProgressModel) renderModuleProgress(modules []stats.ModuleStats) string {
-	title := lipgloss.NewStyle().
-		Bold(true).
-		Foreground(TextPrimary).
-		Render("Progress by Module")
+	var content strings.Builder
 
-	content := title + "\n"
+	content.WriteString(m.renderSectionTitle("Progress by Module", TextPrimary) + "\n")
 
 	if len(modules) == 0 {
-		content += "  No modules available yet\n"
-		return content
+		content.WriteString("  No modules available yet\n")
+		return content.String()
 	}
 
 	for _, module := range modules {
 		moduleName := formatModuleName(module.Module)
-		statsLine := fmt.Sprintf("  %-20s %2d/%-2d  ",
-			moduleName,
-			module.Stats.Completed,
-			module.Stats.Total)
-
-		bar := stats.RenderProgressBar(module.Stats.Percentage)
-		barStyled := lipgloss.NewStyle().Foreground(AccentBlue).Render(bar)
-
-		percentStr := fmt.Sprintf(" %.0f%%", module.Stats.Percentage)
-
-		content += statsLine + barStyled + percentStr + "\n"
+		content.WriteString(m.renderProgressLine(moduleName, module.Stats, AccentBlue) + "\n")
 	}
 
-	return content
+	return content.String()
 }
 
 func (m *ViewProgressModel) Close() {
